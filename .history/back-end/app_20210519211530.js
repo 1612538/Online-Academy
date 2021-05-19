@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const session = require("express-session");
 const createError = require("http-errors");
+const exphbs = require("express-handlebars");
 const passport = require("./utils/passport");
 const cookieParser = require("cookie-parser");
 

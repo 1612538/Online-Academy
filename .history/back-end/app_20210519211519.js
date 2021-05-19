@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const session = require("express-session");
 const createError = require("http-errors");
+const exphbs = require("express-handlebars");
 const passport = require("./utils/passport");
 const cookieParser = require("cookie-parser");
 
@@ -11,6 +12,32 @@ app.use(cookieParser("somesecret"));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+const hbs = exphbs.create({
+  extname: "hbs",
+  helpers: {
+    if_eq: function (a, b, opts) {
+      if (a == b) return opts.fn(this);
+      else return opts.inverse(this);
+    },
+    math: function (lvalue, operator, rvalue, options) {
+      lvalue = parseFloat(lvalue);
+      rvalue = parseFloat(rvalue);
+
+      return {
+        "+": lvalue + rvalue,
+        "-": lvalue - rvalue,
+        "*": lvalue * rvalue,
+        "/": lvalue / rvalue,
+        "%": lvalue % rvalue,
+      }[operator];
+    },
+  },
+});
+
+app.engine("hbs", hbs.engine);
+app.set("view engine", "hbs");
+//app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.static(path.join(__dirname, "public")));
 
