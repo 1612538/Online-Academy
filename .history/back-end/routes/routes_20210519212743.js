@@ -30,8 +30,6 @@ module.exports = (app) => {
     .put(SmallCategories.update)
     .delete(SmallCategories.delete);
 
-  app.route("api/smallcategories/byCatID/:id").get(SmallCategories.getByCatID);
-
   //Admin controller
   let Admins = require("./controllers/AdminController");
   app.route("/api/admins").get(Admins.getAll).post(Admins.add);

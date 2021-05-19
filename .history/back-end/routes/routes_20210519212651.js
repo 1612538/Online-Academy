@@ -18,19 +18,14 @@ module.exports = (app) => {
 
   //Small categories controller
 
-  let SmallCategories = require("./controllers/SmallCatController");
-  app
-    .route("/api/smallcategories")
-    .get(SmallCategories.getAll)
-    .post(SmallCategories.add);
+  let SmallCategories = require("./controllers/CategoriesController");
+  app.route("/api/categories").get(Categories.getAll).post(Categories.add);
 
   app
-    .route("api/smallcategories/:id")
-    .get(SmallCategories.detail)
-    .put(SmallCategories.update)
-    .delete(SmallCategories.delete);
-
-  app.route("api/smallcategories/byCatID/:id").get(SmallCategories.getByCatID);
+    .route("api/categories/:id")
+    .get(Categories.detail)
+    .put(Categories.update)
+    .delete(Categories.delete);
 
   //Admin controller
   let Admins = require("./controllers/AdminController");
