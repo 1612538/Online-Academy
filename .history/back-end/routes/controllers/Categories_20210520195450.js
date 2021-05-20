@@ -1,5 +1,5 @@
 const db = require("../../utils/db");
-const tbName = "teacher";
+const tbName = "category";
 
 module.exports = {
   getAll: (req, res) => {
@@ -11,28 +11,8 @@ module.exports = {
       res.json(result);
     });
   },
-  getByUsername: (req, res) => {
-    const sql = `SELECT * FROM ${tbName} WHERE username = ?`;
-    db.query(sql, [req.params.username], (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.json(result[0]);
-    });
-  },
-
-  getByEmail: (req, res) => {
-    const sql = `SELECT * FROM ${tbName} WHERE email = ?`;
-    db.query(sql, [req.params.email], (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.json(result[0]);
-    });
-  },
-
   detail: (req, res) => {
-    const sql = `SELECT * FROM ${tbName} WHERE idteacher = ?`;
+    const sql = `SELECT * FROM ${tbName} WHERE idadmin = ?`;
     db.query(sql, [req.params.id], (err, result) => {
       if (err) {
         throw err;
@@ -40,9 +20,8 @@ module.exports = {
       res.json(result[0]);
     });
   },
-
   delete: (req, res) => {
-    let sql = `DELETE FROM ${tbName} WHERE idteacher = ?`;
+    let sql = `DELETE FROM ${tbName} WHERE id = ?`;
     db.query(sql, [req.params.id], (err, result) => {
       if (err) throw err;
       res.json({ message: "Delete success!" });
@@ -51,13 +30,13 @@ module.exports = {
   update: (req, res) => {
     let data = req.body;
     let id = req.params.id;
-    const sql = `UPDATE ${tbName} SET ? WHERE idteacher = ?`;
+    const sql = `UPDATE ${tbName} SET ? WHERE id = ?`;
     db.query(sql, [data, id], (err, result) => {
       if (err) throw err;
       res.json({ message: "Update success!" });
     });
   },
-  add: (req, res) => {
+  add: async (entity) => {
     const sql = `INSERT INTO ${tbName} SET ?`;
     let data = req.body;
     db.query(sql, [data], (err, result) => {

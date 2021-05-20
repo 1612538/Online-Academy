@@ -3,17 +3,7 @@ module.exports = (app) => {
   //Courses controller
 
   let Courses = require("./controllers/Courses");
-  app
-    .route("/api/courses")
-    .get(Courses.getAll)
-    .post(
-      upload.fields([
-        { name: "imageInput", maxCount: 1 },
-        { name: "slideInput", maxCount: 1 },
-        { name: "videoInput", maxCount: 1 },
-      ]),
-      Courses.add
-    );
+  app.route("/api/courses").get(Courses.getAll).post(Courses.add);
 
   app
     .route("/api/courses/:id")

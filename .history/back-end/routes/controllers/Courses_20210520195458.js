@@ -92,7 +92,7 @@ module.exports = {
   },
 
   delete: (req, res) => {
-    let sql = `DELETE FROM ${tbName} WHERE idcourses = ?`;
+    let sql = `DELETE FROM ${tbName} WHERE id = ?`;
     db.query(sql, [req.params.id], (err, result) => {
       if (err) throw err;
       res.json({ message: "Delete success!" });
@@ -101,7 +101,7 @@ module.exports = {
   update: (req, res) => {
     let data = req.body;
     let id = req.params.id;
-    const sql = `UPDATE ${tbName} SET ? WHERE idcourses = ?`;
+    const sql = `UPDATE ${tbName} SET ? WHERE id = ?`;
     db.query(sql, [data, id], (err, result) => {
       if (err) throw err;
       res.json({ message: "Update success!" });

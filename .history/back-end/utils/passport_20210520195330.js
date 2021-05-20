@@ -1,7 +1,7 @@
 const passport = require("passport");
-const users = require("../routes/controllers/Users");
-const admins = require("../routes/controllers/Admins");
-const teachers = require("../routes/controllers/Teachers");
+const users = require("../controllers/Users");
+const admins = require("../controllers/Admins");
+const teachers = require("../controllers/Teachers");
 const bcrypt = require("./bcrypt");
 const localStrategy = require("passport-local").Strategy;
 
