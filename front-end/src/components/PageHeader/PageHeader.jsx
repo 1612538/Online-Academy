@@ -1,10 +1,16 @@
 import React, {Component} from "react";
-
+import NavBar from "../NavBar/NavBar"
 
 
 class PageHeader extends Component {
     render() {
-        return (<div></div>);
+        return (
+        <div>
+            <NavBar>
+
+            </NavBar>
+        </div>
+        );
     }
 }
 
