@@ -1,4 +1,7 @@
 "use strict";
+const upload = require("../utils/multer");
+const cors = require("cors");
+
 module.exports = (app) => {
   //Courses controller
 

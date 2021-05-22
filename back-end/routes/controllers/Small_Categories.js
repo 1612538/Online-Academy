@@ -12,8 +12,8 @@ module.exports = {
     });
   },
   getByCatID: (req, res) => {
-    const sql = `SELECT * FROM ${tbName} WHERE CatID = ?`;
-    db.query(sql, [req.params.username], (err, result) => {
+    const sql = `SELECT * FROM ${tbName} WHERE idcategory = ?`;
+    db.query(sql, [req.params.id], (err, result) => {
       if (err) {
         throw err;
       }

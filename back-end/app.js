@@ -5,8 +5,12 @@ const session = require("express-session");
 const createError = require("http-errors");
 const passport = require("./utils/passport");
 const cookieParser = require("cookie-parser");
+var cors = require("cors");
 
 const app = express();
+
+app.use(cors());
+
 app.use(cookieParser("somesecret"));
 
 app.use(bodyParser.urlencoded({ extended: true }));

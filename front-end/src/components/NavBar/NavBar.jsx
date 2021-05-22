@@ -8,6 +8,7 @@ import InputBase from '@material-ui/core/InputBase';
 import { IconButton } from '@material-ui/core';
 import { lightBlue } from '@material-ui/core/colors';
 import SearchIcon from '@material-ui/icons/Search';
+import CategoriesMenu from './NavBarComponents/CategoriesMenu';
 import { createMuiTheme, withStyles, makeStyles, ThemeProvider } from '@material-ui/core/styles';
 
 import "@fontsource/roboto";
@@ -45,16 +46,16 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-  function Home()  {
+  function NavBar()  {
     const classes = useStyles();
     return (
-            <Container maxWidth="xl">
-            <Typography component="div" style={{ backgroundColor: '#03a9f4', borderBottomLeftRadius: 7, borderBottomRightRadius: 7, height: 60}}>
+        <Container maxWidth="xl">
+          <Typography component="div" style={{ backgroundColor: '#03a9f4', borderBottomLeftRadius: 7, borderBottomRightRadius: 7, height: 60}}>
             <Grid container alignItems="center">
             <Grid item xs={2}>
             <ButtonGroup variant="contained" disableElevation aria-label="contained primary button group">
                 <ColorButtonMain  style={{border: 0}}>Home</ColorButtonMain>
-                <ColorButton  style={{border: 0}}>Categories</ColorButton>
+                <CategoriesMenu></CategoriesMenu>
             </ButtonGroup>
             </Grid>
             <Grid item xs={7}>
@@ -62,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
             <Grid container alignItems="center">
             <SearchIcon color="action"></SearchIcon>
             <form className={classes.root} noValidate autoComplete="off">
-            <InputBase id="Search" placeholder="Search for anything" color="secondary" style={{height: 40}}/>
+            <InputBase id="Search" placeholder="Search for anything" color="secondary" style={{height: 40, width:'100%'}}/>
             </form>
             </Grid>
             </Typography>
@@ -76,8 +77,9 @@ const useStyles = makeStyles((theme) => ({
             </Grid>
             </Grid>
             </Grid>
-            </Typography>
+          </Typography>
         </Container>)
 }
 
-export default Home;
+export { NavBar, ColorButton } ;
+
