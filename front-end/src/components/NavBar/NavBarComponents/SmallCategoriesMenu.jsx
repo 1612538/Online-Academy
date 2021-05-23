@@ -4,18 +4,16 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Paper from '@material-ui/core/Paper';
 import ListItemText from '@material-ui/core/ListItemText';
-import Collapse from '@material-ui/core/Collapse';
+import Fade from '@material-ui/core/Fade';
 import ExpandLess from '@material-ui/icons/ArrowBackIos';
 import ExpandMore from '@material-ui/icons/ArrowForwardIos';
 import axios from 'axios';
 
-import "@fontsource/roboto";
 import { Grid } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
     root: {
       width: '360px',
-      backgroundColor: theme.palette.background.paper,
     },
   }));
 
@@ -26,7 +24,6 @@ export default function SmallCatMenu(props) {
     const [categories, setCategories] = React.useState([]);
     const [catActive, setCatActive] = React.useState(-1);
     const [small_categories, setSmall_Categories] = React.useState([]);
-
     const getCategories = () =>{
       axios.get('http://localhost:8080/api/categories')
       .then(res => {
@@ -36,8 +33,8 @@ export default function SmallCatMenu(props) {
       .catch(err => console.log(err));
     }
 
-    const getSmallCategories = (id) => {
-      axios.get(`http://localhost:8080/api/smallcategories/byCatID/${id}`)
+    const getSmallCategories = () => {
+      axios.get(`http://localhost:8080/api/smallcategories`)
       .then(res => {
         const smallcats = res.data;
         setSmall_Categories(smallcats);
@@ -47,6 +44,7 @@ export default function SmallCatMenu(props) {
 
     useEffect(()=>{
       getCategories();
+      getSmallCategories();
     });
 
     const handleClick = (id) => {
@@ -55,14 +53,17 @@ export default function SmallCatMenu(props) {
           setOpen(!open);
         else {
           setCatActive(id);
-          getSmallCategories(id);
         }
       }
       else {
         setOpen(!open);
         setCatActive(id);
-        getSmallCategories(id);
       }
+    }
+
+    const handleClose = (event) => {
+      props.handleClose(event.target);
+      setOpen(false);
     }
 
     const classes = useStyles();
@@ -85,19 +86,19 @@ export default function SmallCatMenu(props) {
       </List>
       </Paper>
       </Grid>
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      <Fade in={open}>
       <Paper variant='outlined'>
       <Grid item>
               <List component="div">
                 {
-                  small_categories.map( smallcat => <ListItem button className={classes.root} onClick={props.handleClose}>
+                  small_categories.filter(obj => obj.idcategory === catActive).map( smallcat => <ListItem button className={classes.root} onClick={handleClose}>
                     <ListItemText primary={smallcat.name} />
                   </ListItem>)
                 }
               </List>
               </Grid>
               </Paper>
-        </Collapse>
+        </Fade>
         </Grid>
       );
   }

@@ -6,8 +6,6 @@ import {ColorButton} from '../NavBar'
 
 import SmallCategoriesMenu from './SmallCategoriesMenu';
 
-import "@fontsource/roboto";
-
 export default function CatMenu() {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);

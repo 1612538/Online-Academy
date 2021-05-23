@@ -14,13 +14,6 @@ import Rating from "@material-ui/lab/Rating";
 import axios from 'axios';
 
 const useStyles = makeStyles({
-  root: {
-    maxWidth: 300,
-  },
-  media: {
-    height: 160,
-    borderBottom: '1px solid #e0e0e0',
-  },
   custom: {
     display: "-webkit-box",
     boxOrient: "vertical",
@@ -87,49 +80,6 @@ export default function CoursesCard() {
   })
   const classes = useStyles();
   return (
-    <Card className={classes.root}>
-      <Link color='inherit' underline='none' href={`http://localhost:8080/api/courses/${course.idcourses}`}>
-      <CardActionArea>
-        <CardMedia
-          className={classes.media}
-          image={'http://localhost:8080'+course.img}
-          title={course.name}
-        />
-        <CardContent>
-          <Typography gutterBottom variant="subtitle1" component="h2" className={classes.custom}>
-            {course.name}
-          </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
-            <Grid container style={{width: '100%', padding: 0}} alignItems='center'  spacing={1}>
-            <Grid item xs={4}>
-              <Button href="http://localhost:8080/api/smallcategories/4" className={classes.colorButton}>{categoryName}</Button>
-            </Grid>
-            <Grid item xs={8}>
-              {teacherName}
-            </Grid>
-            <Grid item xs={12}>
-            <Grid container direction='row' alignItems='center'>
-            <Grid item xs = {1}  className={classes.rate}>
-              {course.rate}
-            </Grid>
-            <Grid item xs = {3} style={{paddingTop: '2px'}}>
-            <Rating size="small" name="read-only" precision={0.5} value={parseFloat(course.rate)} readOnly />
-            </Grid>
-            <Grid item xs = {1}>
-            </Grid>
-            <Grid item xs = {3} style={{marginLeft:'5px'}}>
-            ({course.ratevotes})
-            </Grid>
-            <Grid item xs={3} className={classes.price}>
-              ${course.price}
-            </Grid>
-            </Grid>
-            </Grid>
-            </Grid>
-          </Typography>
-        </CardContent>
-      </CardActionArea>
-      </Link>
-    </Card>
+    <div></div>
   );
 }

@@ -24,6 +24,11 @@ module.exports = (app) => {
     .put(Courses.update)
     .delete(Courses.delete);
 
+  app.route("/api/coursesbysubscribe").get(Courses.getAllBySubscribe);
+
+  app.route("/api/coursesbydate").get(Courses.getAllByDate);
+
+  app.route("/api/coursesbyview").get(Courses.getAllByView);
   //Categories controller
 
   let Categories = require("./controllers/Categories");
