@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import CoursesCard2 from '../../../CoursesCard/CoursesCard2';
+import CoursesCard2 from '../CoursesCard/CoursesCard2';
 import Grid from '@material-ui/core/Grid';
 import Fade from '@material-ui/core/Fade';
 import Box from '@material-ui/core/Box';
@@ -44,42 +44,23 @@ const useStyles = makeStyles({
 
 function AllCourses(props) {
     const classes = useStyles();
-    const [courses, setCourses] = React.useState([]);
-    const [currPage, setCurrPage] = React.useState(1);
     let pageNumber = Math.ceil((props.dataLength)/5);
-
-    const getCourses = (current) => {
-        axios.get(`http://localhost:8080/api/courses?page=${current}`)
-        .then(res => {
-            const data = res.data;
-            setCourses(data);
-        })
-        .catch(err => console.log(err));
-    }
-
     const changeHandle = (event, value) =>{
-        setCurrPage(value);
+        props.setCurrPage(value);
     }
-    
-    useEffect(()=>{
-        getCourses(currPage);
-        return () => {
-            setCourses([]);
-        }
-    }, [currPage])
 
     return (
         <div className={classes.root}>
         <Typography variant='h4' className={classes.customText}>All courses</Typography>
         <Grid container direction='column' spacing={3} className={classes.customGrid}>
             {
-                courses.map((course, key) =><Fade in={true} timeout={1000} key={key}><Grid item>
+                props.courses.map((course, key) =><Fade in={true} timeout={1000} key={key}><Grid item>
                     <CoursesCard2 course={course}></CoursesCard2>
                     </Grid></Fade>)
             }
         </Grid>
         <Box my={1} display="flex" justifyContent="center">
-        <Pagination count={pageNumber ? pageNumber : 0} defaultPage={pageNumber ? pageNumber/2+1 : 0} onChange={changeHandle} size="large" 
+        <Pagination count={pageNumber} defaultPage={pageNumber/2+1} onChange={changeHandle} size="large" 
         renderItem={(item)=> <PaginationItem {...item} 
         className={classes.customPagination} classes={{selected: classes.selected}}/>}/>
         </Box>

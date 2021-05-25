@@ -7,7 +7,7 @@ import Fab from '@material-ui/core/Fab';
 import Fade from '@material-ui/core/Fade';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
-import GetData from '../getData';
+import GetData from '../GetData';
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
@@ -46,8 +46,7 @@ function TopView() {
     const [currPage, setCurrPage] = React.useState(1);
 
     const getCourses = (current) => {
-        setCourses([]);
-        axios.get(`http://localhost:8080/api/coursesbyview/${current}`)
+        axios.get(`http://localhost:8080/api/coursesbyview?page=${current}`)
         .then(res => {
             const data = res.data;
             setCourses(data);
@@ -69,6 +68,9 @@ function TopView() {
 
     useEffect(()=>{
         getCourses(currPage);
+        return () => {
+            setCourses([]);
+        }
     }, [currPage])
 
     return (

@@ -24,17 +24,15 @@ module.exports = (app) => {
     .put(Courses.update)
     .delete(Courses.delete);
 
-  app.route("/api/coursespage/:page").get(Courses.getAllPage);
-
   app.route("/api/coursesbysubscribe").get(Courses.getAllBySubscribe);
 
   app.route("/api/coursesbydate").get(Courses.getAllByDate);
 
-  app.route("/api/coursesbydate/:page").get(Courses.getAllByDatePage);
-
   app.route("/api/coursesbyview").get(Courses.getAllByView);
 
-  app.route("/api/coursesbyview/:page").get(Courses.getAllByViewPage);
+  app.route("/api/courseslength").get(Courses.getLength);
+
+  app.route("/api/coursesearch").get(Courses.getByTextSearch);
   //Categories controller
 
   let Categories = require("./controllers/Categories");

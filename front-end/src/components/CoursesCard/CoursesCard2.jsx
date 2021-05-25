@@ -38,6 +38,7 @@ const useStyles = makeStyles((theme)=>({
     overflow: "hidden",
     lineHeight: 1.5,
     marginBottom: 2,
+    width: '90%',
   },
   colorButton: {
     backgroundColor: '#3f51b5',
@@ -120,13 +121,13 @@ export default function CoursesCard(props) {
                   {course.description1}
                 </Typography>
                 </Link>
-                </Grid>
+              </Grid>
               <Grid item xs>
-                <Grid container style={{width: '35%', padding: 0}} alignItems='center'  spacing={1}>
-                <Grid item xs={5}>
+                <Grid container style={{width: '50%', padding: 0}} alignItems='center'  spacing={1}>
+                <Grid item xs={6}>
                   <Button href="http://localhost:8080/api/smallcategories/4" className={classes.colorButton}>{categoryName}</Button>
                 </Grid>
-                <Grid item xs={7}>
+                <Grid item xs={6}>
                   <Typography variant="body2" color="textSecondary" component="p">
                 {teacherName}
                 </Typography>
@@ -136,10 +137,10 @@ export default function CoursesCard(props) {
                     <Grid item xs = {1}  className={classes.rate}>
                       {course.rate}
                     </Grid>
-                    <Grid item xs = {5} style={{marginTop:'5px', marginLeft: '5px'}}>
+                    <Grid item xs = {4} style={{marginTop:'5px', marginLeft: '5px'}}>
                       <Rating size="small" name="read-only" precision={0.5} value={parseFloat(course.rate)} readOnly />
                     </Grid>
-                    <Grid item xs = {5}>
+                    <Grid item xs = {6}>
                     ({course.ratevotes})
                     </Grid>
                   </Grid>

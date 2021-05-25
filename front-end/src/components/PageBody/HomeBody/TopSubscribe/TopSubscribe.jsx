@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import GetData from '../getData';
+import GetData from '../GetData';
 import Grid from '@material-ui/core/Grid'
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -35,7 +35,7 @@ function TopSubscribe() {
 
     useEffect(()=>{
         getCourses();
-    })
+    }, [])
 
     return (
         <div className={classes.root}>

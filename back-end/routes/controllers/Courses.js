@@ -3,7 +3,12 @@ const tbName = "courses";
 
 module.exports = {
   getAll: (req, res) => {
-    const sql = `SELECT * FROM ${tbName}`;
+    const pageNumber = parseInt(req.query.page) - 1;
+    let sql = `SELECT * FROM ${tbName} WHERE isBlocked=0`;
+    if (pageNumber > -1)
+      sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 limit ${
+        pageNumber * 5
+      },5`;
     db.query(sql, (err, result) => {
       if (err) {
         throw err;
@@ -12,32 +17,23 @@ module.exports = {
     });
   },
 
-  getAllPage: (req, res) => {
-    const pageNumber = parseInt(req.params.page) - 1;
-    const sql = `SELECT * FROM ${tbName} limit ${pageNumber * 5},5`;
+  getLength: (req, res) => {
+    const sql = `SELECT COUNT(*) AS rowCount FROM ${tbName}`;
     db.query(sql, (err, result) => {
       if (err) {
         throw err;
       }
-      res.json(result);
+      res.json(result[0]);
     });
   },
 
   getAllByView: (req, res) => {
-    const sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY views DESC limit 10`;
-    db.query(sql, (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.json(result);
-    });
-  },
-
-  getAllByViewPage: (req, res) => {
-    const pageNumber = parseInt(req.params.page) - 1;
-    const sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY views DESC limit ${
-      pageNumber * 5
-    },5`;
+    const pageNumber = parseInt(req.query.page) - 1;
+    let sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY views DESC limit 10`;
+    if (pageNumber > -1)
+      sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY views DESC limit ${
+        pageNumber * 5
+      },5`;
     db.query(sql, (err, result) => {
       if (err) {
         throw err;
@@ -47,20 +43,12 @@ module.exports = {
   },
 
   getAllByDate: (req, res) => {
-    const sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY STR_TO_DATE(lastupdate,'%T %d/%m/%Y') DESC limit 10;`;
-    db.query(sql, (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.json(result);
-    });
-  },
-
-  getAllByDatePage: (req, res) => {
-    const pageNumber = parseInt(req.params.page) - 1;
-    const sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY STR_TO_DATE(lastupdate,'%T %d/%m/%Y') DESC limit ${
-      pageNumber * 5
-    },5;`;
+    const pageNumber = parseInt(req.query.page) - 1;
+    let sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY STR_TO_DATE(lastupdate,'%T %d/%m/%Y') DESC limit 10;`;
+    if (pageNumber > -1)
+      sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY STR_TO_DATE(lastupdate,'%T %d/%m/%Y') DESC limit ${
+        pageNumber * 5
+      },5`;
     db.query(sql, (err, result) => {
       if (err) {
         throw err;
@@ -89,15 +77,20 @@ module.exports = {
   },
 
   getByTextSearch: (req, res) => {
+    const pageNumber = parseInt(req.query.page) - 1;
     const sql1 = `ALTER TABLE ${tbName} ADD FULLTEXT(name);`;
-    const sql2 = `SELECT * FROM ${tbName} WHERE MATCH(name) AGAINST('${req.body.fulltext}')AND isBlocked=0;`;
+    let sql2 = `SELECT * FROM ${tbName} WHERE MATCH(name) AGAINST ('${req.query.keyword}') AND isBlocked=0;`;
+    if (pageNumber > -1)
+      sql2 = `SELECT * FROM ${tbName} WHERE MATCH(name) AGAINST ('${
+        req.query.keyword
+      }') AND isBlocked=0 limit ${pageNumber * 5},5;`;
     const sql3 = ` ALTER TABLE ${tbName} DROP INDEX name;`;
     const sql = sql1 + sql2 + sql3;
     db.query(sql, (err, result) => {
       if (err) {
         throw err;
       }
-      res.json(result);
+      res.json(result[1]);
     });
   },
 
