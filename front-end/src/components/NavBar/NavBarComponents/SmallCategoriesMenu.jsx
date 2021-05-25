@@ -21,17 +21,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SmallCatMenu(props) {
     const [open, setOpen] = React.useState(false);
-    const [categories, setCategories] = React.useState([]);
+    const [categories, setCategories] = React.useState(props.categories);
     const [catActive, setCatActive] = React.useState(-1);
     const [small_categories, setSmall_Categories] = React.useState([]);
-    const getCategories = () =>{
-      axios.get('http://localhost:8080/api/categories')
-      .then(res => {
-        const cats = res.data;
-        setCategories(cats);
-      })
-      .catch(err => console.log(err));
-    }
 
     const getSmallCategories = () => {
       axios.get(`http://localhost:8080/api/smallcategories`)
@@ -43,7 +35,6 @@ export default function SmallCatMenu(props) {
     }
 
     useEffect(()=>{
-      getCategories();
       getSmallCategories();
     });
 
@@ -62,8 +53,8 @@ export default function SmallCatMenu(props) {
     }
 
     const handleClose = (event) => {
+      setOpen(!open);
       props.handleClose(event.target);
-      setOpen(false);
     }
 
     const classes = useStyles();

@@ -11,6 +11,18 @@ module.exports = {
       res.json(result);
     });
   },
+
+  getAllPage: (req, res) => {
+    const pageNumber = parseInt(req.params.page) - 1;
+    const sql = `SELECT * FROM ${tbName} limit ${pageNumber * 5},5`;
+    db.query(sql, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json(result);
+    });
+  },
+
   getAllByView: (req, res) => {
     const sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY views DESC limit 10`;
     db.query(sql, (err, result) => {
@@ -20,8 +32,35 @@ module.exports = {
       res.json(result);
     });
   },
+
+  getAllByViewPage: (req, res) => {
+    const pageNumber = parseInt(req.params.page) - 1;
+    const sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY views DESC limit ${
+      pageNumber * 5
+    },5`;
+    db.query(sql, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json(result);
+    });
+  },
+
   getAllByDate: (req, res) => {
     const sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY STR_TO_DATE(lastupdate,'%T %d/%m/%Y') DESC limit 10;`;
+    db.query(sql, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json(result);
+    });
+  },
+
+  getAllByDatePage: (req, res) => {
+    const pageNumber = parseInt(req.params.page) - 1;
+    const sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY STR_TO_DATE(lastupdate,'%T %d/%m/%Y') DESC limit ${
+      pageNumber * 5
+    },5;`;
     db.query(sql, (err, result) => {
       if (err) {
         throw err;

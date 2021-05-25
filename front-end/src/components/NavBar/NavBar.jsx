@@ -5,34 +5,33 @@ import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Grid from '@material-ui/core/Grid';
 import InputBase from '@material-ui/core/InputBase';
-import { IconButton } from '@material-ui/core';
-import { indigo } from '@material-ui/core/colors';
+import { blue } from '@material-ui/core/colors';
 import SearchIcon from '@material-ui/icons/Search';
 import CategoriesMenu from './NavBarComponents/CategoriesMenu';
-import { createMuiTheme, withStyles, makeStyles, ThemeProvider } from '@material-ui/core/styles';
+import { withStyles, makeStyles} from '@material-ui/core/styles';
 
 const ColorButton = withStyles((theme) => ({
     root: {
-      color: theme.palette.getContrastText(indigo[600]),
-      backgroundColor: indigo[500],
+      color: theme.palette.getContrastText(blue[600]),
+      backgroundColor: blue[600],
       paddingLeft:25,
       paddingRight:25,
       height: 60,
       '&:hover': {
-        backgroundColor: indigo[600],
+        backgroundColor: blue[700],
       },
     },
 }))(Button);
 
 const ColorButtonMain = withStyles((theme) => ({
     root: {
-      color: theme.palette.getContrastText(indigo[600]),
-      backgroundColor: indigo[700],
+      color: theme.palette.getContrastText(blue[600]),
+      backgroundColor: blue[700],
       height: 60,
       paddingLeft:25,
       paddingRight:25,
       '&:hover': {
-        backgroundColor: indigo[800],
+        backgroundColor: blue[800],
       },
     },
 }))(Button);
@@ -47,8 +46,8 @@ const useStyles = makeStyles((theme) => ({
   function NavBar()  {
     const classes = useStyles();
     return (
-        <Container maxWidth="xl" style={{padding: 0}}>
-          <Typography component="div" style={{ backgroundColor: '#3f51b5', height: 60}}>
+        <Container maxWidth="xl" style={{padding: 0 }}>
+          <Typography component="div" style={{ backgroundColor: '#1e88e5', height: 60}}>
             <Grid container alignItems="center">
             <Grid item xs={2}>
             <ButtonGroup variant="contained" disableElevation aria-label="contained primary button group">
@@ -76,8 +75,8 @@ const useStyles = makeStyles((theme) => ({
             </Grid>
             </Grid>
           </Typography>
-        </Container>)
-}
+        </Container>
+    )}
 
 export { NavBar, ColorButton } ;
 

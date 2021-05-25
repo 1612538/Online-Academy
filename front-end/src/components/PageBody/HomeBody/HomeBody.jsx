@@ -4,15 +4,16 @@ import TopCategories from './TopCategories/TopCategories';
 import TopNew from './TopNew/TopNew';
 import TopSubscribe from './TopSubscribe/TopSubscribe';
 import TopView from './TopView/TopView';
-import Grid from '@material-ui/core/Grid';
-
-import {makeStyles} from '@material-ui/core/styles';
 
 function HomeBody() {
 
     return (
         <div>
         <TopSubscribe></TopSubscribe>
+        <TopView></TopView>
+        <TopCategories></TopCategories>
+        <TopNew></TopNew>
+        <AllCourses></AllCourses>
         </div>
     );
 }

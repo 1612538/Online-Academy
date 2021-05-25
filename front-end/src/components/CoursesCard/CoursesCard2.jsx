@@ -1,25 +1,43 @@
 import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
+import Paper from '@material-ui/core/Paper';
+import ButtonBase from '@material-ui/core/ButtonBase';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import {indigo} from '@material-ui/core/colors';
+import {indigo, blue} from '@material-ui/core/colors';
+import Button from '@material-ui/core/Button';
 import Link from '@material-ui/core/Link';
 import Rating from "@material-ui/lab/Rating";
 
 import axios from 'axios';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme)=>({
+  root: {
+    flexGrow: 1,
+  },
+  paper: {
+    backgroundColor: blue[50],
+    padding: 10,
+    margin: 'auto',
+    maxWidth: 900,
+  },
+  image: {
+    width: 128,
+    height: 128,
+  },
+  img: {
+    margin: 'auto',
+    display: 'block',
+    maxWidth: '100%',
+    maxHeight: '100%',
+  },
   custom: {
     display: "-webkit-box",
     boxOrient: "vertical",
-    lineClamp: 2,
+    lineClamp: 1,
     overflow: "hidden",
-    lineHeight: 1.5
+    lineHeight: 1.5,
+    marginBottom: 2,
   },
   colorButton: {
     backgroundColor: '#3f51b5',
@@ -36,18 +54,17 @@ const useStyles = makeStyles({
   },
   price: {
     color: 'red',
-    fontSize: '1rem',
     fontWeight: 'bold',
   }
-});
+}));
 
-export default function CoursesCard() {
-  const [course, setCourse] = React.useState({});
+export default function CoursesCard(props) {
+  const [course, setCourse] = React.useState(props.course);
   const [teacherName, setTeacherName] = React.useState('');
   const [categoryName, setCategoryName] = React.useState('');
 
   const getCourse = () => {
-      axios.get("http://localhost:8080/api/courses/3")
+      axios.get(`http://localhost:8080/api/courses/${course.idcourses}`)
       .then(res => {
         const data = res.data;
         setCourse(data);
@@ -80,6 +97,62 @@ export default function CoursesCard() {
   })
   const classes = useStyles();
   return (
-    <div></div>
+    <div className={classes.root}>
+      <Paper className={classes.paper}>
+        <Grid container spacing={4}>
+          <Grid item>
+            <ButtonBase className={classes.image} href={`http://localhost:8080/api/courses/${course.idcourses}`}>
+              <img className={classes.img} alt="complex" src={"http://localhost:8080"+course.img} />
+            </ButtonBase>
+          </Grid>
+          <Grid item xs={12} sm container>
+            <Grid item xs container direction="column" spacing={0}>
+              <Grid item xs>
+                <Link color='inherit' underline='none' href={`http://localhost:8080/api/courses/${course.idcourses}`}>
+                <Typography gutterBottom variant="h6" className={classes.custom}>
+                  {course.name}
+                </Typography>
+                </Link>
+              </Grid>
+              <Grid item xs>
+                <Link color='inherit' underline='none' href={`http://localhost:8080/api/courses/${course.idcourses}`}>
+                <Typography gutterBottom variant="subtitle1" className={classes.custom}>
+                  {course.description1}
+                </Typography>
+                </Link>
+                </Grid>
+              <Grid item xs>
+                <Grid container style={{width: '35%', padding: 0}} alignItems='center'  spacing={1}>
+                <Grid item xs={5}>
+                  <Button href="http://localhost:8080/api/smallcategories/4" className={classes.colorButton}>{categoryName}</Button>
+                </Grid>
+                <Grid item xs={7}>
+                  <Typography variant="body2" color="textSecondary" component="p">
+                {teacherName}
+                </Typography>
+                </Grid>
+                <Grid item xs={12}  style={{marginTop: '-5px', paddingBottom: '0px'}}>
+                  <Grid container direction='row' alignItems='center'>
+                    <Grid item xs = {1}  className={classes.rate}>
+                      {course.rate}
+                    </Grid>
+                    <Grid item xs = {5} style={{marginTop:'5px', marginLeft: '5px'}}>
+                      <Rating size="small" name="read-only" precision={0.5} value={parseFloat(course.rate)} readOnly />
+                    </Grid>
+                    <Grid item xs = {5}>
+                    ({course.ratevotes})
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+              </Grid>
+            </Grid>
+            <Grid item>
+              <Typography variant="h6" className={classes.price}>${course.price}</Typography>
+            </Grid>
+          </Grid>
+        </Grid>
+      </Paper>
+    </div>
   );
 }

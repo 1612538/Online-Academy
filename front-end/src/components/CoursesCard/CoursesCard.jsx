@@ -7,7 +7,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import {indigo} from '@material-ui/core/colors';
+import {indigo, blue} from '@material-ui/core/colors';
 import Link from '@material-ui/core/Link';
 import Rating from "@material-ui/lab/Rating";
 
@@ -15,6 +15,7 @@ import axios from 'axios';
 
 const useStyles = makeStyles({
   root: {
+    backgroundColor: blue[50],
     maxWidth: 300,
   },
   media: {
@@ -26,7 +27,7 @@ const useStyles = makeStyles({
     boxOrient: "vertical",
     lineClamp: 2,
     overflow: "hidden",
-    lineHeight: 1.5
+    lineHeight: 1.5,
   },
   colorButton: {
     backgroundColor: '#3f51b5',
@@ -48,19 +49,10 @@ const useStyles = makeStyles({
   }
 });
 
-export default function CoursesCard() {
-  const [course, setCourse] = React.useState({});
+export default function CoursesCard(props) {
+  const [course, setCourse] = React.useState(props.course);
   const [teacherName, setTeacherName] = React.useState('');
   const [categoryName, setCategoryName] = React.useState('');
-
-  const getCourse = () => {
-      axios.get("http://localhost:8080/api/courses/3")
-      .then(res => {
-        const data = res.data;
-        setCourse(data);
-      })
-      .catch(err => console.log(err));
-  }
 
   const getTeacherById = (id) =>{
     axios.get(`http://localhost:8080/api/teachers/${id}`)
@@ -81,43 +73,44 @@ export default function CoursesCard() {
   }
 
   useEffect(() => {
-      getCourse();
       getTeacherById(course.teacher);
       getCategoryById(course.idsmall_category);
   })
   const classes = useStyles();
   return (
     <Card className={classes.root}>
-      <Link color='inherit' underline='none' href={`http://localhost:8080/api/courses/${course.idcourses}`}>
       <CardActionArea>
+        <Link color='inherit' underline='none' href={`http://localhost:8080/api/courses/${course.idcourses}`}>
         <CardMedia
           className={classes.media}
           image={'http://localhost:8080'+course.img}
           title={course.name}
         />
+        </Link>
         <CardContent>
+          <Link color='inherit' underline='none' href={`http://localhost:8080/api/courses/${course.idcourses}`}>
           <Typography gutterBottom variant="subtitle1" component="h2" className={classes.custom}>
             {course.name}
           </Typography>
-          <Typography variant="body2" color="textSecondary" component="p">
+          </Link>
             <Grid container style={{width: '100%', padding: 0}} alignItems='center'  spacing={1}>
             <Grid item xs={4}>
-              <Button href="http://localhost:8080/api/smallcategories/4" className={classes.colorButton}>{categoryName}</Button>
+              <Button href={`http://localhost:8080/api/smallcategories/${course.idsmall_category}`} className={classes.colorButton}>{categoryName}</Button>
             </Grid>
             <Grid item xs={8}>
+            <Typography variant="body2" color="textSecondary" component="p">
               {teacherName}
+            </Typography>
             </Grid>
             <Grid item xs={12}>
             <Grid container direction='row' alignItems='center'>
             <Grid item xs = {1}  className={classes.rate}>
               {course.rate}
             </Grid>
-            <Grid item xs = {3} style={{paddingTop: '2px'}}>
+            <Grid item xs = {4}>
             <Rating size="small" name="read-only" precision={0.5} value={parseFloat(course.rate)} readOnly />
             </Grid>
-            <Grid item xs = {1}>
-            </Grid>
-            <Grid item xs = {3} style={{marginLeft:'5px'}}>
+            <Grid item xs = {3} style={{marginLeft:'7px'}}>
             ({course.ratevotes})
             </Grid>
             <Grid item xs={3} className={classes.price}>
@@ -126,10 +119,8 @@ export default function CoursesCard() {
             </Grid>
             </Grid>
             </Grid>
-          </Typography>
         </CardContent>
       </CardActionArea>
-      </Link>
     </Card>
   );
 }

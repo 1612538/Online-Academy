@@ -7,7 +7,7 @@ import "@fontsource/roboto";
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        position: 'absolute',
+        position: 'fixed',
         width:'100%',
         height:'100vh',
         backgroundImage: `url(${BackgroundImage})`,
@@ -16,6 +16,7 @@ const useStyles = makeStyles((theme) => ({
         backgroundSize: 'cover',
         backgroundAttachment: 'fixed',
         zIndex: '-1',
+        overflow: 'hidden',
     },
   }));
 

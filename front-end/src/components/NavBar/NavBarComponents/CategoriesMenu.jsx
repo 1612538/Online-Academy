@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import Popper from '@material-ui/core/Popper';
-import {ColorButton} from '../NavBar'
+import {ColorButton} from '../NavBar';
+import axios from 'axios';
 
 import SmallCategoriesMenu from './SmallCategoriesMenu';
 
 export default function CatMenu() {
   const [open, setOpen] = React.useState(false);
+  const [categories, setCategories] = React.useState([]);
   const anchorRef = React.useRef(null);
 
   const handleToggle = () => {
@@ -21,6 +23,19 @@ export default function CatMenu() {
 
     setOpen(false);
   };
+
+  const getCategories = () =>{
+    axios.get('http://localhost:8080/api/categories')
+    .then(res => {
+      const cats = res.data;
+      setCategories(cats);
+    })
+    .catch(err => console.log(err));
+  }
+
+  useEffect(()=>{
+    getCategories();
+  })
 
     return (
         <div>
@@ -41,7 +56,7 @@ export default function CatMenu() {
                 <div>
                 <ClickAwayListener onClickAway={handleClose}>
                   <div id="menu-list-grow">
-                  <SmallCategoriesMenu handleClose={handleClose}></SmallCategoriesMenu>
+                  <SmallCategoriesMenu categories={categories} handleClose={handleClose}></SmallCategoriesMenu>
                   </div>
                 </ClickAwayListener>
                 </div>
