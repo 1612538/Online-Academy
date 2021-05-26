@@ -78,12 +78,23 @@ module.exports = {
 
   getByTextSearch: (req, res) => {
     const pageNumber = parseInt(req.query.page) - 1;
+    const isRateDesc = parseInt(req.query.isratedesc);
+    const isPriceAsc = parseInt(req.query.ispriceasc);
     const sql1 = `ALTER TABLE ${tbName} ADD FULLTEXT(name);`;
     let sql2 = `SELECT * FROM ${tbName} WHERE MATCH(name) AGAINST ('${req.query.keyword}') AND isBlocked=0;`;
     if (pageNumber > -1)
-      sql2 = `SELECT * FROM ${tbName} WHERE MATCH(name) AGAINST ('${
-        req.query.keyword
-      }') AND isBlocked=0 limit ${pageNumber * 5},5;`;
+      if (isRateDesc === 1)
+        sql2 = `SELECT * FROM ${tbName} WHERE MATCH(name) AGAINST ('${
+          req.query.keyword
+        }') AND isBlocked=0 ORDER BY rate DESC limit ${pageNumber * 5},5;`;
+      else if (isPriceAsc === 1)
+        sql2 = `SELECT * FROM ${tbName} WHERE MATCH(name) AGAINST ('${
+          req.query.keyword
+        }') AND isBlocked=0 ORDER BY price ASC limit ${pageNumber * 5},5;`;
+      else
+        sql2 = `SELECT * FROM ${tbName} WHERE MATCH(name) AGAINST ('${
+          req.query.keyword
+        }') AND isBlocked=0 limit ${pageNumber * 5},5;`;
     const sql3 = ` ALTER TABLE ${tbName} DROP INDEX name;`;
     const sql = sql1 + sql2 + sql3;
     db.query(sql, (err, result) => {
@@ -95,7 +106,12 @@ module.exports = {
   },
 
   getByCatID: (req, res) => {
-    const sql = `SELECT * FROM ${tbName} WHERE idsmall_category = ? AND isBlocked=0`;
+    const pageNumber = parseInt(req.query.page) - 1;
+    let sql = `SELECT * FROM ${tbName} WHERE idsmall_category = ? AND isBlocked=0`;
+    if (pageNumber > -1)
+      sql = `SELECT * FROM ${tbName} WHERE idsmall_category = ? AND isBlocked=0 limit ${
+        pageNumber * 5
+      }, 5`;
     db.query(sql, [req.params.catid], (err, result) => {
       if (err) {
         throw err;

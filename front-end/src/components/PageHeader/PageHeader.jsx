@@ -1,10 +1,9 @@
-import React, {Component} from "react";
+import React from "react";
 import {NavBar} from "../NavBar/NavBar"
 import Container from "@material-ui/core/Container"
 import HeaderImage from "../../assets/header.png";
 
-class PageHeader extends Component {
-    render() {
+const PageHeader = () => {
         return (
         <div>
             <NavBar>
@@ -14,7 +13,6 @@ class PageHeader extends Component {
             </Container>
         </div>
         );
-    }
 }
 
 export default PageHeader;

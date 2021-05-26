@@ -1,11 +1,8 @@
 import React, { useEffect } from "react";
 import CoursesCard2 from '../../../CoursesCard/CoursesCard2';
-import Grid from '@material-ui/core/Grid';
-import Fade from '@material-ui/core/Fade';
-import Box from '@material-ui/core/Box';
+import {Grid, Typography, Fade, Box} from '@material-ui/core'
 import Pagination from '@material-ui/lab/Pagination';
 import PaginationItem from '@material-ui/lab/PaginationItem';
-import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
 
 import {makeStyles} from '@material-ui/core/styles';
@@ -42,7 +39,7 @@ const useStyles = makeStyles({
     },
   });
 
-function AllCourses(props) {
+const AllCourses = (props) => {
     const classes = useStyles();
     const [courses, setCourses] = React.useState([]);
     const [currPage, setCurrPage] = React.useState(1);
@@ -79,7 +76,7 @@ function AllCourses(props) {
             }
         </Grid>
         <Box my={1} display="flex" justifyContent="center">
-        <Pagination count={pageNumber ? pageNumber : 0} defaultPage={pageNumber ? pageNumber/2+1 : 0} onChange={changeHandle} size="large" 
+        <Pagination count={pageNumber ? pageNumber : 1} defaultPage={pageNumber ? pageNumber/2+1 : 1} onChange={changeHandle} size="large" 
         renderItem={(item)=> <PaginationItem {...item} 
         className={classes.customPagination} classes={{selected: classes.selected}}/>}/>
         </Box>

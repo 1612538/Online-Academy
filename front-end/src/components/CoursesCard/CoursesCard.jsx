@@ -1,14 +1,7 @@
 import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
+import {Card, CardActionArea, CardContent, CardMedia, Typography, Button, Grid, Link} from '@material-ui/core';
 import {indigo, blue} from '@material-ui/core/colors';
-import Link from '@material-ui/core/Link';
 import Rating from "@material-ui/lab/Rating";
 
 import axios from 'axios';
@@ -16,7 +9,7 @@ import axios from 'axios';
 const useStyles = makeStyles({
   root: {
     backgroundColor: blue[50],
-    maxWidth: 300,
+    width: 300,
   },
   media: {
     height: 160,
@@ -49,8 +42,8 @@ const useStyles = makeStyles({
   }
 });
 
-export default function CoursesCard(props) {
-  const [course, setCourse] = React.useState(props.course);
+export default (props) => {
+  const course = props.course;
   const [teacherName, setTeacherName] = React.useState('');
   const [categoryName, setCategoryName] = React.useState('');
 
@@ -75,7 +68,11 @@ export default function CoursesCard(props) {
   useEffect(() => {
       getTeacherById(course.teacher);
       getCategoryById(course.idsmall_category);
-  })
+      return () => {
+        setTeacherName('');
+        setCategoryName('');
+      }
+  }, [])
   const classes = useStyles();
   return (
     <Card className={classes.root}>
@@ -95,7 +92,7 @@ export default function CoursesCard(props) {
           </Link>
             <Grid container style={{width: '100%', padding: 0}} alignItems='center'  spacing={1}>
             <Grid item xs={4}>
-              <Button href={`http://localhost:8080/api/smallcategories/${course.idsmall_category}`} className={classes.colorButton}>{categoryName}</Button>
+              <Button href={`/categories/${course.idsmall_category}`} className={classes.colorButton}>{categoryName}</Button>
             </Grid>
             <Grid item xs={8}>
             <Typography variant="body2" color="textSecondary" component="p">

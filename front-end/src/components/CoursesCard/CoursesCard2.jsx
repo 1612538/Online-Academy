@@ -59,19 +59,10 @@ const useStyles = makeStyles((theme)=>({
   }
 }));
 
-export default function CoursesCard(props) {
-  const [course, setCourse] = React.useState(props.course);
+export default (props) => {
+  const course = props.course;
   const [teacherName, setTeacherName] = React.useState('');
   const [categoryName, setCategoryName] = React.useState('');
-
-  const getCourse = () => {
-      axios.get(`http://localhost:8080/api/courses/${course.idcourses}`)
-      .then(res => {
-        const data = res.data;
-        setCourse(data);
-      })
-      .catch(err => console.log(err));
-  }
 
   const getTeacherById = (id) =>{
     axios.get(`http://localhost:8080/api/teachers/${id}`)
@@ -92,10 +83,13 @@ export default function CoursesCard(props) {
   }
 
   useEffect(() => {
-      getCourse();
       getTeacherById(course.teacher);
       getCategoryById(course.idsmall_category);
-  })
+      return () => {
+        setCategoryName('');
+        setTeacherName('');
+      }
+  }, [])
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -125,7 +119,7 @@ export default function CoursesCard(props) {
               <Grid item xs>
                 <Grid container style={{width: '50%', padding: 0}} alignItems='center'  spacing={1}>
                 <Grid item xs={6}>
-                  <Button href="http://localhost:8080/api/smallcategories/4" className={classes.colorButton}>{categoryName}</Button>
+                  <Button href={`/categories/${course.idsmall_category}`} className={classes.colorButton}>{categoryName}</Button>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography variant="body2" color="textSecondary" component="p">

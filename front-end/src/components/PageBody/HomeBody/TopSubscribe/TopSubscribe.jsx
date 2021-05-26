@@ -20,7 +20,7 @@ const useStyles = makeStyles({
     },
   });
 
-function TopSubscribe() {
+const TopSubscribe = () => {
     const classes = useStyles();
     const [courses, setCourses] = React.useState([])
 
@@ -35,6 +35,9 @@ function TopSubscribe() {
 
     useEffect(()=>{
         getCourses();
+        return () => {
+            setCourses([]);
+        }
     }, [])
 
     return (

@@ -6,7 +6,7 @@ import TopSubscribe from './TopSubscribe/TopSubscribe';
 import TopView from './TopView/TopView';
 import axios from 'axios';
 
-function HomeBody() {
+const HomeBody = () => {
 
     const [length, setLength] = useState(0);
     const getLength = ()=>{
@@ -20,7 +20,7 @@ function HomeBody() {
 
     useEffect(()=>{
         getLength();
-    })
+    }, [])
 
     return (
         <div>
@@ -28,7 +28,7 @@ function HomeBody() {
         <TopView></TopView>
         <TopCategories></TopCategories>
         <TopNew></TopNew>
-        <AllCourses dataLength={length}></AllCourses>
+        <AllCourses dataLength={length ? length : 1}></AllCourses>
         </div>
     );
 }

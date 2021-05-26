@@ -7,7 +7,7 @@ import axios from 'axios';
 
 import SmallCategoriesMenu from './SmallCategoriesMenu';
 
-export default function CatMenu() {
+export default () => {
   const [open, setOpen] = React.useState(false);
   const [categories, setCategories] = React.useState([]);
   const anchorRef = React.useRef(null);
@@ -35,7 +35,10 @@ export default function CatMenu() {
 
   useEffect(()=>{
     getCategories();
-  })
+    return () => {
+      setCategories([]);
+    }
+  }, [])
 
     return (
         <div>

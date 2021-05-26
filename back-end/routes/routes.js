@@ -33,6 +33,8 @@ module.exports = (app) => {
   app.route("/api/courseslength").get(Courses.getLength);
 
   app.route("/api/coursesearch").get(Courses.getByTextSearch);
+
+  app.route("/api/coursesByCatID/:catid").get(Courses.getByCatID);
   //Categories controller
 
   let Categories = require("./controllers/Categories");
@@ -58,7 +60,7 @@ module.exports = (app) => {
     .delete(SmallCategories.delete);
 
   app.route("/api/smallcategories/byCatID/:id").get(SmallCategories.getByCatID);
-
+  app.route("/api/smallcategoriesbycount").get(SmallCategories.getByCount);
   //Admin controller
 
   let Admins = require("./controllers/Admins");

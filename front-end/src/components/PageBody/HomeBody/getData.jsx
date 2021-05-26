@@ -2,7 +2,7 @@ import Fade from '@material-ui/core/Fade';
 import Grid from '@material-ui/core/Grid';
 import CoursesCard from '../../CoursesCard/CoursesCard';
 
-export default function GetData(props) {
+const GetData = (props) => {
 
     return (
 
@@ -15,3 +15,5 @@ export default function GetData(props) {
         </Grid>
     );
 }
+
+export default GetData;

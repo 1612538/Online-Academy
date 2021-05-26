@@ -1,10 +1,6 @@
 import React, {useEffect} from "react";
-import Grid from '@material-ui/core/Grid'
+import {Grid, Typography, Tooltip, Fab, Fade} from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import Tooltip from '@material-ui/core/Tooltip';
-import Fab from '@material-ui/core/Fab';
-import Fade from '@material-ui/core/Fade';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import GetData from '../GetData';
@@ -38,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   }));
 
 
-function TopView() {
+const TopView = () => {
     const classes = useStyles();
     const [courses, setCourses] = React.useState([]);
     const [showNext, setShowNext] = React.useState(true);

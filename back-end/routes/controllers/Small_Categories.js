@@ -20,6 +20,15 @@ module.exports = {
       res.json(result);
     });
   },
+  getByCount: (req, res) => {
+    const sql = `SELECT * FROM ${tbName} ORDER BY count DESC limit 3`;
+    db.query(sql, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json(result);
+    });
+  },
   detail: (req, res) => {
     const sql = `SELECT * FROM ${tbName} WHERE idsmall_category = ?`;
     db.query(sql, [req.params.id], (err, result) => {

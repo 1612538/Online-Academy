@@ -1,10 +1,6 @@
 import React, { useEffect } from "react";
 import {makeStyles} from '@material-ui/core/styles'
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Paper from '@material-ui/core/Paper';
-import ListItemText from '@material-ui/core/ListItemText';
-import Fade from '@material-ui/core/Fade';
+import {List, ListItem, Paper, ListItemText, Fade} from '@material-ui/core';
 import ExpandLess from '@material-ui/icons/ArrowBackIos';
 import ExpandMore from '@material-ui/icons/ArrowForwardIos';
 import axios from 'axios';
@@ -19,9 +15,9 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function SmallCatMenu(props) {
+export default (props) => {
     const [open, setOpen] = React.useState(false);
-    const [categories, setCategories] = React.useState(props.categories);
+    const categories = props.categories;
     const [catActive, setCatActive] = React.useState(-1);
     const [small_categories, setSmall_Categories] = React.useState([]);
 
@@ -36,7 +32,10 @@ export default function SmallCatMenu(props) {
 
     useEffect(()=>{
       getSmallCategories();
-    });
+      return () => {
+        setSmall_Categories([]);
+      }
+    }, []);
 
     const handleClick = (id) => {
       if (open) {
@@ -67,7 +66,7 @@ export default function SmallCatMenu(props) {
         aria-labelledby="nested-list-subheader"
       >
         {
-          categories.map( cat => <ListItem button onClick={() => handleClick(cat.idcategory)}>
+          categories.map( (cat, key) => <ListItem key={key} button onClick={() => handleClick(cat.idcategory)}>
             <ListItemText primary={cat.name} />
             {
               open && catActive===cat.idcategory ? <ExpandLess /> : <ExpandMore />
@@ -82,7 +81,7 @@ export default function SmallCatMenu(props) {
       <Grid item>
               <List component="div">
                 {
-                  small_categories.filter(obj => obj.idcategory === catActive).map( smallcat => <ListItem button className={classes.root} onClick={handleClose}>
+                  small_categories.filter(obj => obj.idcategory === catActive).map( (smallcat, key) => <ListItem key={key} button component="a" href={'/categories/' + smallcat.idsmall_category} className={classes.root} onClick={handleClose}>
                     <ListItemText primary={smallcat.name} />
                   </ListItem>)
                 }

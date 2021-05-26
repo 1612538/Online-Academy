@@ -2,7 +2,7 @@ import React from "react";
 import PageHeader from "../../components/PageHeader/PageHeader"
 import PageBody from "../../components/PageBody/HomeBody/HomeBody"
 
-function Home() {
+const Home = () => {
     return (
         <div>
         <PageHeader>
