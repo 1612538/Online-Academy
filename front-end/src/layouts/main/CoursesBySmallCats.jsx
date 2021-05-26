@@ -9,10 +9,16 @@ const CoursesBySmallCats = () => {
     const [length, setLength] = React.useState(0);
     const [catName, setCatName] = React.useState('');
     const [currPage, setCurrPage] = React.useState(1);
+    const [sort, setSort] = React.useState(0);
     const smallcatID =  useParams().id;
     const getCoursesByID = () => {
+        let tmp1 = 0, tmp2 = 0;
+        if (sort===1)
+            tmp1 = 1;
+        else if (sort === 2)
+            tmp2 = 1;
         axios.all([
-            axios.get(`http://localhost:8080/api/coursesByCatID/${smallcatID}?page=${currPage}`),
+            axios.get(`http://localhost:8080/api/coursesByCatID/${smallcatID}?page=${currPage}&isratedesc=${tmp1}&ispriceasc=${tmp2}`),
             axios.get(`http://localhost:8080/api/coursesByCatID/${smallcatID}`),
             axios.get(`http://localhost:8080/api/smallcategories/${smallcatID}`),
         ])
@@ -26,6 +32,9 @@ const CoursesBySmallCats = () => {
         }))
         .catch(err => console.log(err));
     }
+    const handleChange = (event) => {
+        setSort(event.target.value);
+      };
 
     useEffect(() => {
         getCoursesByID();
@@ -34,14 +43,14 @@ const CoursesBySmallCats = () => {
             setLength(0);
             setCatName('')
         }
-    }, [currPage])
+    }, [currPage, sort])
 
     return (
         <div>
         <PageHeader>
             
         </PageHeader>
-        <SearchBody courses={courses} dataLength={length} setCurrPage={setCurrPage} keyword = {catName}>
+        <SearchBody courses={courses} dataLength={length} setCurrPage={setCurrPage} keyword={catName} handleChange={handleChange} sort={sort} setSort={setSort}>
 
         </SearchBody>
         </div>
