@@ -80,8 +80,8 @@ const NavBar = () => {
             <Grid item xs={3}>
             <Grid container justify="flex-end">
             <ButtonGroup variant="contained" disableElevation aria-label="contained primary button group">
-                <ColorButton  style={{border: 0}}>Sign in</ColorButton>
-                <ColorButton  style={{border: 0}}>Sign up</ColorButton>
+                <ColorButton href="/signin"  style={{border: 0}}>Sign in</ColorButton>
+                <ColorButton href="/signup" style={{border: 0}}>Sign up</ColorButton>
             </ButtonGroup>
             </Grid>
             </Grid>

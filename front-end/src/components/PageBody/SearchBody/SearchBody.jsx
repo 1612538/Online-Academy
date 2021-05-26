@@ -83,6 +83,7 @@ const SearchBody = (props) => {
         >
           <MenuItem value={1}>Rating<DownIcon></DownIcon></MenuItem>
           <MenuItem value={2}>Price<UpIcon></UpIcon></MenuItem>
+          <MenuItem value={3}>Default</MenuItem>
         </Select>
       </FormControl>
         </Grid>
