@@ -71,10 +71,10 @@ export default () => {
               margin="normal"
               required
               fullWidth
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
+              id="email"
+              label="Email address"
+              name="email"
+              autoComplete="off"
               autoFocus
             />
             <TextField
@@ -103,8 +103,8 @@ export default () => {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
+                <Link href="/" variant="body2">
+                  Homepage
                 </Link>
               </Grid>
               <Grid item>

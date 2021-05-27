@@ -1,5 +1,6 @@
 const db = require("../../utils/db");
 const tbName = "user";
+const bcrypt = require("../../utils/bcrypt");
 
 module.exports = {
   getAll: (req, res) => {
@@ -45,7 +46,7 @@ module.exports = {
     let sql = `DELETE FROM ${tbName} WHERE iduser = ?`;
     db.query(sql, [req.params.id], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Delete success!" });
+      res.json({ success: true });
     });
   },
   update: (req, res) => {
@@ -54,15 +55,17 @@ module.exports = {
     const sql = `UPDATE ${tbName} SET ? WHERE iduser = ?`;
     db.query(sql, [data, id], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Update success!" });
+      res.json({ success: true });
     });
   },
-  add: (req, res) => {
+  add: async (req, res) => {
     const sql = `INSERT INTO ${tbName} SET ?`;
     let data = req.body;
+    const passwordHash = await bcrypt.hashPassword(data.password);
+    data.password = passwordHash;
     db.query(sql, [data], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Create success!" });
+      res.json({ success: true });
     });
   },
 };

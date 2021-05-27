@@ -76,7 +76,7 @@ module.exports = (app) => {
     .get(Users.detail)
     .put(Users.update)
     .delete(Users.delete);
-
+  app.route("/api/usersByEmail/:email").get(Users.getByEmail);
   //Teachers controller
 
   let Teachers = require("./controllers/Teachers");
