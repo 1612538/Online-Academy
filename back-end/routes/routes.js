@@ -1,6 +1,8 @@
 "use strict";
 const upload = require("../utils/multer");
 const cors = require("cors");
+const AuthMiddleware = require("../utils/AuthMiddleware");
+const AuthController = require("./controllers/Auth");
 
 module.exports = (app) => {
   //Courses controller
@@ -61,13 +63,13 @@ module.exports = (app) => {
 
   app.route("/api/smallcategories/byCatID/:id").get(SmallCategories.getByCatID);
   app.route("/api/smallcategoriesbycount").get(SmallCategories.getByCount);
-  //Admin controller
 
-  let Admins = require("./controllers/Admins");
-  app.route("/api/admins").get(Admins.getAll).post(Admins.add);
-  app.route("/api/admins/:id").put(Admins.update).delete(Admins.delete);
+  //Login
+  app.route("/login").post(AuthController.logic);
+  app.route("/refresh-token").post(AuthController.refreshToken);
 
   //User controller
+  app.use(AuthMiddleware.isAuth);
 
   let Users = require("./controllers/Users");
   app.route("/api/users").get(Users.getAll).post(Users.add);
@@ -76,16 +78,6 @@ module.exports = (app) => {
     .get(Users.detail)
     .put(Users.update)
     .delete(Users.delete);
-  app.route("/api/usersByEmail/:email").get(Users.getByEmail);
-  //Teachers controller
-
-  let Teachers = require("./controllers/Teachers");
-  app.route("/api/teachers").get(Teachers.getAll).post(Teachers.add);
-  app
-    .route("/api/teachers/:id")
-    .get(Teachers.detail)
-    .put(Teachers.update)
-    .delete(Teachers.delete);
 
   //FavoriteCourses controller
 

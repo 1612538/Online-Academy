@@ -65,7 +65,7 @@ export default (props) => {
   const [categoryName, setCategoryName] = React.useState('');
 
   const getTeacherById = (id) =>{
-    axios.get(`http://localhost:8080/api/teachers/${id}`)
+    axios.get(`http://localhost:8080/api/users/${id}`)
       .then(res => {
         const data = res.data.firstname + " " + res.data.lastname;
         setTeacherName(data);

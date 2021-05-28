@@ -125,6 +125,7 @@ export default () => {
             firstname: firstName,
             lastname: lastName,
             isBlocked: 0,
+            role: 0,
           }
           axios.post(`http://localhost:8080/api/users`, data)
           .then(res => {
@@ -158,14 +159,15 @@ export default () => {
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
+                error={errorEmail}
+                helperText={errorEmail ? errorEmailText : undefined}
                 required
                 fullWidth
-                id="username"
-                label="Username"
-                name="username"
+                id="email"
+                label="Email Address"
+                name="email"
                 autoComplete='off'
-                autoFocus
-                onChange={handleUsername}
+                onChange={handleEmail}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -195,15 +197,14 @@ export default () => {
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
-                error={errorEmail}
-                helperText={errorEmail ? errorEmailText : undefined}
                 required
                 fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
+                id="username"
+                label="Username"
+                name="username"
                 autoComplete='off'
-                onChange={handleEmail}
+                autoFocus
+                onChange={handleUsername}
               />
             </Grid>
             <Grid item xs={12}>

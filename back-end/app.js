@@ -3,11 +3,12 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const session = require("express-session");
 const createError = require("http-errors");
-const passport = require("./utils/passport");
 const cookieParser = require("cookie-parser");
 var cors = require("cors");
 
 const app = express();
+
+app.use(express.json());
 
 app.use(cors({ origin: true, credentials: true }));
 
@@ -27,9 +28,6 @@ app.use(
   })
 );
 
-app.use(passport.initialize());
-app.use(passport.session());
-
 let routes = require("./routes/routes");
 routes(app);
 
@@ -39,37 +37,3 @@ app.use(function (req, res) {
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => console.log(`Listening on port ${port}..`));
-
-function loggedInAsAdmin(req, res, next) {
-  if (req.isAuthenticated() && req.user.type === 3) {
-    next();
-  } else {
-    console.log(req.user.type + "aa");
-    res.redirect("/login");
-  }
-}
-
-function loggedInAsTeacher(req, res, next) {
-  if (req.isAuthenticated() && req.user.type === 2) {
-    next();
-  } else {
-    console.log(req.user.type + "cc");
-    res.redirect("/login");
-  }
-}
-
-function loggedInAsUser(req, res, next) {
-  if (req.isAuthenticated() && req.user.type === 1) {
-    next();
-  } else {
-    res.redirect("/login");
-  }
-}
-
-function loggedIn(req, res, next) {
-  if (req.isAuthenticated()) {
-    next();
-  } else {
-    res.redirect("/login");
-  }
-}

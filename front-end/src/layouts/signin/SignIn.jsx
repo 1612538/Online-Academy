@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,6 +12,10 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import BackgroundImage from "../../assets/background2.jpg";
+import History from '../../components/History'
+
+import axios from 'axios';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,6 +54,48 @@ const useStyles = makeStyles((theme) => ({
 
 export default () => {
   const classes = useStyles();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorPasswordText, setErrorPasswordText] = useState('');
+  const [errorEmailText, setErrorEmailText] = useState('');
+
+  const handleEmail = (e) => {
+    let re = /.+@.+\.[A-Za-z]+$/
+    if ( re.test(e.target.value) ) {
+      setEmail(e.target.value);
+      setErrorEmailText(null);
+    }
+    else {
+        setErrorEmailText('Invalid email address');
+    }
+  }
+
+  const handlePassword = (e) =>{
+    setPassword(e.target.value);
+  }
+  
+  const handleSubmit = (e) =>  {
+    e.preventDefault();
+    const data = {
+      email: email,
+      password: password,
+    }
+    axios.post('http://localhost:8080/login', data)
+    .then( res => {
+      if (res.data.id)  {
+        localStorage.setItem('iduser', res.data.id);
+        localStorage.setItem('accessToken', res.data.accessToken);
+        localStorage.setItem('refreshToken', res.data.refreshToken);
+        setTimeout(() => {History.push('/')}, 1000);
+      } else {
+        if (res.data.errorCode===1)
+          setErrorEmailText(res.data.message);
+        else
+          setErrorPasswordText(res.data.message);
+      }
+    })
+    .catch(err => console.log(err));
+  }
 
   return (
     <div>
@@ -65,10 +111,12 @@ export default () => {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate>
+          <form className={classes.form} onSubmit={handleSubmit}>
             <TextField
               variant="outlined"
               margin="normal"
+              error={errorEmailText ? true : false}
+              helperText={errorEmailText ? errorEmailText : undefined}
               required
               fullWidth
               id="email"
@@ -76,17 +124,21 @@ export default () => {
               name="email"
               autoComplete="off"
               autoFocus
+              onChange={handleEmail}
             />
             <TextField
               variant="outlined"
               margin="normal"
               required
+              error={errorPasswordText ? true : false}
+              helperText={errorPasswordText ? errorPasswordText : undefined}
               fullWidth
               name="password"
               label="Password"
               type="password"
               id="password"
               autoComplete="current-password"
+              onChange={handlePassword}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}

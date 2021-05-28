@@ -2,12 +2,17 @@ import Home from "./layouts/main/Home";
 import Search from "./layouts/main/Search";
 import SignIn from "./layouts/signin/SignIn";
 import SignUp from "./layouts/signup/SignUp";
+import SignOut from "./layouts/signin/SignOut";
 import Error from "./layouts/error/ErrorPage";
 import CoursesBySmallCats from "./layouts/main/CoursesBySmallCats";
 import { Router, Route, Switch } from "react-router-dom";
 import History from "./components/History";
 import { makeStyles } from "@material-ui/core/styles";
 import BackgroundImage from "./assets/background.jpg";
+import AccountProfile from "./layouts/profile/AccountProfile";
+
+import PrivateRoute from "./routes/PrivateRoute";
+
 import "@fontsource/roboto";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,12 +40,14 @@ function App() {
           <Route path="/signin" component={SignIn} />
           <Route path="/search" component={Search} />
           <Route path="/signup" component={SignUp} />
+          <PrivateRoute path="/signout" component={SignOut} />
           <Route exact path="/" component={Home} />
           <Route
             path="/categories/:id"
             render={(props) => <CoursesBySmallCats {...props} />}
           />
           <Route path="/404Error" component={Error} />
+          <PrivateRoute path="/profile" component={AccountProfile} />
           <Route component={Error} />
         </Switch>
       </Router>

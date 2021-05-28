@@ -12,24 +12,18 @@ module.exports = {
       res.json(result);
     });
   },
-  getByUsername: (req, res) => {
-    const sql = `SELECT * FROM ${tbName} WHERE username = ?`;
-    db.query(sql, [req.params.username], (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.json(result[0]);
-    });
-  },
 
-  getByEmail: (req, res) => {
+  getByEmail: async (req, res) => {
     const sql = `SELECT * FROM ${tbName} WHERE email = ?`;
-    db.query(sql, [req.params.email], (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.json(result[0]);
+    const results = await new Promise((resolve, reject) => {
+      db.query(sql, [req.body.email], (err, result) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(result);
+      });
     });
+    return results[0];
   },
 
   detail: (req, res) => {
