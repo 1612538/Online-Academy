@@ -1,18 +1,18 @@
 import React, {useEffect, useState} from 'react'
 
 import PageHeader from '../../components/PageHeader/PageHeader';
-import ProfileBody from '../../components/PageBody/ProfileBody/ProfileBody';
+import CourseBody from '../../components/PageBody/CourseBody/CourseBody';
 
-const AccountProfile = (props) => {
-
+const CourseDetail = (props) => {
+    
     return (
         <div>
             <PageHeader>
 
             </PageHeader>
-            <ProfileBody match={props.match}></ProfileBody>
+            <CourseBody match={props.match}></CourseBody>
         </div>
     )
 }
 
-export default AccountProfile;
+export default CourseDetail;

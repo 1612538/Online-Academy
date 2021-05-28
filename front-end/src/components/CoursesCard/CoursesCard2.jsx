@@ -96,21 +96,21 @@ export default (props) => {
       <Paper className={classes.paper}>
         <Grid container spacing={4}>
           <Grid item>
-            <ButtonBase className={classes.image} href={`http://localhost:8080/api/courses/${course.idcourses}`}>
+            <ButtonBase className={classes.image} href={`http://localhost:3000/courses/${course.idcourses}`}>
               <img className={classes.img} alt="complex" src={"http://localhost:8080"+course.img} />
             </ButtonBase>
           </Grid>
           <Grid item xs={12} sm container>
             <Grid item xs container direction="column" spacing={0}>
               <Grid item xs>
-                <Link color='inherit' underline='none' href={`http://localhost:8080/api/courses/${course.idcourses}`}>
+                <Link color='inherit' underline='none' href={`http://localhost:3000/courses/${course.idcourses}`}>
                 <Typography gutterBottom variant="h6" className={classes.custom}>
                   {course.name}
                 </Typography>
                 </Link>
               </Grid>
               <Grid item xs>
-                <Link color='inherit' underline='none' href={`http://localhost:8080/api/courses/${course.idcourses}`}>
+                <Link color='inherit' underline='none' href={`http://localhost:3000/courses/${course.idcourses}`}>
                 <Typography gutterBottom variant="subtitle1" className={classes.custom}>
                   {course.description1}
                 </Typography>

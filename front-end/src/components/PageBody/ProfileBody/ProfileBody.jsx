@@ -4,6 +4,7 @@ import Pagination from '@material-ui/lab/Pagination';
 import PaginationItem from '@material-ui/lab/PaginationItem';
 import { makeStyles } from '@material-ui/core/styles';
 import CoursesCard from '../../CoursesCard/CoursesCard';
+import {Redirect} from 'react-router-dom';
 
 import axios from 'axios';
 
@@ -44,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-const ProfileBody = () => {
+const ProfileBody = (props) => {
     const classes = useStyles();
     const [courses, setCourses] = React.useState([]);
     const [currPage, setCurrPage] = React.useState(1);
@@ -53,18 +54,18 @@ const ProfileBody = () => {
     const [open, setOpen] = useState(true);
 
     const getUser = async () => {
-        const data = await axios.get(`http://localhost:8080/api/users/6`)
+        const data = await axios.get(`http://localhost:8080/api/users/${props.match.params.id}`)
         setUser(data.data);
     }
 
     const getCourses = async (current) => {
-        const data = await axios.get(`http://localhost:8080/api/getByTeacher/6?page=${current}`)
+        const data = await axios.get(`http://localhost:8080/api/getByTeacher/${props.match.params.id}?page=${current}`)
         setCourses(data.data);
         setOpen(true);  
     }
 
     const getLength = async ()=>{
-        const length = await axios.get('http://localhost:8080/api/getByTeacher/6');
+        const length = await axios.get(`http://localhost:8080/api/getByTeacher/${props.match.params.id}`);
         setPageNumber(Math.ceil((length.data.length)/5));
     }
     
@@ -86,7 +87,8 @@ const ProfileBody = () => {
 
     return (
         <div className={classes.root}>
-        <Grid container direction='row' className={classes.customGrid1}>
+        { user.role === 0 || user.role === 2 || !user ? <Redirect to="/"></Redirect> : undefined}
+        <Grid container direction='row' className={classes.customGrid1} spacing={3}>
             <Grid container item xs={8} spacing={3} alignItems='center'>
                 <Grid item xs={10}>
                     <Typography variant='h5' className={classes.customText}>{user.username}</Typography>

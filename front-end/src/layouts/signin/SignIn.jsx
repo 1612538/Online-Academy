@@ -110,6 +110,7 @@ export default () => {
         localStorage.setItem('iduser', res.data.id);
         localStorage.setItem('accessToken', res.data.accessToken);
         localStorage.setItem('refreshToken', res.data.refreshToken);
+        localStorage.setItem('role', res.data.role);
         setOpen(true);
         setTimeout(() => {History.push('/')}, 2000);
       } else {

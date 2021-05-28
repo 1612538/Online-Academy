@@ -77,7 +77,7 @@ export default (props) => {
   return (
     <Card className={classes.root}>
       <CardActionArea>
-        <Link color='inherit' underline='none' href={`http://localhost:8080/api/courses/${course.idcourses}`}>
+        <Link color='inherit' underline='none' href={`http://localhost:3000/courses/${course.idcourses}`}>
         <CardMedia
           className={classes.media}
           image={'http://localhost:8080'+course.img}
@@ -85,7 +85,7 @@ export default (props) => {
         />
         </Link>
         <CardContent>
-          <Link color='inherit' underline='none' href={`http://localhost:8080/api/courses/${course.idcourses}`}>
+          <Link color='inherit' underline='none' href={`http://localhost:3000/courses/${course.idcourses}`}>
           <Typography gutterBottom variant="subtitle1" component="h2" className={classes.custom}>
             {course.name}
           </Typography>
