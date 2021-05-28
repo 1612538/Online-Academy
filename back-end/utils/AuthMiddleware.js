@@ -15,12 +15,12 @@ const isAuth = async (req, res, next) => {
       next();
     } catch (err) {
       console.log("Error while verify token: ", err);
-      return res.status(401).json({
+      return res.json({
         message: "Unauthorized",
       });
     }
   else {
-    return res.status(403).send({
+    return res.send({
       message: "No token provided.",
     });
   }

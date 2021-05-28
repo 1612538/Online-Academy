@@ -10,8 +10,13 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
+import Modal from '@material-ui/core/Modal';
+import Backdrop from '@material-ui/core/Backdrop';
+import Fade from '@material-ui/core/Fade';
 import { makeStyles } from '@material-ui/core/styles';
 import BackgroundImage from "../../assets/background2.jpg";
+import CheckIcon from '@material-ui/icons/CheckCircleOutline';
+
 import History from '../../components/History'
 
 import axios from 'axios';
@@ -50,6 +55,20 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paper2: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
 }));
 
 export default () => {
@@ -58,6 +77,7 @@ export default () => {
   const [password, setPassword] = useState('');
   const [errorPasswordText, setErrorPasswordText] = useState('');
   const [errorEmailText, setErrorEmailText] = useState('');
+  const [open, setOpen] = useState(false);
 
   const handleEmail = (e) => {
     let re = /.+@.+\.[A-Za-z]+$/
@@ -73,6 +93,10 @@ export default () => {
   const handlePassword = (e) =>{
     setPassword(e.target.value);
   }
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   
   const handleSubmit = (e) =>  {
     e.preventDefault();
@@ -86,7 +110,8 @@ export default () => {
         localStorage.setItem('iduser', res.data.id);
         localStorage.setItem('accessToken', res.data.accessToken);
         localStorage.setItem('refreshToken', res.data.refreshToken);
-        setTimeout(() => {History.push('/')}, 1000);
+        setOpen(true);
+        setTimeout(() => {History.push('/')}, 2000);
       } else {
         if (res.data.errorCode===1)
           setErrorEmailText(res.data.message);
@@ -169,6 +194,25 @@ export default () => {
         </div>
       </Grid>
     </Grid>
+    <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        className={classes.modal}
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={open}>
+          <div className={classes.paper2}>
+            <CheckIcon fontSize="large" style={{color: '#4caf50'}}></CheckIcon>
+            <h2 id="transition-modal-title" style={{color: '#4caf50'}}>Signed in successfully!</h2>
+          </div>
+        </Fade>
+      </Modal>
     </div>
   );
 }

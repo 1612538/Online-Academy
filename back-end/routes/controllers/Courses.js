@@ -66,8 +66,13 @@ module.exports = {
       res.json(result);
     });
   },
-  detailByTeacher: (req, res) => {
-    const sql = `SELECT * FROM ${tbName} WHERE teacher = ? AND isBlocked=0`;
+  getByTeacher: (req, res) => {
+    const pageNumber = parseInt(req.query.page) - 1;
+    let sql = `SELECT * FROM ${tbName} WHERE teacher = ? AND isBlocked=0`;
+    if (pageNumber > -1)
+      sql = `SELECT * FROM ${tbName} WHERE teacher = ? AND isBlocked=0 limit ${
+        pageNumber * 5
+      },5`;
     db.query(sql, [req.params.id], (err, result) => {
       if (err) {
         throw err;

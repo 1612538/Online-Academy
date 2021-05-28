@@ -36,6 +36,8 @@ module.exports = (app) => {
 
   app.route("/api/coursesearch").get(Courses.getByTextSearch);
 
+  app.route("/api/getByTeacher/:id").get(Courses.getByTeacher);
+
   app.route("/api/coursesByCatID/:catid").get(Courses.getByCatID);
   //Categories controller
 
@@ -64,20 +66,18 @@ module.exports = (app) => {
   app.route("/api/smallcategories/byCatID/:id").get(SmallCategories.getByCatID);
   app.route("/api/smallcategoriesbycount").get(SmallCategories.getByCount);
 
+  //User controller
+  let Users = require("./controllers/Users");
+  app.route("/api/users/:id").get(Users.detail);
   //Login
-  app.route("/login").post(AuthController.logic);
+  app.route("/login").post(AuthController.login);
   app.route("/refresh-token").post(AuthController.refreshToken);
 
-  //User controller
   app.use(AuthMiddleware.isAuth);
+  //User controller
 
-  let Users = require("./controllers/Users");
   app.route("/api/users").get(Users.getAll).post(Users.add);
-  app
-    .route("/api/users/:id")
-    .get(Users.detail)
-    .put(Users.update)
-    .delete(Users.delete);
+  app.route("/api/users/:id").put(Users.update).delete(Users.delete);
 
   //FavoriteCourses controller
 

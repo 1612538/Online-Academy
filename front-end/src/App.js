@@ -47,7 +47,7 @@ function App() {
             render={(props) => <CoursesBySmallCats {...props} />}
           />
           <Route path="/404Error" component={Error} />
-          <PrivateRoute path="/profile" component={AccountProfile} />
+          <Route path="/profile" component={AccountProfile} />
           <Route component={Error} />
         </Switch>
       </Router>

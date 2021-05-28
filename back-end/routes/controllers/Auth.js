@@ -4,7 +4,7 @@ const bcrypt = require("../../utils/bcrypt");
 
 let tokenList = {};
 
-const accessTokenLife = process.env.ACCESS_TOKEN_LIFE || "1h";
+const accessTokenLife = process.env.ACCESS_TOKEN_LIFE || "2h";
 
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET || "my-access-token";
 
@@ -40,7 +40,12 @@ const login = async (req, res) => {
         tokenList[refreshToken] = { accessToken, refreshToken };
         return res
           .status(200)
-          .json({ id: user.iduser, accessToken, refreshToken });
+          .json({
+            id: user.iduser,
+            accessToken,
+            refreshToken,
+            role: user.role,
+          });
       } else return res.json({ message: "Invalid password", errorCode: 2 });
     } else return res.json({ message: "Invalid email address", errorCode: 1 });
   } catch (err) {
@@ -62,22 +67,22 @@ const refreshToken = async (req, res) => {
         accessTokenSecret,
         accessTokenLife
       );
-      return res.status(200).json({
+      return res.json({
         accessToken,
       });
     } catch (err) {
-      res.status(403).json({
+      res.json({
         message: "Invalid refresh token",
       });
     }
   } else {
-    return res.status(403).send({
+    return res.send({
       message: "No token provided",
     });
   }
 };
 
 module.exports = {
-  logic: login,
+  login: login,
   refreshToken: refreshToken,
 };
