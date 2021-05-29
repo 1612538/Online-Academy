@@ -50,6 +50,16 @@ const useStyles = makeStyles((theme) => ({
         color: 'red',
         fontWeight: 'bold',
       },
+      bestseller: {
+        padding:'4px 10px 4px 10px',
+        backgroundColor: '#ffc107',
+        color: '#f50057',
+        boxShadow:'0 3px 4px 0px rgba(0,0,0,0.5)',
+        borderBottomRightRadius:'3px',
+        borderBottomLeftRadius:'3px',
+        fontWeight:'bold',
+        fontSize:'1rem'
+      }
   }));
 
   const StyledButton = withStyles({
@@ -82,22 +92,29 @@ const CourseBody = (props) => {
     const classes = useStyles();
     const [course, setCourse] = useState({});
     const [teacher, setTeacher] = useState({});
+    const [bestseller, setBestSeller] = useState(false);
 
     const getCourse = async () => {
         const data = await axios.get(`http://localhost:8080/api/courses/${props.match.params.id}`)
-        setCourse(data.data);
-        return data.data.teacher;
+        await setCourse(data.data);
+        return data.data;
     }
 
     const getTeacher = async (teacher) => {
         const data = await axios.get(`http://localhost:8080/api/users/${teacher}`)
         setTeacher(data.data);
-        return '';
     }
+
+    const getBestSeller = async (id) => {
+        const data = await axios.get(`http://localhost:8080/api/coursesbysubscribe`);
+        if (data.data.find(object => object.idcourses === id))
+            setBestSeller(true);
+      }
     
     useEffect(async ()=>{
-        const teacher = await getCourse();
-        const tmp = await getTeacher(teacher);
+        const data = await getCourse();
+        await getTeacher(data.teacher);
+        await getBestSeller(data.idcourses);
         return () => {
             setCourse({});
             setTeacher({});
@@ -113,8 +130,13 @@ const CourseBody = (props) => {
                     <Typography variant='h6' className={classes.customText} style={{fontWeight: 'normal'}}>{course.description1}</Typography>
                 </Grid>
             </Grid>
-            <Grid container item xs={4} justify='center' alignItems='center'>
+            <Grid container item xs={4} justify='center' alignItems='center' direction='column'>
                 <img style={{ height: '170px', width: '300px'}} alt={course.name} src={'http://localhost:8080'+course.img} />
+                {
+                bestseller ? <div className={classes.bestseller}>
+                Bestseller
+                </div> : undefined
+                }
             </Grid>
         </Grid>
         <Grid container className={classes.customGrid1} spacing={4}>
@@ -162,7 +184,7 @@ const CourseBody = (props) => {
             <Grid container alignItems='center' direction='column'>
                 <Grid item>
                 <Link href={"/lecturer/" + teacher.iduser}>
-                <Avatar style={{ height: '120px', width: '120px' }} alt={teacher.firstname + " " + teacher.lastname} src="https://img-c.udemycdn.com/user/200_H/2364054_83cd_5.jpg?Expires=1622293513&Signature=EhYBO91U-pTGRq~ctA1rJuZbXojsiWHuR7~M9C1JGbKHZULiGnAhdjl1Tbfy2tNTcOmU5wvnKMkiogumch-gMwCVTdB0EdUn~kyBljRsadM3K8hIzEWPbcPaBfLi4jLchUpefDvFEZ9EgU90pYkVmAeXy01EoYL6Ty33y3WwhZjw0iHSMRXUr0jtfIosQ7ZnBFnPk~YsoEuw3W4ILAZ31zZFX5V2uD7JEWXkb27tn6lwkZNu1zHJsfnwCAkQsqPIgDaW4MeMOOO3ySyAH2jQlYMRr9bb2BHYVFtZ~BEk3iyIltnDPv5nErjDVmlWa03y5dcKKXpQXKJoGP3S9lbdJQ__&Key-Pair-Id=APKAITJV77WS5ZT7262A" />
+                <Avatar style={{ height: '120px', width: '120px' }} alt={teacher.firstname + " " + teacher.lastname} src={'http://localhost:8080/'+teacher.img} />
                 </Link>
                 </Grid>
                 <Grid item>

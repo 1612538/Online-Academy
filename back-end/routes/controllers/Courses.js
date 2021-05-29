@@ -75,7 +75,7 @@ module.exports = {
   },
 
   getAllBySubscribe: (req, res) => {
-    const sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY subscribes DESC limit 3`;
+    const sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY subscribes DESC limit 4`;
     db.query(sql, (err, result) => {
       if (err) {
         throw err;

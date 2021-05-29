@@ -14,6 +14,7 @@ const useStyles = makeStyles({
   media: {
     height: 160,
     borderBottom: '1px solid #e0e0e0',
+    position: 'relative',
   },
   custom: {
     display: "-webkit-box",
@@ -39,6 +40,19 @@ const useStyles = makeStyles({
     color: 'red',
     fontSize: '1rem',
     fontWeight: 'bold',
+  },
+  bestseller: {
+    padding:'4px 10px 4px 10px',
+    backgroundColor: '#ffc107',
+    color: '#f50057',
+    position: 'absolute',
+    right:'0',
+    bottom:'10px',
+    boxShadow:'0 3px 4px 0px rgba(0,0,0,0.5)',
+    borderTopLeftRadius:'3px',
+    borderBottomLeftRadius:'3px',
+    fontWeight:'bold',
+    fontSize:'0.8rem'
   }
 });
 
@@ -46,6 +60,7 @@ export default (props) => {
   const course = props.course;
   const [teacherName, setTeacherName] = React.useState('');
   const [categoryName, setCategoryName] = React.useState('');
+  const [bestseller, setBestSeller] = React.useState(false);
 
   const getTeacherById = (id) =>{
     axios.get(`http://localhost:8080/api/users/${id}`)
@@ -65,9 +80,19 @@ export default (props) => {
       .catch(err => console.log(err));
   }
 
+  const getBestSeller = () => {
+    axios.get(`http://localhost:8080/api/coursesbysubscribe`)
+    .then(res=>{
+      const data = res.data;
+      if (data.find(object => object.idcourses === course.idcourses))
+        setBestSeller(true);
+    })
+  }
+
   useEffect(() => {
       getTeacherById(course.teacher);
       getCategoryById(course.idsmall_category);
+      getBestSeller();
       return () => {
         setTeacherName('');
         setCategoryName('');
@@ -82,7 +107,13 @@ export default (props) => {
           className={classes.media}
           image={'http://localhost:8080'+course.img}
           title={course.name}
-        />
+        >
+          {
+            bestseller ? <div className={classes.bestseller}>
+              Bestseller
+            </div> : undefined
+          }
+        </CardMedia>
         </Link>
         <CardContent>
           <Link color='inherit' underline='none' href={`http://localhost:3000/courses/${course.idcourses}`}>

@@ -56,6 +56,19 @@ const useStyles = makeStyles((theme)=>({
   price: {
     color: 'red',
     fontWeight: 'bold',
+  },
+  bestseller: {
+    padding:'4px 10px 4px 10px',
+    backgroundColor: '#ffc107',
+    color: '#f50057',
+    position: 'absolute',
+    left:'0',
+    top:'10px',
+    boxShadow:'0 3px 4px 0px rgba(0,0,0,0.5)',
+    borderTopRightRadius:'3px',
+    borderBottomRightRadius:'3px',
+    fontWeight:'bold',
+    fontSize:'0.8rem'
   }
 }));
 
@@ -63,6 +76,7 @@ export default (props) => {
   const course = props.course;
   const [teacherName, setTeacherName] = React.useState('');
   const [categoryName, setCategoryName] = React.useState('');
+  const [bestseller, setBestSeller] = React.useState(false);
 
   const getTeacherById = (id) =>{
     axios.get(`http://localhost:8080/api/users/${id}`)
@@ -82,9 +96,19 @@ export default (props) => {
       .catch(err => console.log(err));
   }
 
+  const getBestSeller = () => {
+    axios.get(`http://localhost:8080/api/coursesbysubscribe`)
+    .then(res=>{
+      const data = res.data;
+      if (data.find(object => object.idcourses === course.idcourses))
+        setBestSeller(true);
+    })
+  }
+
   useEffect(() => {
       getTeacherById(course.teacher);
       getCategoryById(course.idsmall_category);
+      getBestSeller();
       return () => {
         setCategoryName('');
         setTeacherName('');
@@ -97,7 +121,12 @@ export default (props) => {
         <Grid container spacing={4}>
           <Grid item>
             <ButtonBase className={classes.image} href={`http://localhost:3000/courses/${course.idcourses}`}>
-              <img className={classes.img} alt="complex" src={"http://localhost:8080"+course.img} />
+              <img className={classes.img} alt="complex" src={"http://localhost:8080"+course.img}/>
+              {
+                bestseller ? <div className={classes.bestseller}>
+                Bestseller
+             </div> : undefined
+              }
             </ButtonBase>
           </Grid>
           <Grid item xs={12} sm container>
