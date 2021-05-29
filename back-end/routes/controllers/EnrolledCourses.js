@@ -12,7 +12,12 @@ module.exports = {
     });
   },
   getByUserId: (req, res) => {
-    const sql = `SELECT * FROM ${tbName} WHERE iduser = ?`;
+    const pageNumber = parseInt(req.query.page) - 1;
+    let sql = `SELECT * FROM ${tbName} WHERE iduser = ?`;
+    if (pageNumber > -1)
+      sql = `SELECT * FROM ${tbName} WHERE iduser = ? limit ${
+        pageNumber * 5
+      },5`;
     db.query(sql, [req.params.userid], (err, result) => {
       if (err) {
         throw err;

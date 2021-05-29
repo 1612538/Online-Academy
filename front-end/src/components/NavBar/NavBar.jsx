@@ -1,5 +1,5 @@
 import React, {Component, useEffect, useState} from "react";
-import {Typography, Container, Button, ButtonGroup, Grid, InputBase} from '@material-ui/core';
+import {Typography, Container, Button, ButtonGroup, Grid, InputBase, Popper, Grow, Paper, ClickAwayListener, MenuItem, MenuList, Link} from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import SearchIcon from '@material-ui/icons/Search';
 import CategoriesMenu from './NavBarComponents/CategoriesMenu';
@@ -43,6 +43,20 @@ const useStyles = makeStyles((theme) => ({
 const NavBar = () => {
     const classes = useStyles();
     const [value, setValue] = useState('');
+    const anchorRef = React.useRef(null);
+    const [open, setOpen] = React.useState(false);
+
+    const handleToggle = () => {
+      setOpen((prevOpen) => !prevOpen);
+    };
+  
+    const handleClose = (event) => {
+      if (anchorRef.current && anchorRef.current.contains(event.target)) {
+        return;
+      }
+  
+      setOpen(false);
+    };
 
     const handleSearch = (event) => {
       event.preventDefault();
@@ -79,10 +93,40 @@ const NavBar = () => {
             </Grid>
             <Grid item xs={3}>
             <Grid container justify="flex-end">
+            {
+            localStorage.getItem('iduser') ? 
+            <ButtonGroup variant="contained" disableElevation aria-label="contained primary button group">
+            <ColorButton 
+            style={{border: 0, textTransform: 'none'}} 
+            ref={anchorRef}
+            aria-controls={open ? 'menu-list-grow' : undefined}
+            aria-haspopup="true"
+            onClick={handleToggle}>
+              Welcome, {localStorage.getItem('username')}
+            </ColorButton>
+            <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+            {({ TransitionProps, placement }) => (
+              <Grow
+                {...TransitionProps}
+                style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+              >
+                <Paper>
+                  <ClickAwayListener onClickAway={handleClose}>
+                    <MenuList id="menu-list-grow">
+                      <Link color='inherit' underline='none' href='/profile'><MenuItem onClick={handleClose}>My profile</MenuItem></Link>
+                      <Link color='inherit' underline='none' href='/signout'><MenuItem onClick={handleClose}>Sign out</MenuItem></Link>
+                    </MenuList>
+                  </ClickAwayListener>
+                </Paper>
+              </Grow>
+            )}
+            </Popper>
+            </ButtonGroup> :
             <ButtonGroup variant="contained" disableElevation aria-label="contained primary button group">
                 <ColorButton href="/signin"  style={{border: 0}}>Sign in</ColorButton>
                 <ColorButton href="/signup" style={{border: 0}}>Sign up</ColorButton>
             </ButtonGroup>
+            }
             </Grid>
             </Grid>
             </Grid>

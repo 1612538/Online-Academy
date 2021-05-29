@@ -1,16 +1,18 @@
 import React, {useEffect, useState} from 'react'
 
 import PageHeader from '../../components/PageHeader/PageHeader';
-import ProfileBody from '../../components/PageBody/ProfileBody/ProfileBody';
+import UserProfileBody from '../../components/PageBody/ProfileBody/UserProfileBody';
 
-const AccountProfile = (props) => {
+import {Redirect} from "react-router-dom";
 
+const AccountProfile = () => {
     return (
         <div>
-            <PageHeader>
-
-            </PageHeader>
-            <ProfileBody match={props.match}></ProfileBody>
+            {
+            localStorage.getItem('role') === '0' || localStorage.getItem('role') === '1'?
+            <div><PageHeader></PageHeader> 
+            <UserProfileBody></UserProfileBody></div> : <Redirect to='/'></Redirect>
+            }
         </div>
     )
 }

@@ -14,6 +14,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import BackgroundImage from "../../assets/background2.jpg";
 import History from '../../components/History'
 
+import { Redirect } from 'react-router-dom';
+
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
@@ -142,6 +144,9 @@ export default () => {
 
   return (
     <div>
+      {
+        localStorage.getItem('accessToken') ? <Redirect to='/'></Redirect> : undefined
+      }
           <div className={classes.image} />
     <Grid container component="main" className={classes.root}>
       <CssBaseline />

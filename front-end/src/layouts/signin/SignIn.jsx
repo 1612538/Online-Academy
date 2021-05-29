@@ -20,6 +20,7 @@ import CheckIcon from '@material-ui/icons/CheckCircleOutline';
 import History from '../../components/History'
 
 import axios from 'axios';
+import { Redirect } from 'react-router-dom';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -65,8 +66,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
 }));
@@ -107,12 +106,15 @@ export default () => {
     axios.post('http://localhost:8080/login', data)
     .then( res => {
       if (res.data.id)  {
-        localStorage.setItem('iduser', res.data.id);
-        localStorage.setItem('accessToken', res.data.accessToken);
-        localStorage.setItem('refreshToken', res.data.refreshToken);
-        localStorage.setItem('role', res.data.role);
         setOpen(true);
-        setTimeout(() => {History.push('/')}, 2000);
+        setTimeout(() => {
+          localStorage.setItem('iduser', res.data.id);
+          localStorage.setItem('accessToken', res.data.accessToken);
+          localStorage.setItem('refreshToken', res.data.refreshToken);
+          localStorage.setItem('role', res.data.role);
+          localStorage.setItem('username', res.data.username);
+          History.push('/');
+        }, 2000);
       } else {
         if (res.data.errorCode===1)
           setErrorEmailText(res.data.message);
@@ -125,6 +127,9 @@ export default () => {
 
   return (
     <div>
+      {
+        localStorage.getItem('accessToken') ? <Redirect to='/'></Redirect> : undefined
+      }
           <div className={classes.image} />
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
@@ -206,11 +211,13 @@ export default () => {
         BackdropProps={{
           timeout: 500,
         }}
+        disableAutoFocus
+        disableEnforceFocus
       >
         <Fade in={open}>
           <div className={classes.paper2}>
             <CheckIcon fontSize="large" style={{color: '#4caf50'}}></CheckIcon>
-            <h2 id="transition-modal-title" style={{color: '#4caf50'}}>Signed in successfully!</h2>
+            <h2 id="transition-modal-title" style={{color: '#4caf50', marginLeft: '10px'}}>Signed in successfully!</h2>
           </div>
         </Fade>
       </Modal>

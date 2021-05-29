@@ -38,14 +38,13 @@ const login = async (req, res) => {
           refreshTokenLife
         );
         tokenList[refreshToken] = { accessToken, refreshToken };
-        return res
-          .status(200)
-          .json({
-            id: user.iduser,
-            accessToken,
-            refreshToken,
-            role: user.role,
-          });
+        return res.status(200).json({
+          id: user.iduser,
+          accessToken,
+          refreshToken,
+          role: user.role,
+          username: user.username,
+        });
       } else return res.json({ message: "Invalid password", errorCode: 2 });
     } else return res.json({ message: "Invalid email address", errorCode: 1 });
   } catch (err) {

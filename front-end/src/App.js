@@ -4,9 +4,10 @@ import SignIn from "./layouts/signin/SignIn";
 import SignUp from "./layouts/signup/SignUp";
 import SignOut from "./layouts/signin/SignOut";
 import Error from "./layouts/error/ErrorPage";
-import AccountProfile from "./layouts/profile/AccountProfile";
+import TeacherProfile from "./layouts/profile/TeacherProfile";
 import CoursesBySmallCats from "./layouts/main/CoursesBySmallCats";
 import CourseDetail from "./layouts/courseDetail/CourseDetail";
+import AccountProfile from "./layouts/profile/AccountProfile";
 
 import { Router, Route, Switch } from "react-router-dom";
 import History from "./components/History";
@@ -43,6 +44,7 @@ function App() {
           <Route path="/search" component={Search} />
           <Route path="/signup" component={SignUp} />
           <PrivateRoute path="/signout" component={SignOut} />
+          <PrivateRoute path="/profile" component={AccountProfile} />
           <Route exact path="/" component={Home} />
           <Route
             path="/categories/:id"
@@ -51,7 +53,7 @@ function App() {
           <Route path="/404Error" component={Error} />
           <Route
             path="/lecturer/:id"
-            render={(props) => <AccountProfile {...props} />}
+            render={(props) => <TeacherProfile {...props} />}
           />
           <Route
             path="/courses/:id"
