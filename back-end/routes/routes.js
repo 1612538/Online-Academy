@@ -8,17 +8,7 @@ module.exports = (app) => {
   //Courses controller
 
   let Courses = require("./controllers/Courses");
-  app
-    .route("/api/courses")
-    .get(Courses.getAll)
-    .post(
-      upload.fields([
-        { name: "imageInput", maxCount: 1 },
-        { name: "slideInput", maxCount: 1 },
-        { name: "videoInput", maxCount: 1 },
-      ]),
-      Courses.add
-    );
+  app.route("/api/courses").get(Courses.getAll);
 
   app
     .route("/api/courses/:id")
@@ -69,6 +59,9 @@ module.exports = (app) => {
   //User controller
   let Users = require("./controllers/Users");
   app.route("/api/users/:id").get(Users.detail);
+  app.route("/api/usersByEmail/:email").get(Users.getByEmailClient);
+  app.route("/api/users").post(Users.add);
+  app.route("/api/users/:id").put(Users.update);
   //Login
   app.route("/login").post(AuthController.login);
   app.route("/refresh-token").post(AuthController.refreshToken);
@@ -76,8 +69,16 @@ module.exports = (app) => {
   app.use(AuthMiddleware.isAuth);
   //User controller
 
-  app.route("/api/users").get(Users.getAll).post(Users.add);
-  app.route("/api/users/:id").put(Users.update).delete(Users.delete);
+  app.route("/api/users").get(Users.getAll);
+  app.route("/api/users/:id").delete(Users.delete);
+
+  app.route("/api/courses").post(
+    upload.fields([
+      { name: "imageInput", maxCount: 1 },
+      { name: "videoInput", maxCount: 1 },
+    ]),
+    Courses.add
+  );
 
   //FavoriteCourses controller
 

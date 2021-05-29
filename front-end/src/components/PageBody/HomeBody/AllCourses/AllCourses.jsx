@@ -76,7 +76,7 @@ const AllCourses = (props) => {
             }
         </Grid>
         <Box my={1} display="flex" justifyContent="center">
-        <Pagination count={pageNumber ? pageNumber : 1} defaultPage={pageNumber ? pageNumber/2+1 : 1} onChange={changeHandle} size="large" 
+        <Pagination count={pageNumber ? pageNumber : 1} defaultPage={1} onChange={changeHandle} size="large" 
         renderItem={(item)=> <PaginationItem {...item} 
         className={classes.customPagination} classes={{selected: classes.selected}}/>}/>
         </Box>

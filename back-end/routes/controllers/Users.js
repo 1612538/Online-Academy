@@ -26,6 +26,16 @@ module.exports = {
     return results[0];
   },
 
+  getByEmailClient: async (req, res) => {
+    const sql = `SELECT * FROM ${tbName} WHERE email = ?`;
+    db.query(sql, [req.params.email], (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json(result[0]);
+    });
+  },
+
   detail: (req, res) => {
     const sql = `SELECT * FROM ${tbName} WHERE iduser = ?`;
     db.query(sql, [req.params.id], (err, result) => {

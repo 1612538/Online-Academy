@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {Grid, Typography, Avatar, Fade, Box} from '@material-ui/core';
+import {Grid, Typography, Avatar, Fade, Box, Fab, Tooltip} from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 import PaginationItem from '@material-ui/lab/PaginationItem';
 import { makeStyles } from '@material-ui/core/styles';
 import CoursesCard from '../../../CoursesCard/CoursesCard';
-import {Redirect} from 'react-router-dom';
+import AddIcon from '@material-ui/icons/Add';
 
 import axios from 'axios';
 
@@ -18,13 +18,6 @@ const useStyles = makeStyles((theme) => ({
     },
     customGrid1: {
         width: '100%',
-    },
-    customGrid2: {
-        width: '80%',
-    },
-    customText: {
-        fontWeight: 'bold',
-        margin:'10px 30px 5px 30px',
     },
     customText2: {
         margin: '10px 20px 5px 20px',
@@ -42,6 +35,9 @@ const useStyles = makeStyles((theme) => ({
     selected: {
         backgroundColor: 'rgba(255,255,255, 0.7) !important',
         color:'black',
+    },
+    absolute: {
+        width: '200px',
     },
   }));
 
@@ -88,11 +84,27 @@ const ProfileBody = () => {
 
     return (
         <Grid container className={classes.customGrid1} spacing={4}>
-            <Grid item xs={8}>
+            <Grid container item xs={8} spacing={2}>
+                <Grid item xs={10}>
                 <Typography variant='h5' className={classes.customText3}>About me</Typography>
+                </Grid>
                 <Typography variant='body1' className={classes.customText2}>{user.information}</Typography>
             </Grid>
-            <Grid item xs={4}>
+            <Grid container item xs={4} justify='center' alignItems='center'>
+            <Grid item>
+            <Tooltip title='' aria-label="add">
+                <Fab color="secondary" className={classes.absolute}>
+                    <AddIcon /> Create course
+                </Fab>
+            </Tooltip>
+            </Grid>
+            <Grid item>
+            <Tooltip title='' aria-label="edit">
+                <Fab color="primary" className={classes.absolute}>
+                    <AddIcon /> Edit information
+                </Fab>
+            </Tooltip>
+            </Grid>
             </Grid>
             <Grid item xs={12}>
             <Typography variant='h5' className={classes.customText3}>My courses</Typography>

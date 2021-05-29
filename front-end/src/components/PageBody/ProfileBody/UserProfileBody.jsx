@@ -36,16 +36,9 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: '20px',
         marginLeft:'30px',
     },
-    customPagination: {
-        color: 'white',
-    },
-    selected: {
-        backgroundColor: 'rgba(255,255,255, 0.7) !important',
-        color:'black',
-    },
   }));
 
-const ProfileBody = (props) => {
+const ProfileBody = () => {
     const classes = useStyles();
     const [user, setUser] = useState({});
 
@@ -64,8 +57,8 @@ const ProfileBody = (props) => {
 
     return (
         <div className={classes.root}>
-        <Grid container direction='row' className={classes.customGrid1} spacing={3}>
-            <Grid container item xs={8} spacing={3} alignItems='center'>
+        <Grid container direction='row' className={classes.customGrid1} spacing={4}>
+            <Grid container item xs={8} spacing={2} alignItems='center'>
                 <Grid item xs={10}>
                     <Typography variant='h5' className={classes.customText}>{user.username}</Typography>
                     <Typography variant='h4' className={classes.customText}>{user.firstname + " " + user.lastname}</Typography>
@@ -73,7 +66,7 @@ const ProfileBody = (props) => {
                 </Grid>
             </Grid>
             <Grid container item xs={4} justify='center' alignItems='center'>
-                <Avatar style={{ height: '250px', width: '250px' }} alt={user.firstname + " " + user.lastname} src="https://img-c.udemycdn.com/user/200_H/2364054_83cd_5.jpg?Expires=1622293513&Signature=EhYBO91U-pTGRq~ctA1rJuZbXojsiWHuR7~M9C1JGbKHZULiGnAhdjl1Tbfy2tNTcOmU5wvnKMkiogumch-gMwCVTdB0EdUn~kyBljRsadM3K8hIzEWPbcPaBfLi4jLchUpefDvFEZ9EgU90pYkVmAeXy01EoYL6Ty33y3WwhZjw0iHSMRXUr0jtfIosQ7ZnBFnPk~YsoEuw3W4ILAZ31zZFX5V2uD7JEWXkb27tn6lwkZNu1zHJsfnwCAkQsqPIgDaW4MeMOOO3ySyAH2jQlYMRr9bb2BHYVFtZ~BEk3iyIltnDPv5nErjDVmlWa03y5dcKKXpQXKJoGP3S9lbdJQ__&Key-Pair-Id=APKAITJV77WS5ZT7262A" />
+                <Avatar style={{ height: '250px', width: '250px' }} alt={user.firstname + " " + user.lastname} src={`http://localhost:8080/${user.img}`} />
             </Grid>
         </Grid>
         {

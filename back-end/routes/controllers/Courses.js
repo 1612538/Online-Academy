@@ -1,6 +1,23 @@
 const db = require("../../utils/db");
 const tbName = "courses";
 
+function currentDate() {
+  var date = new Date();
+  var dateStr =
+    ("00" + date.getHours()).slice(-2) +
+    ":" +
+    ("00" + date.getMinutes()).slice(-2) +
+    ":" +
+    ("00" + date.getSeconds()).slice(-2) +
+    " " +
+    ("00" + date.getDate()).slice(-2) +
+    "/" +
+    ("00" + (date.getMonth() + 1)).slice(-2) +
+    "/" +
+    date.getFullYear();
+  return dateStr;
+}
+
 module.exports = {
   getAll: (req, res) => {
     const pageNumber = parseInt(req.query.page) - 1;
@@ -173,8 +190,24 @@ module.exports = {
   },
   add: (res, req) => {
     const sql = `INSERT INTO ${tbName} SET ?`;
-    let data = req.body;
-    db.query(sql, [data], (err, result) => {
+    const course = {
+      name: req.body.name,
+      price: req.body.price,
+      idsmall_category: req.body.smallcategory,
+      rate: 0,
+      ratevotes: 0,
+      teacher: req.user.idteacher,
+      description1: req.body.briefDesc,
+      description2: req.body.detailDesc,
+      lastupdate: currentDate(),
+      isCompleted: 0,
+      img: "/tmp/my-uploads/" + req.files["imageInput"][0].filename,
+      subscribes: 0,
+      previewvideo: "/tmp/my-uploads/" + req.files["videoInput"][0].filename,
+      isBlocked: 0,
+      views: 0,
+    };
+    db.query(sql, [course], (err, result) => {
       if (err) throw err;
       res.json({ message: "Create success!" });
     });

@@ -113,7 +113,7 @@ export default () => {
       axios.get(`http://localhost:8080/api/usersByEmail/${email}`)
       .then(res => {
         const data = res.data;
-        if (data){
+        if (data.email){
           setErrorEmail(true);
           setErrorEmailText('Email has already been used');
           setSuccess(false);
