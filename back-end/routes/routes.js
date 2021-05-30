@@ -70,6 +70,7 @@ module.exports = (app) => {
 
   app.route("/api/users").get(Users.getAll);
   app.route("/api/users/:id").delete(Users.delete);
+  app.route("/api/checkpassword/:id/:password").get(Users.checkPassword);
 
   app.route("/api/courses").post(
     upload.fields([

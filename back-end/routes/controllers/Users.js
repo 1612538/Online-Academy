@@ -36,6 +36,21 @@ module.exports = {
     });
   },
 
+  checkPassword: async (req, res) => {
+    const sql = `SELECT * FROM ${tbName} WHERE iduser = ?`;
+    db.query(sql, [req.params.id], async (err, result) => {
+      if (err) {
+        throw err;
+      }
+      const isEqual = await bcrypt.checkPassword(
+        req.params.password,
+        result[0].password
+      );
+      console.log(isEqual);
+      res.json({ isEqual: isEqual });
+    });
+  },
+
   detail: (req, res) => {
     const sql = `SELECT * FROM ${tbName} WHERE iduser = ?`;
     db.query(sql, [req.params.id], (err, result) => {
@@ -53,9 +68,13 @@ module.exports = {
       res.json({ success: true });
     });
   },
-  update: (req, res) => {
+  update: async (req, res) => {
     let data = req.body;
     let id = req.params.id;
+    if (req.body.password) {
+      const passwordHash = await bcrypt.hashPassword(data.password);
+      data.password = passwordHash;
+    }
     const sql = `UPDATE ${tbName} SET ? WHERE iduser = ?`;
     db.query(sql, [data, id], (err, result) => {
       if (err) throw err;
