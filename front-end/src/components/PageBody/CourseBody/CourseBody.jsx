@@ -4,6 +4,9 @@ import Rating from "@material-ui/lab/Rating";
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Infinite from '@material-ui/icons/AllInclusive';
 import Phone from '@material-ui/icons/PhoneAndroid';
+import "video-react/dist/video-react.css"; 
+
+import {Player, ControlBar, ReplayControl, ForwardControl, CurrentTimeDisplay, TimeDivider, PlaybackRateMenuButton, VolumeMenuButton} from 'video-react';
 
 import axios from 'axios';
 
@@ -93,10 +96,12 @@ const CourseBody = (props) => {
     const [course, setCourse] = useState({});
     const [teacher, setTeacher] = useState({});
     const [bestseller, setBestSeller] = useState(false);
+    const [video, setVideo] = useState('');
 
     const getCourse = async () => {
         const data = await axios.get(`http://localhost:8080/api/courses/${props.match.params.id}`)
-        await setCourse(data.data);
+        setCourse(data.data);
+        setVideo('http://localhost:8080' + data.data.previewvideo)
         return data.data;
     }
 
@@ -111,10 +116,13 @@ const CourseBody = (props) => {
             setBestSeller(true);
       }
     
-    useEffect(async ()=>{
-        const data = await getCourse();
-        await getTeacher(data.teacher);
-        await getBestSeller(data.idcourses);
+    useEffect(()=>{
+        const fetchData = async () =>{
+            const data = await getCourse();
+            await getTeacher(data.teacher);
+            await getBestSeller(data.idcourses);
+        }
+        fetchData();
         return () => {
             setCourse({});
             setTeacher({});
@@ -141,6 +149,20 @@ const CourseBody = (props) => {
         </Grid>
         <Grid container className={classes.customGrid1} spacing={4}>
             <Grid item xs={8}>
+                <Typography variant='h5' className={classes.customText3}>Preview video</Typography>
+                <div style={{margin: '20px 0 20px 20px'}}>
+                <Player poster={'http://localhost:8080'+course.img}>
+                <source key={video} src={video} />
+                <ControlBar autoHide>
+                    <ReplayControl seconds={10} order={1.1} />
+                    <ForwardControl seconds={30} order={1.2} />
+                    <CurrentTimeDisplay order={4.1} />
+                    <TimeDivider order={4.2} />
+                    <PlaybackRateMenuButton rates={[5, 2, 1, 0.5, 0.1]} order={7.1} />
+                    <VolumeMenuButton order={7.2}/>
+                </ControlBar>
+                </Player>
+                </div>
                 <Typography variant='h5' className={classes.customText3}>About courses</Typography>
                 <div className={classes.customText2} dangerouslySetInnerHTML={{__html: course.description2}}></div>
             </Grid>
@@ -165,10 +187,10 @@ const CourseBody = (props) => {
                         <Grid item xs = {1}  className={classes.rate}>
                         {course.rate}
                         </Grid>
-                        <Grid item xs = {4} style={{marginLeft: '7px', marginTop: '2px'}}>
+                        <Grid item xs = {4} style={{marginLeft: '6px', marginTop: '2px'}}>
                         <Rating size="small" name="read-only" precision={0.5} value={parseFloat(course.rate)} readOnly />
                         </Grid>
-                        <Grid item xs = {2} style={{marginLeft: '7px'}}>
+                        <Grid item xs = {2} style={{marginLeft: '10px'}}>
                         ({course.ratevotes})
                         </Grid>
                     </Grid>

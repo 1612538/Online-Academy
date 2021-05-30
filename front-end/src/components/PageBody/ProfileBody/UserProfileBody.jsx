@@ -47,9 +47,11 @@ const ProfileBody = () => {
         setUser(data.data);
     }
 
-    useEffect(async ()=>{
-        await getUser();
-        
+    useEffect(()=>{ 
+        const fetchData = async () => {
+            await getUser();
+        }
+        fetchData();
         return () => {
             setUser({});
         }
@@ -66,7 +68,7 @@ const ProfileBody = () => {
                 </Grid>
             </Grid>
             <Grid container item xs={4} justify='center' alignItems='center'>
-                <Avatar style={{ height: '250px', width: '250px' }} alt={user.firstname + " " + user.lastname} src={`http://localhost:8080/${user.img}`} />
+                <Avatar style={{ height: '250px', width: '250px' }} alt={user.firstname} src={`http://localhost:8080/${user.img}`} />
             </Grid>
         </Grid>
         {

@@ -1,5 +1,6 @@
 const db = require("../../utils/db");
 const tbName = "courses";
+const upload = require("../../utils/multer");
 
 function currentDate() {
   var date = new Date();
@@ -188,7 +189,7 @@ module.exports = {
       res.json({ message: "Update success!" });
     });
   },
-  add: (res, req) => {
+  add: (req, res) => {
     const sql = `INSERT INTO ${tbName} SET ?`;
     const course = {
       name: req.body.name,
@@ -196,7 +197,7 @@ module.exports = {
       idsmall_category: req.body.smallcategory,
       rate: 0,
       ratevotes: 0,
-      teacher: req.user.idteacher,
+      teacher: req.body.idteacher,
       description1: req.body.briefDesc,
       description2: req.body.detailDesc,
       lastupdate: currentDate(),
@@ -209,7 +210,7 @@ module.exports = {
     };
     db.query(sql, [course], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Create success!" });
+      res.json({ success: 1 });
     });
   },
 };

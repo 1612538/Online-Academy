@@ -127,6 +127,7 @@ export default () => {
             firstname: firstName,
             lastname: lastName,
             isBlocked: 0,
+            occupation: 'Student',
             role: 0,
           }
           axios.post(`http://localhost:8080/api/users`, data)

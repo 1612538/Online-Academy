@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {Grid, Typography, Avatar, Fade, Box} from '@material-ui/core';
+import {Grid, Typography, Fab, Tooltip, Fade, Box, Grow, Popper, Paper, ClickAwayListener, MenuList, MenuItem} from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 import PaginationItem from '@material-ui/lab/PaginationItem';
 import { makeStyles } from '@material-ui/core/styles';
 import CoursesCard from '../../../CoursesCard/CoursesCard';
+import EditIcon from '@material-ui/icons/Edit';
 
 import axios from 'axios';
 
@@ -42,6 +43,13 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: 'rgba(255,255,255, 0.7) !important',
         color:'black',
     },
+    absolute: {
+        position: 'fixed',
+        bottom: theme.spacing(10),
+        right: theme.spacing(10),
+        textTransform: 'none',
+        width:'120px',
+    },
   }));
 
 const ProfileBody = (props) => {
@@ -53,6 +61,8 @@ const ProfileBody = (props) => {
     const [pageNumberF, setPageNumberF] = useState(1);
     const [pageNumberE, setPageNumberE] = useState(1);
     const [open, setOpen] = useState(true);
+    const [openMenu, setOpenMenu] = React.useState(false);
+    const anchorRef = React.useRef(null);
 
     const getFavoriteCourses = async (current) => {
         const data = await axios.get(`http://localhost:8080/api/favoritecourses/${localStorage.getItem('iduser')}?page=${current}`, {headers: {'x-access-token': localStorage.getItem('accessToken')}})
@@ -99,12 +109,26 @@ const ProfileBody = (props) => {
         setTimeout(() => setCurrPageE(value), 500);
     }
 
-    useEffect(async ()=>{
+    const handleToggle = () => {
+        setOpenMenu((prevOpen) => !prevOpen);
+      };
+    
+      const handleClose = (event) => {
+        if (anchorRef.current && anchorRef.current.contains(event.target)) {
+          return;
+        }
+    
+        setOpenMenu(false);
+      };
+
+    useEffect(()=>{
+        const fetchData = async() => {
         await getFavoriteCourses(currPageF);
         await getLengthF();
         await getEnrolledCourses(currPageE);
         await getLengthE();
-        
+        }
+        fetchData();
         return () => {
             setFavoriteCourses([]);
             setEnrolledCourses([]);
@@ -147,6 +171,31 @@ const ProfileBody = (props) => {
             className={classes.customPagination} classes={{selected: classes.selected}}/>}/>
             </Box>
             </Grid>
+            <Tooltip title='' aria-label="edit" ref={anchorRef}
+                aria-controls={openMenu ? 'menu-list-grow' : undefined}
+                aria-haspopup="true"
+                onClick={handleToggle}>
+                <Fab color="primary" className={classes.absolute}>
+                    <EditIcon /> Profile
+                </Fab>
+            </Tooltip>
+            <Popper open={openMenu} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
+            {({ TransitionProps, placement }) => (
+                <Grow
+                {...TransitionProps}
+                style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
+                >
+                <Paper>
+                    <ClickAwayListener onClickAway={handleClose}>
+                    <MenuList id="menu-list-grow">
+                        <MenuItem onClick={handleClose}>Edit information</MenuItem>
+                        <MenuItem onClick={handleClose}>Change password</MenuItem>
+                    </MenuList>
+                    </ClickAwayListener>
+                </Paper>
+                </Grow>
+            )}
+            </Popper>
         </Grid>
     )
 }

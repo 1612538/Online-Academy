@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Grid, Typography, Avatar, Fade, Box, Fab, Tooltip} from '@material-ui/core';
+import {Grid, Typography, Fade, Box, Fab, Tooltip} from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
 import PaginationItem from '@material-ui/lab/PaginationItem';
 import { makeStyles } from '@material-ui/core/styles';
 import CoursesCard from '../../../CoursesCard/CoursesCard';
 import AddIcon from '@material-ui/icons/Add';
+import EditIcon from '@material-ui/icons/Edit';
+import CourseForm from './CourseForm';
 
 import axios from 'axios';
 
@@ -48,6 +50,7 @@ const ProfileBody = () => {
     const [pageNumber, setPageNumber] = useState(1);
     const [user, setUser] = useState({});
     const [open, setOpen] = useState(true);
+    const [addform, setAddForm] = useState(false);
 
     const getUser = async () => {
         const data = await axios.get(`http://localhost:8080/api/users/${localStorage.getItem('iduser')}`)
@@ -71,11 +74,17 @@ const ProfileBody = () => {
         setTimeout(() => setCurrPage(value), 500);
     }
 
-    useEffect(async ()=>{
+    const AddClose = () =>{
+        setAddForm(false);
+    }
+
+    useEffect(()=>{
+        const fetchData = async() => {
         await getUser();
         await getCourses(currPage);
         await getLength();
-        
+        }
+        fetchData();
         return () => {
             setUser({});
             setCourses([]);
@@ -92,7 +101,7 @@ const ProfileBody = () => {
             </Grid>
             <Grid container item xs={4} justify='center' alignItems='center'>
             <Grid item>
-            <Tooltip title='' aria-label="add">
+            <Tooltip title='' aria-label="add" onClick={()=>{setAddForm(true)}}>
                 <Fab color="secondary" className={classes.absolute}>
                     <AddIcon /> Create course
                 </Fab>
@@ -101,7 +110,7 @@ const ProfileBody = () => {
             <Grid item>
             <Tooltip title='' aria-label="edit">
                 <Fab color="primary" className={classes.absolute}>
-                    <AddIcon /> Edit information
+                    <EditIcon /> Edit information
                 </Fab>
             </Tooltip>
             </Grid>
@@ -123,6 +132,7 @@ const ProfileBody = () => {
             className={classes.customPagination} classes={{selected: classes.selected}}/>}/>
             </Box>
             </Grid>
+                <CourseForm AddClose={AddClose} open={addform}></CourseForm>
         </Grid>
     )
 }
