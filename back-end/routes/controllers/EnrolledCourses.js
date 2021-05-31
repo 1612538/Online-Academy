@@ -11,6 +11,15 @@ module.exports = {
       res.json(result);
     });
   },
+  getByData: (req, res) => {
+    const sql = `SELECT * FROM ${tbName} WHERE iduser = ? AND idcourses = ?`;
+    db.query(sql, [req.params.iduser, req.params.idcourses], (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json(result[0]);
+    });
+  },
   getByUserId: (req, res) => {
     const pageNumber = parseInt(req.query.page) - 1;
     let sql = `SELECT * FROM ${tbName} WHERE iduser = ?`;
@@ -18,7 +27,7 @@ module.exports = {
       sql = `SELECT * FROM ${tbName} WHERE iduser = ? limit ${
         pageNumber * 5
       },5`;
-    db.query(sql, [req.params.userid], (err, result) => {
+    db.query(sql, [req.params.iduser], (err, result) => {
       if (err) {
         throw err;
       }
@@ -30,7 +39,7 @@ module.exports = {
     let sql = `DELETE FROM ${tbName} WHERE iduser = ? AND idcourses = ?`;
     db.query(sql, [req.params.iduser, req.params.idcourses], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Delete success!" });
+      res.json({ success: 1 });
     });
   },
 
@@ -39,7 +48,7 @@ module.exports = {
     let data = req.body;
     db.query(sql, [data], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Create success!" });
+      res.json({ success: 1 });
     });
   },
 };

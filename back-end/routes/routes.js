@@ -89,6 +89,7 @@ module.exports = (app) => {
     .post(FavoriteCourses.add);
   app
     .route("/api/favoritecourses/:iduser/:idcourses")
+    .get(FavoriteCourses.getByData)
     .delete(FavoriteCourses.delete);
   app.route("/api/favoritecourses/:iduser").get(FavoriteCourses.getByUserId);
 
@@ -101,6 +102,7 @@ module.exports = (app) => {
     .post(EnrolledCourses.add);
   app
     .route("/api/enrolledcourses/:iduser/:idcourses")
-    .delete(EnrolledCourses.delete);
+    .delete(EnrolledCourses.delete)
+    .get(EnrolledCourses.getByData);
   app.route("/api/enrolledcourses/:iduser").get(EnrolledCourses.getByUserId);
 };

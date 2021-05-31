@@ -263,7 +263,12 @@ const ProfileBody = (props) => {
           My courses
         </Typography>
         <Fade in={open} timeout={500}>
-          <Grid container spacing={3} justify="center">
+          <Grid
+            container
+            spacing={3}
+            justify="center"
+            style={{ height: "700px" }}
+          >
             {courses.map((course, key) => (
               <Grid item key={key}>
                 <CoursesCard course={course}></CoursesCard>

@@ -76,6 +76,7 @@ const ProfileBody = (props) => {
   const [pageNumberF, setPageNumberF] = useState(1);
   const [pageNumberE, setPageNumberE] = useState(1);
   const [open, setOpen] = useState(true);
+  const [open2, setOpen2] = useState(true);
   const [openMenu, setOpenMenu] = React.useState(false);
   const anchorRef = React.useRef(null);
   const [editform, setEditForm] = useState(false);
@@ -116,6 +117,7 @@ const ProfileBody = (props) => {
       )}?page=${current}`,
       { headers: { "x-access-token": localStorage.getItem("accessToken") } }
     );
+    console.log(data.data);
     let array = [];
     for (let i = 0; i < data.data.length; i++) {
       const newdata = await axios.get(
@@ -124,7 +126,8 @@ const ProfileBody = (props) => {
       array.push(newdata.data);
     }
     setEnrolledCourses(array);
-    setOpen(true);
+    console.log(array);
+    setOpen2(true);
   };
 
   const getLengthE = async () => {
@@ -143,7 +146,7 @@ const ProfileBody = (props) => {
   };
 
   const changeHandleE = (event, value) => {
-    setOpen(false);
+    setOpen2(false);
     setTimeout(() => setCurrPageE(value), 500);
   };
 
@@ -187,7 +190,12 @@ const ProfileBody = (props) => {
           My favorite courses
         </Typography>
         <Fade in={open} timeout={500}>
-          <Grid container spacing={3} justify="center">
+          <Grid
+            container
+            spacing={3}
+            justify="center"
+            style={{ height: "700px" }}
+          >
             {favoriteCourses.map((course, key) => (
               <Grid item key={key}>
                 <CoursesCard course={course}></CoursesCard>
@@ -215,8 +223,13 @@ const ProfileBody = (props) => {
         <Typography variant="h5" className={classes.customText3}>
           My enrolled courses
         </Typography>
-        <Fade in={open} timeout={500}>
-          <Grid container spacing={3} justify="center">
+        <Fade in={open2} timeout={500}>
+          <Grid
+            container
+            spacing={3}
+            justify="center"
+            style={{ height: "700px" }}
+          >
             {enrolledCourses.map((course, key) => (
               <Grid item key={key}>
                 <CoursesCard course={course}></CoursesCard>
