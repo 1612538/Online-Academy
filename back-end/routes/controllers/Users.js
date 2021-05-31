@@ -46,7 +46,6 @@ module.exports = {
         req.params.password,
         result[0].password
       );
-      console.log(isEqual);
       res.json({ isEqual: isEqual });
     });
   },

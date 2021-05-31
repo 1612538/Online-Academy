@@ -1,5 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography, Fade, Box, Fab, Tooltip } from "@material-ui/core";
+import {
+  Grid,
+  Typography,
+  Fade,
+  Box,
+  Fab,
+  Tooltip,
+  Popper,
+  Grow,
+  Paper,
+  ClickAwayListener,
+  MenuList,
+  MenuItem,
+} from "@material-ui/core";
 import Pagination from "@material-ui/lab/Pagination";
 import PaginationItem from "@material-ui/lab/PaginationItem";
 import { makeStyles } from "@material-ui/core/styles";
@@ -7,6 +20,9 @@ import CoursesCard from "../../../CoursesCard/CoursesCard";
 import AddIcon from "@material-ui/icons/Add";
 import EditIcon from "@material-ui/icons/Edit";
 import CourseForm from "./CourseForm";
+import InforForm from "./UserForm";
+import PasswordForm from "./PasswordForm";
+import AboutMeForm from "./AboutMeForm";
 
 import axios from "axios";
 
@@ -43,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ProfileBody = () => {
+const ProfileBody = (props) => {
   const classes = useStyles();
   const [courses, setCourses] = React.useState([]);
   const [currPage, setCurrPage] = React.useState(1);
@@ -52,12 +68,11 @@ const ProfileBody = () => {
   const [open, setOpen] = useState(true);
   const [addform, setAddForm] = useState(false);
 
-  const getUser = async () => {
-    const data = await axios.get(
-      `http://localhost:8080/api/users/${localStorage.getItem("iduser")}`
-    );
-    setUser(data.data);
-  };
+  const [openMenu, setOpenMenu] = React.useState(false);
+  const anchorRef = React.useRef(null);
+  const [editform, setEditForm] = useState(false);
+  const [passwordform, setPasswordForm] = useState(false);
+  const [aboutmeform, setAboutMeForm] = useState(false);
 
   const getCourses = async (current) => {
     const data = await axios.get(
@@ -89,18 +104,41 @@ const ProfileBody = () => {
     setAddForm(false);
   };
 
+  const handleToggle = () => {
+    setOpenMenu((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+    setOpenMenu(false);
+  };
+
+  const EditClose = () => {
+    setEditForm(false);
+  };
+
+  const PasswordClose = () => {
+    setPasswordForm(false);
+  };
+
+  const AboutMeClose = () => {
+    setAboutMeForm(false);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
-      await getUser();
+      await setUser(props.user);
       await getCourses(currPage);
       await getLength();
     };
+
     fetchData();
     return () => {
-      setUser({});
       setCourses([]);
     };
-  }, [currPage]);
+  }, [currPage, props.user]);
 
   return (
     <Grid container className={classes.customGrid1} spacing={4}>
@@ -110,11 +148,21 @@ const ProfileBody = () => {
             About me
           </Typography>
         </Grid>
-        <Typography variant="body1" className={classes.customText2}>
-          {user.information}
-        </Typography>
+        <Typography
+          variant="body1"
+          className={classes.customText2}
+          key={Date()}
+          dangerouslySetInnerHTML={{ __html: user.information }}
+        ></Typography>
       </Grid>
-      <Grid container item xs={4} justify="center" alignItems="center">
+      <Grid
+        container
+        item
+        xs={4}
+        justify="center"
+        alignItems="center"
+        style={{ height: "200px" }}
+      >
         <Grid item>
           <Tooltip
             title=""
@@ -128,13 +176,87 @@ const ProfileBody = () => {
             </Fab>
           </Tooltip>
         </Grid>
+        <CourseForm AddClose={AddClose} open={addform}></CourseForm>
         <Grid item>
-          <Tooltip title="" aria-label="edit">
+          <Tooltip
+            title=""
+            aria-label="edit"
+            ref={anchorRef}
+            aria-controls={openMenu ? "menu-list-grow" : undefined}
+            aria-haspopup="true"
+            onClick={handleToggle}
+          >
             <Fab color="primary" className={classes.absolute}>
               <EditIcon /> Edit information
             </Fab>
           </Tooltip>
         </Grid>
+        <Popper
+          open={openMenu}
+          anchorEl={anchorRef.current}
+          role={undefined}
+          transition
+          disablePortal
+        >
+          {({ TransitionProps, placement }) => (
+            <Grow
+              {...TransitionProps}
+              style={{
+                transformOrigin:
+                  placement === "bottom" ? "center top" : "center bottom",
+              }}
+            >
+              <Paper>
+                <ClickAwayListener onClickAway={handleClose}>
+                  <MenuList id="menu-list-grow">
+                    <MenuItem
+                      onClick={(e) => {
+                        handleClose(e);
+                        setEditForm(true);
+                      }}
+                    >
+                      Edit information
+                    </MenuItem>
+                    <MenuItem
+                      onClick={(e) => {
+                        handleClose(e);
+                        setAboutMeForm(true);
+                      }}
+                    >
+                      Edit "About me"
+                    </MenuItem>
+                    <MenuItem
+                      onClick={(e) => {
+                        handleClose(e);
+                        setPasswordForm(true);
+                      }}
+                    >
+                      Change password
+                    </MenuItem>
+                  </MenuList>
+                </ClickAwayListener>
+              </Paper>
+            </Grow>
+          )}
+        </Popper>
+        <InforForm
+          EditClose={EditClose}
+          open={editform}
+          user={props.user}
+          update={props.update}
+          setUpdate={props.setUpdate}
+        ></InforForm>
+        <PasswordForm
+          EditClose={PasswordClose}
+          open={passwordform}
+        ></PasswordForm>
+        <AboutMeForm
+          EditClose={AboutMeClose}
+          open={aboutmeform}
+          user={props.user}
+          update={props.update}
+          setUpdate={props.setUpdate}
+        ></AboutMeForm>
       </Grid>
       <Grid item xs={12}>
         <Typography variant="h5" className={classes.customText3}>
@@ -165,7 +287,6 @@ const ProfileBody = () => {
           />
         </Box>
       </Grid>
-      <CourseForm AddClose={AddClose} open={addform}></CourseForm>
     </Grid>
   );
 };

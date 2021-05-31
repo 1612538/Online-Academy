@@ -3,12 +3,15 @@ import React, { useEffect, useState } from "react";
 import {
   Grid,
   Typography,
-  TextField,
   Button,
   Dialog,
   DialogContent,
   DialogActions,
 } from "@material-ui/core";
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { convertToRaw } from "draft-js";
+import draftToHtml from "draftjs-to-html";
 
 import axios from "axios";
 
@@ -53,11 +56,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const InforForm = (props) => {
-  const [username, setUsername] = useState(props.user.username);
-  const [firstname, setFirstname] = useState(props.user.firstname);
-  const [lastname, setLastname] = useState(props.user.lastname);
-  const [occupation, setOccupation] = useState(props.user.occupation);
+const AboutMeForm = (props) => {
+  const [editor, setEditor] = useState("");
+
+  const onEditorStateChange = (contentState) => {
+    setEditor(contentState);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -66,17 +70,14 @@ const InforForm = (props) => {
         "x-access-token": localStorage.getItem("accessToken"),
       },
     };
-
-    if (!username) await setUsername(props.user.username);
-    if (!firstname) await setFirstname(props.user.firstname);
-    if (!lastname) await setLastname(props.user.lastname);
-    if (!occupation) await setOccupation(props.user.occupation);
-
+    const hashtagConfig = {
+      trigger: "#",
+      separator: " ",
+    };
+    const rawContentState = convertToRaw(editor.getCurrentContent());
+    const markup = draftToHtml(rawContentState, hashtagConfig, true);
     const data = {
-      username: username,
-      firstname: firstname,
-      lastname: lastname,
-      occupation: occupation,
+      information: markup,
     };
     const returnData = await axios.put(
       `http://localhost:8080/api/users/${localStorage.getItem("iduser")}`,
@@ -87,22 +88,6 @@ const InforForm = (props) => {
       props.EditClose();
       props.setUpdate(!props.update);
     }
-  };
-
-  const handleUsername = (e) => {
-    setUsername(e.target.value);
-  };
-
-  const handleFirstname = (e) => {
-    setFirstname(e.target.value);
-  };
-
-  const handleLastname = (e) => {
-    setLastname(e.target.value);
-  };
-
-  const handleOccupation = (e) => {
-    setOccupation(e.target.value);
   };
 
   useEffect(() => {}, []);
@@ -123,55 +108,24 @@ const InforForm = (props) => {
           <Grid container direction="row">
             <Grid item xs={12}>
               <Typography variant="h5" className={classes.customText3}>
-                Edit information
+                Edit "About me"
               </Typography>
             </Grid>
           </Grid>
           <Grid container className={classes.customGrid}>
-            <Grid container item xs={12} spacing={2} justify="center">
-              {localStorage.getItem("role") === "0" ? (
-                <Grid item xs={10}>
-                  <TextField
-                    id="username"
-                    label="Username"
-                    fullWidth
-                    margin="normal"
-                    helperText="No change if empty"
-                    onChange={handleUsername}
-                  />
-                </Grid>
-              ) : (
-                <Grid item xs={10}>
-                  <TextField
-                    id="occupation"
-                    label="Occupation"
-                    fullWidth
-                    margin="normal"
-                    helperText="No change if empty"
-                    onChange={handleOccupation}
-                  />
-                </Grid>
-              )}
-              <Grid item xs={5}>
-                <TextField
-                  id="firstname"
-                  label="First name"
-                  fullWidth
-                  margin="normal"
-                  helperText="No change if empty"
-                  onChange={handleFirstname}
-                />
-              </Grid>
-              <Grid item xs={5}>
-                <TextField
-                  id="lastname"
-                  label="Last name"
-                  fullWidth
-                  margin="normal"
-                  helperText="No change if empty"
-                  onChange={handleLastname}
-                />
-              </Grid>
+            <Grid item xs={12} style={{ marginTop: "20px" }}>
+              <Typography variant="body1" style={{ color: "#9e9e9e" }}>
+                Detail Description
+              </Typography>
+              <Editor
+                editorState={editor}
+                toolbarClassName="toolbarClassName"
+                wrapperClassName="wrapperClassName"
+                editorClassName="editorClassName"
+                onEditorStateChange={onEditorStateChange}
+                editorStyle={{ height: "300px" }}
+                handlePastedText={() => false}
+              />
             </Grid>
           </Grid>
         </DialogContent>
@@ -180,12 +134,9 @@ const InforForm = (props) => {
             type="submit"
             component="button"
             variant="contained"
-            disabled={
-              username || firstname || lastname || occupation ? false : true
-            }
             className={classes.customButton1}
           >
-            Accept
+            Accept changes
           </Button>
           <Button
             variant="contained"
@@ -200,4 +151,4 @@ const InforForm = (props) => {
   );
 };
 
-export default InforForm;
+export default AboutMeForm;

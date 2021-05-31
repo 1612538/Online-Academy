@@ -78,8 +78,7 @@ const PasswordForm = (props) => {
     const url = `http://localhost:8080/api/checkpassword/${localStorage.getItem(
       "iduser"
     )}/${oldpassword}`;
-    console.log(url);
-    const equal = await axios.get(url);
+    const equal = await axios.get(url, config);
     if (equal.data.isEqual === false) {
       setError1(true);
       setError1Text("Old password isn't correct.");
