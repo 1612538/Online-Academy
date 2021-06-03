@@ -152,6 +152,13 @@ const CourseBody = (props) => {
     );
     setCourse(data.data);
     setVideo("http://localhost:8080" + data.data.previewvideo);
+    const view = {
+      views: parseInt(data.data.views) + 1,
+    };
+    const tmp = await axios.put(
+      `http://localhost:8080/api/courses/${props.match.params.id}`,
+      view
+    );
     return data.data;
   };
 
@@ -184,7 +191,7 @@ const CourseBody = (props) => {
     else setEnrolled(false);
   };
 
-  const handleEnroll = async () => {
+  const handleEnroll = async (sub) => {
     if (localStorage.getItem("iduser") === null) History.push("/signin");
     else {
       const config = {
@@ -201,7 +208,16 @@ const CourseBody = (props) => {
         data,
         config
       );
-      if (returnData.data.success) setEnrolled(true);
+      if (returnData.data.success) {
+        const subscribe = {
+          subscribes: parseInt(sub) + 1,
+        };
+        const tmp = await axios.put(
+          `http://localhost:8080/api/courses/${props.match.params.id}`,
+          subscribe
+        );
+        setEnrolled(true);
+      }
     }
   };
 
@@ -368,7 +384,11 @@ const CourseBody = (props) => {
               <>
                 {isEnrolled === false ? (
                   <Grid item xs={12}>
-                    <StyledButton onClick={handleEnroll}>Enroll</StyledButton>
+                    <StyledButton
+                      onClick={() => handleEnroll(course.subscribes)}
+                    >
+                      Enroll
+                    </StyledButton>
                   </Grid>
                 ) : (
                   <Grid item xs={12}>
