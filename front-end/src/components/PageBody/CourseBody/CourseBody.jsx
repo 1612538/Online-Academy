@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography, Button, Avatar, Link } from "@material-ui/core";
+import {
+  Grid,
+  Typography,
+  Button,
+  Avatar,
+  Link,
+  Collapse,
+  Paper,
+} from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Infinite from "@material-ui/icons/AllInclusive";
 import Phone from "@material-ui/icons/PhoneAndroid";
 import "video-react/dist/video-react.css";
+import Expand from "@material-ui/icons/ExpandMore";
 
 import {
   Player,
@@ -16,6 +25,8 @@ import {
   PlaybackRateMenuButton,
   VolumeMenuButton,
 } from "video-react";
+
+import History from "../../History";
 
 import axios from "axios";
 
@@ -72,6 +83,28 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
     fontSize: "1rem",
   },
+  paper: {
+    marginTop: "16px",
+    backgroundColor: "transparent",
+    padding: "15px 25px 15px 25px",
+    borderBottomLeftRadius: "0px",
+    borderBottomRightRadius: "0px",
+    border: "1px solid rgba(0,0,0,0.3)",
+    borderBottom: "0",
+  },
+  customButton: {
+    background: "linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.6))",
+    color: "white",
+    height: 40,
+    padding: "30px 30px 5px 30px",
+    width: "100%",
+    borderTopLeftRadius: "0px",
+    borderTopRightRadius: "0px",
+    textTransform: "none",
+    border: "1px solid rgba(0,0,0,0.2)",
+    borderTop: "0",
+    marginTop: "-20px",
+  },
 }));
 
 const StyledButton = withStyles({
@@ -104,6 +137,7 @@ const StyledButton2 = withStyles({
 
 const CourseBody = (props) => {
   const classes = useStyles();
+  const [col1, setCol1] = useState(false);
   const [course, setCourse] = useState({});
   const [teacher, setTeacher] = useState({});
   const [bestseller, setBestSeller] = useState(false);
@@ -151,21 +185,24 @@ const CourseBody = (props) => {
   };
 
   const handleEnroll = async () => {
-    const config = {
-      headers: {
-        "x-access-token": localStorage.getItem("accessToken"),
-      },
-    };
-    const data = {
-      iduser: localStorage.getItem("iduser"),
-      idcourses: props.match.params.id,
-    };
-    const returnData = await axios.post(
-      `http://localhost:8080/api/enrolledcourses`,
-      data,
-      config
-    );
-    if (returnData.data.success) setEnrolled(true);
+    if (localStorage.getItem("iduser") === null) History.push("/signin");
+    else {
+      const config = {
+        headers: {
+          "x-access-token": localStorage.getItem("accessToken"),
+        },
+      };
+      const data = {
+        iduser: localStorage.getItem("iduser"),
+        idcourses: props.match.params.id,
+      };
+      const returnData = await axios.post(
+        `http://localhost:8080/api/enrolledcourses`,
+        data,
+        config
+      );
+      if (returnData.data.success) setEnrolled(true);
+    }
   };
 
   const checkFavorite = async () => {
@@ -185,21 +222,25 @@ const CourseBody = (props) => {
   };
 
   const handleFavorite = async () => {
-    const config = {
-      headers: {
-        "x-access-token": localStorage.getItem("accessToken"),
-      },
-    };
-    const data = {
-      iduser: localStorage.getItem("iduser"),
-      idcourses: props.match.params.id,
-    };
-    const returnData = await axios.post(
-      `http://localhost:8080/api/favoritecourses`,
-      data,
-      config
-    );
-    if (returnData.data.success) setFavorite(true);
+    if (localStorage.getItem("iduser") === null) {
+      History.push("/signin");
+    } else {
+      const config = {
+        headers: {
+          "x-access-token": localStorage.getItem("accessToken"),
+        },
+      };
+      const data = {
+        iduser: localStorage.getItem("iduser"),
+        idcourses: props.match.params.id,
+      };
+      const returnData = await axios.post(
+        `http://localhost:8080/api/favoritecourses`,
+        data,
+        config
+      );
+      if (returnData.data.success) setFavorite(true);
+    }
   };
 
   const handleUnfavorite = async () => {
@@ -215,9 +256,12 @@ const CourseBody = (props) => {
       config
     );
     if (returnData.data.success) {
-      console.log("false");
       setFavorite(false);
     }
+  };
+
+  const handleClick1 = () => {
+    setCol1(!col1);
   };
 
   useEffect(() => {
@@ -225,8 +269,10 @@ const CourseBody = (props) => {
       const data = await getCourse();
       await getTeacher(data.teacher);
       await getBestSeller(data.idcourses);
-      await checkEnrolled();
-      await checkFavorite();
+      if (localStorage.getItem("iduser") !== null) {
+        await checkEnrolled();
+        await checkFavorite();
+      }
     };
     fetchData();
     return () => {
@@ -317,7 +363,8 @@ const CourseBody = (props) => {
               </Grid>
             </Grid>
             {localStorage.getItem("role") === "0" ||
-            localStorage.getItem("role") === "2" ? (
+            localStorage.getItem("role") === "2" ||
+            localStorage.getItem("role") === null ? (
               <>
                 {isEnrolled === false ? (
                   <Grid item xs={12}>
@@ -342,7 +389,8 @@ const CourseBody = (props) => {
                   </Grid>
                 )}
               </>
-            ) : (
+            ) : localStorage.getItem("role") === "1" &&
+              parseInt(localStorage.getItem("iduser")) === teacher.iduser ? (
               <>
                 <Grid item xs={12}>
                   <StyledButton>Add lectures</StyledButton>
@@ -351,7 +399,7 @@ const CourseBody = (props) => {
                   <StyledButton2>Edit course</StyledButton2>
                 </Grid>
               </>
-            )}
+            ) : undefined}
             <Grid container item direction="row" xs={12}>
               <Grid item xs={3}>
                 Rating:{" "}
@@ -416,11 +464,18 @@ const CourseBody = (props) => {
               </Typography>
             </Grid>
             <Grid item>
-              <Typography
-                variant="body1"
-                className={classes.customText2}
-                dangerouslySetInnerHTML={{ __html: teacher.information }}
-              ></Typography>
+              <Collapse in={col1} collapsedHeight={150}>
+                <Paper elevation={0} className={classes.paper}>
+                  <Typography
+                    variant="body1"
+                    className={classes.customText2}
+                    dangerouslySetInnerHTML={{ __html: teacher.information }}
+                  ></Typography>
+                </Paper>
+              </Collapse>
+              <Button className={classes.customButton} onClick={handleClick1}>
+                <Expand></Expand>
+              </Button>
             </Grid>
           </Grid>
         </Grid>

@@ -117,7 +117,6 @@ const ProfileBody = (props) => {
       )}?page=${current}`,
       { headers: { "x-access-token": localStorage.getItem("accessToken") } }
     );
-    console.log(data.data);
     let array = [];
     for (let i = 0; i < data.data.length; i++) {
       const newdata = await axios.get(
@@ -126,13 +125,12 @@ const ProfileBody = (props) => {
       array.push(newdata.data);
     }
     setEnrolledCourses(array);
-    console.log(array);
     setOpen2(true);
   };
 
   const getLengthE = async () => {
     const length = await axios.get(
-      `http://localhost:8080/api/favoritecourses/${localStorage.getItem(
+      `http://localhost:8080/api/enrolledcourses/${localStorage.getItem(
         "iduser"
       )}`,
       { headers: { "x-access-token": localStorage.getItem("accessToken") } }
@@ -173,15 +171,23 @@ const ProfileBody = (props) => {
     const fetchData = async () => {
       await getFavoriteCourses(currPageF);
       await getLengthF();
+    };
+    fetchData();
+    return () => {
+      setFavoriteCourses([]);
+    };
+  }, [currPageF]);
+
+  useEffect(() => {
+    const fetchData = async () => {
       await getEnrolledCourses(currPageE);
       await getLengthE();
     };
     fetchData();
     return () => {
-      setFavoriteCourses([]);
       setEnrolledCourses([]);
     };
-  }, [currPageF, currPageE]);
+  }, [currPageE]);
 
   return (
     <Grid container className={classes.customGrid1} spacing={4}>

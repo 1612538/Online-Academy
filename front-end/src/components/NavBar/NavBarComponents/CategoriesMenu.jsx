@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Grow from '@material-ui/core/Grow';
-import Popper from '@material-ui/core/Popper';
-import {ColorButton} from '../NavBar';
-import axios from 'axios';
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import Grow from "@material-ui/core/Grow";
+import Popper from "@material-ui/core/Popper";
+import { ColorButton } from "../NavBar";
+import axios from "axios";
 
-import SmallCategoriesMenu from './SmallCategoriesMenu';
+import SmallCategoriesMenu from "./SmallCategoriesMenu";
 
 export default () => {
   const [open, setOpen] = React.useState(false);
@@ -24,48 +24,62 @@ export default () => {
     setOpen(false);
   };
 
-  const getCategories = () =>{
-    axios.get('http://localhost:8080/api/categories')
-    .then(res => {
-      const cats = res.data;
-      setCategories(cats);
-    })
-    .catch(err => console.log(err));
-  }
+  const getCategories = () => {
+    axios
+      .get("http://localhost:8080/api/categories")
+      .then((res) => {
+        const cats = res.data;
+        setCategories(cats);
+      })
+      .catch((err) => console.log(err));
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     getCategories();
     return () => {
       setCategories([]);
-    }
-  }, [])
+    };
+  }, []);
 
-    return (
-        <div>
-        <ColorButton
-          ref={anchorRef}
-          aria-controls={open ? 'menu-list-grow' : undefined}
-          aria-haspopup="true"
-          onClick={handleToggle}
-        >
-          Categories
-        </ColorButton>
-        <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal style={{marginLeft: '107px'}}>
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
-            >
-                <div>
-                <ClickAwayListener onClickAway={handleClose}>
-                  <div id="menu-list-grow">
-                  <SmallCategoriesMenu categories={categories} handleClose={handleClose}></SmallCategoriesMenu>
-                  </div>
-                </ClickAwayListener>
+  return (
+    <div>
+      <ColorButton
+        ref={anchorRef}
+        aria-controls={open ? "menu-list-grow" : undefined}
+        aria-haspopup="true"
+        onClick={handleToggle}
+      >
+        Categories
+      </ColorButton>
+      <Popper
+        open={open}
+        anchorEl={anchorRef.current}
+        role={undefined}
+        transition
+        disablePortal
+        style={{ marginLeft: "80px", zIndex: "1" }}
+      >
+        {({ TransitionProps, placement }) => (
+          <Grow
+            {...TransitionProps}
+            style={{
+              transformOrigin:
+                placement === "bottom" ? "center top" : "center bottom",
+            }}
+          >
+            <div>
+              <ClickAwayListener onClickAway={handleClose}>
+                <div id="menu-list-grow">
+                  <SmallCategoriesMenu
+                    categories={categories}
+                    handleClose={handleClose}
+                  ></SmallCategoriesMenu>
                 </div>
-            </Grow>
-          )}
-        </Popper>
-      </div>
-    );
-}
+              </ClickAwayListener>
+            </div>
+          </Grow>
+        )}
+      </Popper>
+    </div>
+  );
+};

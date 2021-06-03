@@ -44,7 +44,7 @@ const TopSubscribe = () => {
   return (
     <div className={classes.root}>
       <Typography variant="h4" className={classes.customText}>
-        Top bestseller courses
+        Bestseller courses
       </Typography>
       <Grid
         container

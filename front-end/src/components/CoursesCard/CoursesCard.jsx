@@ -65,8 +65,8 @@ const useStyles = makeStyles({
   },
 });
 
-export default (props) => {
-  const [course, setCourse] = React.useState(props.course);
+export default function CourseCard(props) {
+  const course = props.course;
   const [teacherName, setTeacherName] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
   const [bestseller, setBestSeller] = React.useState(false);
@@ -100,7 +100,7 @@ export default (props) => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchData = () => {
       getTeacherById(course.teacher);
       getCategoryById(course.idsmall_category);
       getBestSeller();
@@ -191,4 +191,4 @@ export default (props) => {
       </CardActionArea>
     </Card>
   );
-};
+}

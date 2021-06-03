@@ -14,12 +14,13 @@ import axios from "axios";
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
+    textAlign: "left",
   },
   paper: {
     backgroundColor: blue[50],
     padding: 10,
     margin: "auto",
-    maxWidth: 900,
+    width: 900,
   },
   image: {
     width: 128,
@@ -72,8 +73,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default (props) => {
-  const [course, setCourse] = React.useState(props.course);
+export default function CourseCard(props) {
+  const course = props.course;
   const [teacherName, setTeacherName] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
   const [bestseller, setBestSeller] = React.useState(false);
@@ -234,4 +235,4 @@ export default (props) => {
       </Paper>
     </div>
   );
-};
+}
