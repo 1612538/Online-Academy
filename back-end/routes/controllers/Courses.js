@@ -1,6 +1,5 @@
 const db = require("../../utils/db");
 const tbName = "courses";
-const upload = require("../../utils/multer");
 
 function currentDate() {
   var date = new Date();

@@ -105,4 +105,18 @@ module.exports = (app) => {
     .delete(EnrolledCourses.delete)
     .get(EnrolledCourses.getByData);
   app.route("/api/enrolledcourses/:iduser").get(EnrolledCourses.getByUserId);
+
+  //Course lectures
+  let CourseLectures = require("./controllers/CourseLectures");
+
+  app
+    .route("/api/courselectures")
+    .post(
+      upload.fields([{ name: "videoInput", maxCount: 1 }]),
+      CourseLectures.add
+    );
+  app.route("/api/courselectures/:id").get(CourseLectures.getByCourse);
+  app
+    .route("/api/courselectures/:idcourse/:idlecture")
+    .get(CourseLectures.getDetail);
 };

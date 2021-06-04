@@ -7,6 +7,7 @@ import Error from "./layouts/error/ErrorPage";
 import TeacherProfile from "./layouts/profile/TeacherProfile";
 import CoursesBySmallCats from "./layouts/main/CoursesBySmallCats";
 import CourseDetail from "./layouts/courseDetail/CourseDetail";
+import CourseLectures from "./layouts/courseDetail/CourseLectures";
 import AccountProfile from "./layouts/profile/AccountProfile";
 
 import { Router, Route, Switch } from "react-router-dom";
@@ -50,14 +51,18 @@ function App() {
             path="/categories/:id"
             render={(props) => <CoursesBySmallCats {...props} />}
           />
-          <Route path="/404Error" component={Error} />
           <Route
             path="/lecturer/:id"
             render={(props) => <TeacherProfile {...props} />}
           />
           <Route
+            exact
             path="/courses/:id"
             render={(props) => <CourseDetail {...props} />}
+          />
+          <PrivateRoute
+            path="/courses/lectures/:id"
+            component={CourseLectures}
           />
           <Route component={Error} />
         </Switch>

@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: "75%",
     backgroundColor: "rgba(255,255,255,0.5)",
-    margin: "50px auto 0 auto",
+    margin: "50px auto 50px auto",
     padding: "50px",
     borderRadius: "5px",
   },
@@ -392,7 +392,11 @@ const CourseBody = (props) => {
                   </Grid>
                 ) : (
                   <Grid item xs={12}>
-                    <StyledButton>View lectures</StyledButton>
+                    <StyledButton
+                      href={"/courses/lectures/" + props.match.params.id}
+                    >
+                      View lectures
+                    </StyledButton>
                   </Grid>
                 )}
                 {isFavorite === false ? (
@@ -413,7 +417,11 @@ const CourseBody = (props) => {
               parseInt(localStorage.getItem("iduser")) === teacher.iduser ? (
               <>
                 <Grid item xs={12}>
-                  <StyledButton>Add lectures</StyledButton>
+                  <StyledButton
+                    href={"/courses/lectures/" + props.match.params.id}
+                  >
+                    View lectures
+                  </StyledButton>
                 </Grid>
                 <Grid item xs={12}>
                   <StyledButton2>Edit course</StyledButton2>
