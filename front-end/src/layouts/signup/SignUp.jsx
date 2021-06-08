@@ -129,6 +129,7 @@ export default () => {
               isBlocked: 0,
               occupation: "Student",
               role: 0,
+              isVerify: 0,
             };
             axios
               .post(`http://localhost:8080/api/users`, data)
@@ -255,8 +256,9 @@ export default () => {
                   {success ? (
                     <Grow in={success}>
                       <Alert severity="success" variant="filled">
-                        Account is created successfully! <br /> You'll be
-                        redirect to Sign in
+                        Account is created!
+                        <br /> Activated link has been sent to your email <br />
+                        You'll be redirect to Sign in
                       </Alert>
                     </Grow>
                   ) : undefined}

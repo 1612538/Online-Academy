@@ -61,6 +61,7 @@ module.exports = (app) => {
   app.route("/api/usersByEmail/:email").get(Users.getByEmailClient);
   app.route("/api/users").post(Users.add);
   app.route("/api/users/:id").put(Users.update);
+  app.route("/api/confirmation/:email/:key").get(Users.confirmation);
   //Login
   app.route("/login").post(AuthController.login);
   app.route("/refresh-token").post(AuthController.refreshToken);

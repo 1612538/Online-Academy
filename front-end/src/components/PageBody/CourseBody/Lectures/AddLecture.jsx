@@ -97,7 +97,19 @@ const AddLectureForm = (props) => {
     );
     if (returnData.data.success) {
       props.lectureClose();
-      props.setUpdate(!props.update);
+      if (props.lectures.length === 5)
+        props.setPageNumberL((prevPage) => prevPage + 1);
+      else {
+        let tmp = props.lectures;
+        tmp.push({
+          title: title,
+          description: markup,
+          idcourse: props.match.params.id,
+          idlecture: props.length,
+          video: "",
+        });
+        props.setLectures(tmp);
+      }
     }
   };
 

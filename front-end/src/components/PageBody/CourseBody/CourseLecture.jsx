@@ -78,7 +78,6 @@ const CourseLecture = (props) => {
   const [currPage, setPage] = useState(1);
   const [currLecture, setCurrLecture] = useState(undefined);
   const [lectureForm, setLectureForm] = useState(false);
-  const [update, setUpdate] = useState(false);
   const [Length, setLength] = useState(0);
 
   const config = {
@@ -152,7 +151,7 @@ const CourseLecture = (props) => {
       setCourse({});
       setLectures([]);
     };
-  }, [update]);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -250,8 +249,9 @@ const CourseLecture = (props) => {
           <LectureForm
             lectureClose={LectureClose}
             open={lectureForm}
-            update={update}
-            setUpdate={setUpdate}
+            setPage={setPageNumberL}
+            lectures={lectures}
+            setLectures={setLectures}
             match={props.match}
             length={Length}
           ></LectureForm>

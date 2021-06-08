@@ -9,6 +9,7 @@ import CoursesBySmallCats from "./layouts/main/CoursesBySmallCats";
 import CourseDetail from "./layouts/courseDetail/CourseDetail";
 import CourseLectures from "./layouts/courseDetail/CourseLectures";
 import AccountProfile from "./layouts/profile/AccountProfile";
+import VerifyAccount from "./layouts/VerifyAccount/VerifyAccount";
 
 import { Router, Route, Switch } from "react-router-dom";
 import History from "./components/History";
@@ -44,6 +45,7 @@ function App() {
           <Route path="/signin" component={SignIn} />
           <Route path="/search" component={Search} />
           <Route path="/signup" component={SignUp} />
+          <Route path="/verifyaccount/:email" component={VerifyAccount} />
           <PrivateRoute path="/signout" component={SignOut} />
           <PrivateRoute path="/profile" component={AccountProfile} />
           <Route exact path="/" component={Home} />

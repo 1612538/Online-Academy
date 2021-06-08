@@ -1,6 +1,8 @@
 const db = require("../../utils/db");
 const tbName = "user";
 const bcrypt = require("../../utils/bcrypt");
+const mailer = require("../../utils/mailer");
+const jwthelpers = require("../../helpers/jwthelpers");
 
 module.exports = {
   getAll: (req, res) => {
@@ -85,9 +87,40 @@ module.exports = {
     let data = req.body;
     const passwordHash = await bcrypt.hashPassword(data.password);
     data.password = passwordHash;
+    const userData = {
+      email: data.email,
+    };
+    process.env.VERIFY_TOKEN = await jwthelpers.generateToken(
+      userData,
+      "VERIFY_TOKEN",
+      "1h"
+    );
+    await mailer.sendMail(
+      data.email,
+      "Account verification",
+      `Hello, please verify your email.<br/> <a href="http://localhost:8080/api/confirmation/${data.email}/${process.env.VERIFY_TOKEN}">Click here</a>`
+    );
     db.query(sql, [data], (err, result) => {
       if (err) throw err;
       res.json({ success: true });
     });
+  },
+  confirmation: (req, res) => {
+    const key = req.params.key;
+    if (key === process.env.VERIFY_TOKEN) {
+      const data = {
+        isVerify: 1,
+      };
+      const sql = `UPDATE ${tbName} SET ? WHERE email = ?`;
+      db.query(sql, [data, req.params.email], (err, result) => {
+        if (err) throw err;
+        res.redirect(
+          `http://localhost:3000/verifyaccount/${req.params.email}?success=true`
+        );
+      });
+    } else
+      res.redirect(
+        `http://localhost:3000/verifyaccount/${req.params.email}?success=false`
+      );
   },
 };
