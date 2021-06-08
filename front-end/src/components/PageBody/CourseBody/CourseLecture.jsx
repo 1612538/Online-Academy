@@ -23,7 +23,7 @@ import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "75%",
+    width: "90%",
     backgroundColor: "rgba(255,255,255,0.5)",
     margin: "50px auto 50px auto",
     padding: "50px",
@@ -189,9 +189,12 @@ const CourseLecture = (props) => {
                   <VolumeMenuButton order={7.2} />
                 </ControlBar>
               </Player>
-              <Typography variant="body1" className={classes.customText2}>
-                {currLecture.description}
-              </Typography>
+              <Typography
+                variant="body1"
+                className={classes.customText2}
+                key={Date()}
+                dangerouslySetInnerHTML={{ __html: currLecture.description }}
+              ></Typography>
             </>
           ) : undefined}
         </Grid>
@@ -199,23 +202,19 @@ const CourseLecture = (props) => {
           container
           item
           xs={4}
-          direction="column"
           alignItems="center"
+          justify="center"
           spacing={2}
         >
-          <Grid
-            container
-            item
-            xs={10}
-            justify="center"
-            alignItems="center"
-            style={{ height: "300px" }}
-          >
-            {lectures.map((obj, key) => {
-              <Grid item xs={10} key={key}>
-                <LectureCard data={obj}></LectureCard>
-              </Grid>;
-            })}
+          <Grid container item xs={10} justify="center" alignItems="center">
+            {lectures.map((obj, key) => (
+              <Grid item xs={12} key={key}>
+                <LectureCard
+                  data={obj}
+                  setCurrLecture={setCurrLecture}
+                ></LectureCard>
+              </Grid>
+            ))}
             <Box my={1} display="flex" justifyContent="center">
               <Pagination
                 count={pageNumberL ? pageNumberL : 1}
@@ -232,19 +231,28 @@ const CourseLecture = (props) => {
             </Box>
           </Grid>
           <Grid container item xs={11} justify="center">
-            <img src={"http://localhost:8080" + course.img} width="256px"></img>
-            <Typography variant="h6" className={classes.customText}>
-              {course.name}
-            </Typography>
-            {localStorage.getItem("role") === "1" ? (
-              <StyledButton
-                onClick={() => {
-                  setLectureForm(true);
-                }}
-              >
-                Add lectures
-              </StyledButton>
-            ) : undefined}
+            <Grid item>
+              <img
+                src={"http://localhost:8080" + course.img}
+                width="256px"
+              ></img>
+            </Grid>
+            <Grid item>
+              <Typography variant="h6" className={classes.customText}>
+                {course.name}
+              </Typography>
+            </Grid>
+            <Grid container item xs={12} justify="center">
+              {localStorage.getItem("role") === "1" ? (
+                <StyledButton
+                  onClick={() => {
+                    setLectureForm(true);
+                  }}
+                >
+                  Add lectures
+                </StyledButton>
+              ) : undefined}
+            </Grid>
           </Grid>
           <LectureForm
             lectureClose={LectureClose}

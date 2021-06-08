@@ -96,7 +96,6 @@ const AddLectureForm = (props) => {
       config
     );
     if (returnData.data.success) {
-      props.lectureClose();
       if (props.lectures.length === 5)
         props.setPageNumberL((prevPage) => prevPage + 1);
       else {
@@ -109,6 +108,7 @@ const AddLectureForm = (props) => {
           video: "",
         });
         props.setLectures(tmp);
+        props.lectureClose();
       }
     }
   };

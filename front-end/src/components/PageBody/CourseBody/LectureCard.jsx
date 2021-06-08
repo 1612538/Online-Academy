@@ -14,6 +14,10 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     backgroundColor: "rgba(250,242,237,1)",
     width: "100%",
+    cursor: "pointer",
+    "&:hover": {
+      backgroundColor: "rgba(220,220,220,1)",
+    },
   },
   image: {
     width: 80,
@@ -31,31 +35,38 @@ const useStyles = makeStyles((theme) => ({
     lineClamp: 2,
     overflow: "hidden",
     lineHeight: 1.3,
-    marginBottom: 2,
     width: "90%",
     textTransform: "none",
   },
 }));
 
-export default (props) => {
-  useEffect(() => {}, []);
+const LectureCard = (props) => {
+  useEffect(() => {
+    console.log(props.data);
+  }, []);
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <Paper className={classes.paper}>
-        <Grid container spacing={4}>
-          <Grid item>
+      <Paper
+        className={classes.paper}
+        onClick={() => {
+          props.setCurrLecture(props.data);
+        }}
+      >
+        <Grid container>
+          <Grid container justify="center" item xs={4}>
             <ButtonBase className={classes.image}>
               <img className={classes.img} alt="complex" src={VideoPlay} />
             </ButtonBase>
           </Grid>
-          <Grid item xs={12} sm container>
-            <Grid item xs container direction="column" spacing={0}>
+          <Grid item xs={8} container>
+            <Grid item xs container direction="column">
               <Grid item xs>
                 <Typography
                   gutterBottom
                   variant="h6"
                   className={classes.custom}
+                  style={{ margin: "10px 0 -10px 0" }}
                 >
                   {props.data.title}
                 </Typography>
@@ -65,9 +76,10 @@ export default (props) => {
                   gutterBottom
                   variant="subtitle1"
                   className={classes.custom}
-                >
-                  {props.data.description}
-                </Typography>
+                  style={{ margin: "-10px 0px -6px 0px" }}
+                  key={Date()}
+                  dangerouslySetInnerHTML={{ __html: props.data.description }}
+                ></Typography>
               </Grid>
             </Grid>
           </Grid>
@@ -76,3 +88,5 @@ export default (props) => {
     </div>
   );
 };
+
+export default LectureCard;
