@@ -1,39 +1,30 @@
 const db = require("../../utils/db");
-const tbName = "category";
+const tbName = "feedback";
 
 module.exports = {
-  getAll: (req, res) => {
-    const sql = `SELECT * FROM ${tbName}`;
-    db.query(sql, (err, result) => {
+  getAllByCourse: (req, res) => {
+    const sql = `SELECT * FROM ${tbName} WHERE idcourse = ?`;
+    db.query(sql, [req.params.id], (err, result) => {
       if (err) {
         throw err;
       }
       res.json(result);
     });
   },
-  detail: (req, res) => {
-    const sql = `SELECT * FROM ${tbName} WHERE idcategory = ?`;
-    db.query(sql, [req.params.id], (err, result) => {
-      if (err) {
-        throw err;
-      }
-      res.json(result[0]);
-    });
-  },
   delete: (req, res) => {
     let sql = `DELETE FROM ${tbName} WHERE idcategory = ?`;
     db.query(sql, [req.params.id], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Delete success!" });
+      res.json({ success: true });
     });
   },
   update: (req, res) => {
     let data = req.body;
     let id = req.params.id;
-    const sql = `UPDATE ${tbName} SET ? WHERE idcategory = ?`;
+    const sql = `UPDATE ${tbName} SET ? WHERE idfeedback = ?`;
     db.query(sql, [data, id], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Update success!" });
+      res.json({ success: true });
     });
   },
   add: (req, res) => {
@@ -41,7 +32,7 @@ module.exports = {
     let data = req.body;
     db.query(sql, [data], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Create success!" });
+      res.json({ success: true });
     });
   },
 };

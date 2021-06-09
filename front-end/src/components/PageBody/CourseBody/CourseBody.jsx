@@ -15,6 +15,7 @@ import Phone from "@material-ui/icons/PhoneAndroid";
 import "video-react/dist/video-react.css";
 import Expand from "@material-ui/icons/ExpandMore";
 import CourseList from "./CourseList";
+import CourseFeedback from "./CourseFeedback";
 
 import {
   Player,
@@ -300,12 +301,7 @@ const CourseBody = (props) => {
 
   return (
     <div className={classes.root}>
-      <Grid
-        container
-        direction="row"
-        className={classes.customGrid1}
-        spacing={0}
-      >
+      <Grid container direction="row" className={classes.customGrid1}>
         <Grid container item xs={8} spacing={2} alignItems="center">
           <Grid item xs={12}>
             <Typography variant="h4" className={classes.customText}>
@@ -520,6 +516,13 @@ const CourseBody = (props) => {
           <Typography variant="h5" className={classes.customText3}>
             Student feedback
           </Typography>
+          <CourseFeedback
+            isEnrolled={isEnrolled}
+            idcourse={course.idcourses}
+          ></CourseFeedback>
+          <Grid item style={{ textAlign: "center" }}>
+            <Expand></Expand>
+          </Grid>
         </Grid>
       </Grid>
     </div>

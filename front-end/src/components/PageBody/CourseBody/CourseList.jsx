@@ -66,14 +66,15 @@ const CourseSubscribe = (props) => {
         alignItems="center"
         style={{ padding: 20, width: "100%" }}
       >
-        <Grid item>
+        <Grid item xs={12}>
           <Fade in={open} timeout={1000}>
             <Grid
               container
               spacing={2}
               style={{
                 display: "block",
-                width: "1000px",
+                width: "95%",
+                margin: "auto",
                 height: "320px",
                 overflow: "auto",
                 whiteSpace: "nowrap",

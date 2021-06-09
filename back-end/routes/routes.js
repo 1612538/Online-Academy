@@ -59,6 +59,10 @@ module.exports = (app) => {
   app.route("/api/smallcategories/byCatID/:id").get(SmallCategories.getByCatID);
   app.route("/api/smallcategoriesbycount").get(SmallCategories.getByCount);
 
+  //Comment controller
+  let Comment = require("./controllers/Comment");
+  app.route("/api/commentsbycourse/:id").get(Comment.getAllByCourse);
+
   //User controller
   let Users = require("./controllers/Users");
   app.route("/api/users/:id").get(Users.detail);
@@ -84,6 +88,10 @@ module.exports = (app) => {
     ]),
     Courses.add
   );
+
+  //Comment controller
+  app.route("/api/comments/:id").put(Comment.update).delete(Comment.delete);
+  app.route("/api/comments").post(Comment.add);
 
   //FavoriteCourses controller
 
