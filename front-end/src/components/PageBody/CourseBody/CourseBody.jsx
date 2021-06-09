@@ -14,6 +14,7 @@ import Infinite from "@material-ui/icons/AllInclusive";
 import Phone from "@material-ui/icons/PhoneAndroid";
 import "video-react/dist/video-react.css";
 import Expand from "@material-ui/icons/ExpandMore";
+import CourseList from "./CourseList";
 
 import {
   Player,
@@ -430,7 +431,7 @@ const CourseBody = (props) => {
             ) : undefined}
             <Grid container item direction="row" xs={12}>
               <Grid item xs={3}>
-                Rating:{" "}
+                <Typography variant="body1">Rating:</Typography>
               </Grid>
               <Grid item xs={1} className={classes.rate}>
                 {course.rate}
@@ -447,6 +448,11 @@ const CourseBody = (props) => {
               <Grid item xs={2} style={{ marginLeft: "10px" }}>
                 ({course.ratevotes})
               </Grid>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="body2">
+                Last update: {course.lastupdate}
+              </Typography>
             </Grid>
             <Grid item xs={12}>
               <Typography variant="body1">This course includes: </Typography>
@@ -466,6 +472,9 @@ const CourseBody = (props) => {
               </Typography>
             </Grid>
           </Grid>
+        </Grid>
+        <Grid item xs={12}>
+          <CourseList catID={course.idsmall_category}></CourseList>
         </Grid>
         <Grid item xs={6}>
           <Typography variant="h5" className={classes.customText3}>

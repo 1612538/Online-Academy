@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import PageHeader from "../../components/PageHeader/PageHeader";
 import SearchBody from "../../components/PageBody/SearchBody/SearchBody";
 import QueryString from "query-string";
+import ChatBox from "../../components/ChatBot/ChatBox";
 import axios from "axios";
 
 const Search = (props) => {
@@ -60,6 +61,7 @@ const Search = (props) => {
         handleChange={handleChange}
         setSort={setSort}
       ></SearchBody>
+      <ChatBox></ChatBox>
     </div>
   );
 };

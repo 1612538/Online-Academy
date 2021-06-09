@@ -83,6 +83,15 @@ module.exports = {
       res.json(result);
     });
   },
+  getBySubscribeAndCat: (req, res) => {
+    const sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 AND idsmall_category = ? ORDER BY subscribes DESC limit 5`;
+    db.query(sql, [req.params.id], (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json(result);
+    });
+  },
   getByTeacher: (req, res) => {
     const pageNumber = parseInt(req.query.page) - 1;
     let sql = `SELECT * FROM ${tbName} WHERE teacher = ? AND isBlocked=0`;

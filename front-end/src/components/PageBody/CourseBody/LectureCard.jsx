@@ -15,6 +15,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "rgba(250,242,237,1)",
     width: "100%",
     cursor: "pointer",
+    borderRadius: "0px",
     "&:hover": {
       backgroundColor: "rgba(220,220,220,1)",
     },

@@ -28,6 +28,10 @@ module.exports = (app) => {
   app.route("/api/getByTeacher/:id").get(Courses.getByTeacher);
 
   app.route("/api/coursesByCatID/:catid").get(Courses.getByCatID);
+
+  app
+    .route("/api/coursesbysubscribeandcat/:id")
+    .get(Courses.getBySubscribeAndCat);
   //Categories controller
 
   let Categories = require("./controllers/Categories");
