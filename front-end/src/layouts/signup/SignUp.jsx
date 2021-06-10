@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default () => {
+const SignUp = () => {
   const classes = useStyles();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -299,3 +299,4 @@ export default () => {
     </div>
   );
 };
+export default SignUp;

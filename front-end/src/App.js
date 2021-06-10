@@ -11,6 +11,8 @@ import CourseLectures from "./layouts/courseDetail/CourseLectures";
 import AccountProfile from "./layouts/profile/AccountProfile";
 import VerifyAccount from "./layouts/VerifyAccount/VerifyAccount";
 
+import Admin from "./layouts/Admin/Admin";
+
 import { Router, Route, Switch } from "react-router-dom";
 import History from "./components/History";
 import { makeStyles } from "@material-ui/core/styles";
@@ -66,6 +68,7 @@ function App() {
             path="/courses/lectures/:id"
             component={CourseLectures}
           />
+          <PrivateRoute path="/admin" component={Admin}></PrivateRoute>
           <Route component={Error} />
         </Switch>
       </Router>
