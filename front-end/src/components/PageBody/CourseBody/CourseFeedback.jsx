@@ -70,7 +70,7 @@ const Feedback = (props) => {
       data.img = user.data.img;
       let tmp = comments;
       tmp.push(data);
-      setComments(tmp);
+      setComments([...tmp]);
     }
   };
 

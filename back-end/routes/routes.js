@@ -78,6 +78,8 @@ module.exports = (app) => {
   //User controller
 
   app.route("/api/users").get(Users.getAll);
+  app.route("/api/userslist").get(Users.getUser);
+  app.route("/api/teacherslist").get(Users.getTeacher);
   app.route("/api/users/:id").delete(Users.delete);
   app.route("/api/checkpassword/:id/:password").get(Users.checkPassword);
 

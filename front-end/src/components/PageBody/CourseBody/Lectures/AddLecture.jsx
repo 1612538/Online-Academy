@@ -107,7 +107,7 @@ const AddLectureForm = (props) => {
           idlecture: props.length,
           video: "",
         });
-        props.setLectures(tmp);
+        props.setLectures([...tmp]);
         props.lectureClose();
       }
     }

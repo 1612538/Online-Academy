@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Grid,
   Container,
@@ -18,6 +18,7 @@ import User from "@material-ui/icons/AccountCircleRounded";
 import Account from "@material-ui/icons/PersonRounded";
 import Category from "@material-ui/icons/Category";
 import Book from "@material-ui/icons/ImportContacts";
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,15 +41,53 @@ const useStyles = makeStyles((theme) => ({
   nested: {
     paddingLeft: "30px",
   },
+  nested2: {
+    paddingLeft: "50px",
+  },
 }));
 
 const SideBar = () => {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
+  const [open2, setOpen2] = React.useState(false);
+  const [cat, setCat] = React.useState([]);
+  const [smallcat, setSmallCat] = React.useState([]);
+  const [opens, setOpens] = React.useState([]);
+
+  const getCat = async () => {
+    const data = await axios.get("http://localhost:8080/api/categories");
+    setCat(data.data);
+    for (let i = 0; i < data.data.length; i++) {
+      let tmp = opens;
+      tmp.push(false);
+      setOpens(tmp);
+    }
+  };
+
+  const getSmallCat = async () => {
+    const data = await axios.get("http://localhost:8080/api/smallcategories");
+    setSmallCat(data.data);
+  };
 
   const handleClick = () => {
     setOpen(!open);
   };
+  const handleClick2 = () => {
+    setOpen2(!open2);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await getCat();
+      await getSmallCat();
+    };
+    fetchData();
+    console.log(open2);
+    return () => {
+      setSmallCat([]);
+      setCat([]);
+    };
+  }, []);
   return (
     <Container maxWidth="xl" className={classes.root}>
       <Box
@@ -76,41 +115,108 @@ const SideBar = () => {
         </Typography>
       </Box>
       <List component="nav" aria-labelledby="nested-list-subheader">
-        <ListItem button>
+        <ListItem button component="a" href="/admin/account">
           <ListItemIcon>
             <Account />
           </ListItemIcon>
           <ListItemText primary="My account" />
         </ListItem>
-        <ListItem button onClick={handleClick}>
+        <ListItem button onClick={handleClick2}>
           <ListItemIcon>
             <Category />
           </ListItemIcon>
           <ListItemText primary="Categories" />
-          {open ? <ExpandLess /> : <ExpandMore />}
+          {open2 ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
         <div style={{ overflow: "hidden" }}>
-          <Slide in={open} timeout={300} unmountOnExit>
+          <Slide in={open2} timeout={300} unmountOnExit>
             <List component="div" disablePadding>
-              <ListItem button className={classes.nested}>
-                <ListItemIcon></ListItemIcon>
-                <ListItemText primary="Starred" />
-              </ListItem>
+              {cat.map((obj, key) => (
+                <ListItem
+                  key={key}
+                  button
+                  className={classes.nested}
+                  component="a"
+                  href={`/admin/categories/${obj.idcategory}`}
+                >
+                  <ListItemIcon></ListItemIcon>
+                  <ListItemText primary={obj.name} />
+                </ListItem>
+              ))}
             </List>
           </Slide>
         </div>
-        <ListItem button>
+        <ListItem button component="a" href="/admin/users">
           <ListItemIcon>
             <User />
           </ListItemIcon>
           <ListItemText primary="User list" />
         </ListItem>
-        <ListItem button>
+        <ListItem button component="a" href="/admin/teachers">
+          <ListItemIcon>
+            <User />
+          </ListItemIcon>
+          <ListItemText primary="Teacher list" />
+        </ListItem>
+        <ListItem button onClick={handleClick}>
           <ListItemIcon>
             <Book />
           </ListItemIcon>
           <ListItemText primary="Courses list" />
+          {open ? <ExpandLess /> : <ExpandMore />}
         </ListItem>
+        <div style={{ overflow: "hidden" }}>
+          <Slide in={open} timeout={300} unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem
+                button
+                className={classes.nested}
+                component="a"
+                href="/admin/courses"
+              >
+                <ListItemIcon></ListItemIcon>
+                <ListItemText primary="All categories" />
+              </ListItem>
+              {cat.map((obj, key) => (
+                <div key={key}>
+                  <ListItem
+                    button
+                    className={classes.nested}
+                    onClick={() => {
+                      let tmp = opens;
+                      tmp[key] = !tmp[key];
+                      setOpens([...tmp]);
+                    }}
+                  >
+                    <ListItemIcon></ListItemIcon>
+                    <ListItemText primary={obj.name} />
+                    {opens[key] ? <ExpandLess /> : <ExpandMore />}
+                  </ListItem>
+                  <div style={{ overflow: "hidden" }}>
+                    <Slide in={opens[key]} timeout={300} unmountOnExit>
+                      <List component="div" disablePadding>
+                        {smallcat
+                          .filter((x) => x.idcategory === obj.idcategory)
+                          .map((obj2, key2) => (
+                            <ListItem
+                              button
+                              className={classes.nested2}
+                              key={key2}
+                              component="a"
+                              href={`/admin/courses/${obj2.idsmall_category}`}
+                            >
+                              <ListItemIcon></ListItemIcon>
+                              <ListItemText primary={obj2.name} />
+                            </ListItem>
+                          ))}
+                      </List>
+                    </Slide>
+                  </div>
+                </div>
+              ))}
+            </List>
+          </Slide>
+        </div>
       </List>
     </Container>
   );

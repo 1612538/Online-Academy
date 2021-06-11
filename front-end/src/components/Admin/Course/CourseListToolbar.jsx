@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 
-const UserListToolbar = () => (
+const CourseListToolbar = () => (
   <Box>
     <Box
       style={{
@@ -35,7 +35,7 @@ const UserListToolbar = () => (
                   </InputAdornment>
                 ),
               }}
-              placeholder="Search user"
+              placeholder="Search course"
               variant="outlined"
             />
           </Box>
@@ -45,4 +45,4 @@ const UserListToolbar = () => (
   </Box>
 );
 
-export default UserListToolbar;
+export default CourseListToolbar;

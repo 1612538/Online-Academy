@@ -1,14 +1,14 @@
 import { Box, Container } from "@material-ui/core";
-import UserListResults from "../../../components/Admin/User/UserListResults";
-import UserListToolbar from "../../../components/Admin/User/UserListToolbar";
+import CourseListResults from "../../../components/Admin/Course/CourseListResults";
+import CourseListToolbar from "../../../components/Admin/Course/CourseListToolbar";
 
 const UserList = () => (
   <>
     <Box>
       <Container maxWidth={false}>
-        <UserListToolbar />
+        <CourseListToolbar />
         <Box style={{ paddingTop: 30 }}>
-          <UserListResults />
+          <CourseListResults />
         </Box>
       </Container>
     </Box>

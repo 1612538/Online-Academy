@@ -7,26 +7,26 @@ import {
   InputAdornment,
   SvgIcon,
 } from "@material-ui/core";
-import { Search as SearchIcon } from "@material-ui/icons/Search";
+import SearchIcon from "@material-ui/icons/Search";
 
-const CustomerListToolbar = (props) => (
-  <Box {...props}>
+const TeacherListToolbar = () => (
+  <Box>
     <Box
-      sx={{
+      style={{
         display: "flex",
         justifyContent: "flex-end",
       }}
     >
       <Button>Import</Button>
-      <Button sx={{ mx: 1 }}>Export</Button>
+      <Button style={{ marginLeft: 10, marginRight: 10 }}>Export</Button>
       <Button color="primary" variant="contained">
-        Add customer
+        Add teacher
       </Button>
     </Box>
-    <Box sx={{ mt: 3 }}>
+    <Box style={{ marginTop: 30 }}>
       <Card>
         <CardContent>
-          <Box sx={{ maxWidth: 500 }}>
+          <Box style={{ maxWidth: 500 }}>
             <TextField
               fullWidth
               InputProps={{
@@ -38,7 +38,7 @@ const CustomerListToolbar = (props) => (
                   </InputAdornment>
                 ),
               }}
-              placeholder="Search customer"
+              placeholder="Search teacher"
               variant="outlined"
             />
           </Box>
@@ -48,4 +48,4 @@ const CustomerListToolbar = (props) => (
   </Box>
 );
 
-export default CustomerListToolbar;
+export default TeacherListToolbar;

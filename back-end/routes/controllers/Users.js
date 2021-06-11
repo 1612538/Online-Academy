@@ -15,6 +15,26 @@ module.exports = {
     });
   },
 
+  getTeacher: (req, res) => {
+    const sql = `SELECT * FROM ${tbName} WHERE role = 1`;
+    db.query(sql, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json(result);
+    });
+  },
+
+  getUser: (req, res) => {
+    const sql = `SELECT * FROM ${tbName} WHERE role = 0`;
+    db.query(sql, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json(result);
+    });
+  },
+
   getByEmail: async (req, res) => {
     const sql = `SELECT * FROM ${tbName} WHERE email = ?`;
     const results = await new Promise((resolve, reject) => {

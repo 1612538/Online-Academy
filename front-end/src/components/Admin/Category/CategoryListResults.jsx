@@ -14,23 +14,16 @@ import {
 } from "@material-ui/core";
 import axios from "axios";
 
-const TeacherListResults = () => {
+const CategoryListResults = (props) => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
-  const [teachers, setTeachers] = useState([]);
+  const [cats, setCats] = useState([]);
 
-  const config = {
-    headers: {
-      "x-access-token": localStorage.getItem("accessToken"),
-    },
-  };
-
-  const getTeacher = async () => {
+  const getCats = async () => {
     const data = await axios.get(
-      "http://localhost:8080/api/teacherslist",
-      config
+      `http://localhost:8080/api/smallcategories/byCatID/${props.match.params.id}`
     );
-    if (data.data) setTeachers(data.data);
+    if (data.data) setCats(data.data);
   };
 
   const handleLimitChange = (event) => {
@@ -43,13 +36,13 @@ const TeacherListResults = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getTeacher();
+      await getCats();
     };
     fetchData();
     return () => {
-      setTeachers([]);
+      setCats([]);
     };
-  }, []);
+  }, [props.match]);
 
   return (
     <Card>
@@ -58,14 +51,12 @@ const TeacherListResults = () => {
           <TableHead>
             <TableRow>
               <TableCell>Avatar</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Occupation</TableCell>
+              <TableCell>Searched times</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {teachers.slice(0, limit).map((teacher, key) => (
+            {cats.slice(0, limit).map((cat, key) => (
               <TableRow hover key={key}>
                 <TableCell>
                   <Box
@@ -75,19 +66,17 @@ const TeacherListResults = () => {
                     }}
                   >
                     <Avatar
-                      src={"http://localhost:8080" + teacher.img}
+                      src={"http://localhost:8080" + cat.img}
                       style={{ marginRight: "20px" }}
                     >
-                      {teacher.name}
+                      {cat.name}
                     </Avatar>
                     <Typography color="textPrimary" variant="body1">
-                      {teacher.firstname + " " + teacher.lastname}
+                      {cat.name}
                     </Typography>
                   </Box>
                 </TableCell>
-                <TableCell>{teacher.email}</TableCell>
-                <TableCell>{teacher.username}</TableCell>
-                <TableCell>{teacher.occupation}</TableCell>
+                <TableCell>{cat.count}</TableCell>
                 <TableCell></TableCell>
               </TableRow>
             ))}
@@ -96,7 +85,7 @@ const TeacherListResults = () => {
       </Box>
       <TablePagination
         component="div"
-        count={teachers ? teachers.length : 0}
+        count={cats ? cats.length : 0}
         onChangePage={handlePageChange}
         onChangeRowsPerPage={handleLimitChange}
         page={page}
@@ -107,4 +96,4 @@ const TeacherListResults = () => {
   );
 };
 
-export default TeacherListResults;
+export default CategoryListResults;

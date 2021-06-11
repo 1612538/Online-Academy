@@ -1,5 +1,4 @@
-import { useState } from "react";
-import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
 import {
   Avatar,
   Box,
@@ -13,49 +12,22 @@ import {
   TableRow,
   Typography,
 } from "@material-ui/core";
+import axios from "axios";
 
-const CustomerListResults = ({ customers, ...rest }) => {
-  const [selectedCustomerIds, setSelectedCustomerIds] = useState([]);
+const UserListResults = () => {
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
+  const [users, setUsers] = useState([]);
 
-  const handleSelectAll = (event) => {
-    let newSelectedCustomerIds;
-
-    if (event.target.checked) {
-      newSelectedCustomerIds = customers.map((customer) => customer.id);
-    } else {
-      newSelectedCustomerIds = [];
-    }
-
-    setSelectedCustomerIds(newSelectedCustomerIds);
+  const config = {
+    headers: {
+      "x-access-token": localStorage.getItem("accessToken"),
+    },
   };
 
-  const handleSelectOne = (event, id) => {
-    const selectedIndex = selectedCustomerIds.indexOf(id);
-    let newSelectedCustomerIds = [];
-
-    if (selectedIndex === -1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds,
-        id
-      );
-    } else if (selectedIndex === 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds.slice(1)
-      );
-    } else if (selectedIndex === selectedCustomerIds.length - 1) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds.slice(0, -1)
-      );
-    } else if (selectedIndex > 0) {
-      newSelectedCustomerIds = newSelectedCustomerIds.concat(
-        selectedCustomerIds.slice(0, selectedIndex),
-        selectedCustomerIds.slice(selectedIndex + 1)
-      );
-    }
-
-    setSelectedCustomerIds(newSelectedCustomerIds);
+  const getUser = async () => {
+    const data = await axios.get("http://localhost:8080/api/userslist", config);
+    if (data.data) setUsers(data.data);
   };
 
   const handleLimitChange = (event) => {
@@ -66,46 +38,32 @@ const CustomerListResults = ({ customers, ...rest }) => {
     setPage(newPage);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      await getUser();
+    };
+    fetchData();
+    return () => {
+      setUsers([]);
+    };
+  }, []);
+
   return (
-    <Card {...rest}>
+    <Card>
       <Box style={{ minWidth: 1050 }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  checked={selectedCustomerIds.length === customers.length}
-                  color="primary"
-                  indeterminate={
-                    selectedCustomerIds.length > 0 &&
-                    selectedCustomerIds.length < customers.length
-                  }
-                  onChange={handleSelectAll}
-                />
-              </TableCell>
               <TableCell>Avatar</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Username</TableCell>
-              <TableCell>First name</TableCell>
-              <TableCell>Last name</TableCell>
               <TableCell>Occupation</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {customers.slice(0, limit).map((customer) => (
-              <TableRow
-                hover
-                key={customer.id}
-                selected={selectedCustomerIds.indexOf(customer.id) !== -1}
-              >
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedCustomerIds.indexOf(customer.id) !== -1}
-                    onChange={(event) => handleSelectOne(event, customer.id)}
-                    value="true"
-                  />
-                </TableCell>
+            {users.slice(0, limit).map((user, key) => (
+              <TableRow hover key={key}>
                 <TableCell>
                   <Box
                     style={{
@@ -113,20 +71,21 @@ const CustomerListResults = ({ customers, ...rest }) => {
                       display: "flex",
                     }}
                   >
-                    <Avatar src={customer.avatarUrl} style={{ mr: 2 }}>
-                      {customer.name}
+                    <Avatar
+                      src={"http://localhost:8080" + user.img}
+                      style={{ marginRight: "20px" }}
+                    >
+                      {user.name}
                     </Avatar>
                     <Typography color="textPrimary" variant="body1">
-                      {customer.name}
+                      {user.firstname + " " + user.lastname}
                     </Typography>
                   </Box>
                 </TableCell>
-                <TableCell>{customer.email}</TableCell>
-                <TableCell>
-                  {`${customer.address.city}, ${customer.address.state}, ${customer.address.country}`}
-                </TableCell>
-                <TableCell>{customer.phone}</TableCell>
-                <TableCell>{customer.createdAt}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.username}</TableCell>
+                <TableCell>{user.occupation}</TableCell>
+                <TableCell></TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -134,9 +93,9 @@ const CustomerListResults = ({ customers, ...rest }) => {
       </Box>
       <TablePagination
         component="div"
-        count={customers.length}
-        onPageChange={handlePageChange}
-        onRowsPerPageChange={handleLimitChange}
+        count={users ? users.length : 0}
+        onChangePage={handlePageChange}
+        onChangeRowsPerPage={handleLimitChange}
         page={page}
         rowsPerPage={limit}
         rowsPerPageOptions={[5, 10, 25]}
@@ -145,8 +104,4 @@ const CustomerListResults = ({ customers, ...rest }) => {
   );
 };
 
-CustomerListResults.propTypes = {
-  customers: PropTypes.array.isRequired,
-};
-
-export default CustomerListResults;
+export default UserListResults;
