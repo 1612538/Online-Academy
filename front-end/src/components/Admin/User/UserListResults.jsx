@@ -13,12 +13,21 @@ import {
   Typography,
 } from "@material-ui/core";
 import axios from "axios";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
+import ClearIcon from "@material-ui/icons/Clear";
+import CheckIcon from "@material-ui/icons/Check";
 
 const UserListResults = () => {
   const [limit, setLimit] = useState(10);
   const [start, setStart] = useState(0);
   const [page, setPage] = useState(0);
   const [users, setUsers] = useState([]);
+  const [show, setShow] = useState(-1);
+  const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
 
   const config = {
     headers: {
@@ -35,6 +44,41 @@ const UserListResults = () => {
     setPage(newPage);
     setLimit(newPage * 10 + 10);
     setStart(newPage * 10);
+  };
+
+  const handleDelete = async (id) => {
+    const data = await axios.delete(
+      `http://localhost:8080/api/users/${id}`,
+      config
+    );
+    if (data.data.success === true) {
+      let tmp = users;
+      tmp = tmp.filter((obj) => obj.iduser !== id);
+      setUsers([...tmp]);
+    }
+  };
+
+  const handleUpdate = async (id) => {
+    const data = {
+      email: email,
+      firstname: firstName,
+      lastname: lastName,
+      username: username,
+    };
+    const returnData = await axios.put(
+      `http://localhost:8080/api/users/${id}`,
+      data,
+      config
+    );
+    if (returnData.data.success === true) {
+      let tmp = users;
+      let i = tmp.findIndex((obj) => obj.iduser === id);
+      tmp[i].email = email;
+      tmp[i].firstname = firstName;
+      tmp[i].lastname = lastName;
+      tmp[i].username = username;
+      setUsers([...tmp]);
+    }
   };
 
   useEffect(() => {
@@ -77,18 +121,148 @@ const UserListResults = () => {
                     >
                       {user.name}
                     </Avatar>
-                    <Typography color="textPrimary" variant="body1">
-                      {user.firstname + " " + user.lastname}
-                    </Typography>
+                    {show !== key ? (
+                      <Typography color="textPrimary" variant="body1">
+                        {user.firstname + " " + user.lastname}
+                      </Typography>
+                    ) : (
+                      <>
+                        <TextField
+                          label="First name"
+                          variant="outlined"
+                          defaultValue={user.firstname}
+                          style={{
+                            height: "40px",
+                            width: "120px",
+                            marginRight: "10px",
+                          }}
+                          onChange={(e) => {
+                            setFirstName(e.target.value);
+                          }}
+                        />
+                        <TextField
+                          label="Last name"
+                          variant="outlined"
+                          defaultValue={user.lastname}
+                          style={{ height: "40px", width: "120px" }}
+                          onChange={(e) => {
+                            setLastName(e.target.value);
+                          }}
+                        />
+                      </>
+                    )}
                   </Box>
                 </TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.username}</TableCell>
+                <TableCell>
+                  {show !== key ? (
+                    user.email
+                  ) : (
+                    <TextField
+                      label="Email"
+                      variant="outlined"
+                      defaultValue={user.email}
+                      style={{ height: "40px" }}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                      }}
+                    />
+                  )}
+                </TableCell>
+                <TableCell>
+                  {show !== key ? (
+                    user.username
+                  ) : (
+                    <TextField
+                      label="Occupation"
+                      variant="outlined"
+                      defaultValue={user.username}
+                      style={{ height: "40px" }}
+                      onChange={(e) => {
+                        setOccupation(e.target.value);
+                      }}
+                    />
+                  )}
+                </TableCell>
                 <TableCell>{user.occupation}</TableCell>
                 <TableCell>
                   {user.isVerify === 0 ? "Not verify" : "Verified"}
                 </TableCell>
-                <TableCell></TableCell>
+                <TableCell>
+                  {show !== key ? (
+                    <>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        style={{
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                        }}
+                        onClick={() => {
+                          setShow(key);
+                          setUsername(user.username);
+                          setFirstName(user.firstname);
+                          setLastName(user.lastname);
+                          setEmail(user.email);
+                        }}
+                      >
+                        <EditIcon></EditIcon>
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        style={{
+                          marginLeft: "10px",
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                        }}
+                        onClick={() => {
+                          handleDelete(user.iduser);
+                        }}
+                      >
+                        <DeleteIcon></DeleteIcon>
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        style={{
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                        }}
+                        onClick={() => {
+                          handleUpdate(user.iduser);
+                          setShow(-1);
+                        }}
+                      >
+                        <CheckIcon></CheckIcon>
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        style={{
+                          marginLeft: "10px",
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                        }}
+                        onClick={() => {
+                          setShow(-1);
+                        }}
+                      >
+                        <ClearIcon></ClearIcon>
+                      </Button>
+                    </>
+                  )}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
