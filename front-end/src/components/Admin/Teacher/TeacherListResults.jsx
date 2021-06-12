@@ -3,7 +3,7 @@ import {
   Avatar,
   Box,
   Card,
-  Checkbox,
+  Button,
   Table,
   TableBody,
   TableCell,
@@ -11,13 +11,24 @@ import {
   TablePagination,
   TableRow,
   Typography,
+  TextField,
 } from "@material-ui/core";
 import axios from "axios";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
+import ClearIcon from "@material-ui/icons/Clear";
+import CheckIcon from "@material-ui/icons/Check";
 
-const TeacherListResults = () => {
+const TeacherListResults = ({ update }) => {
   const [limit, setLimit] = useState(10);
+  const [start, setStart] = useState(0);
   const [page, setPage] = useState(0);
+  const [show, setShow] = useState(-1);
   const [teachers, setTeachers] = useState([]);
+  const [occupation, setOccupation] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
 
   const config = {
     headers: {
@@ -33,12 +44,45 @@ const TeacherListResults = () => {
     if (data.data) setTeachers(data.data);
   };
 
-  const handleLimitChange = (event) => {
-    setLimit(event.target.value);
+  const handleDelete = async (id) => {
+    const data = await axios.delete(
+      `http://localhost:8080/api/users/${id}`,
+      config
+    );
+    if (data.data.success === true) {
+      let tmp = teachers;
+      tmp = tmp.filter((obj) => obj.iduser !== id);
+      setTeachers([...tmp]);
+    }
+  };
+
+  const handleUpdate = async (id) => {
+    const data = {
+      email: email,
+      firstname: firstName,
+      lastname: lastName,
+      occupation: occupation,
+    };
+    const returnData = await axios.put(
+      `http://localhost:8080/api/users/${id}`,
+      data,
+      config
+    );
+    if (returnData.data.success === true) {
+      let tmp = teachers;
+      let i = tmp.findIndex((obj) => obj.iduser === id);
+      tmp[i].email = email;
+      tmp[i].firstname = firstName;
+      tmp[i].lastname = lastName;
+      tmp[i].occupation = occupation;
+      setTeachers([...tmp]);
+    }
   };
 
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
+    setLimit(newPage * 10 + 10);
+    setStart(newPage * 10);
   };
 
   useEffect(() => {
@@ -49,7 +93,7 @@ const TeacherListResults = () => {
     return () => {
       setTeachers([]);
     };
-  }, []);
+  }, [update]);
 
   return (
     <Card>
@@ -57,15 +101,16 @@ const TeacherListResults = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Avatar</TableCell>
+              <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Role</TableCell>
               <TableCell>Occupation</TableCell>
+              <TableCell>Verify</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {teachers.slice(0, limit).map((teacher, key) => (
+            {teachers.slice(start, limit).map((teacher, key) => (
               <TableRow hover key={key}>
                 <TableCell>
                   <Box
@@ -80,15 +125,148 @@ const TeacherListResults = () => {
                     >
                       {teacher.name}
                     </Avatar>
-                    <Typography color="textPrimary" variant="body1">
-                      {teacher.firstname + " " + teacher.lastname}
-                    </Typography>
+                    {show !== key ? (
+                      <Typography color="textPrimary" variant="body1">
+                        {teacher.firstname + " " + teacher.lastname}
+                      </Typography>
+                    ) : (
+                      <>
+                        <TextField
+                          label="First name"
+                          variant="outlined"
+                          defaultValue={teacher.firstname}
+                          style={{
+                            height: "40px",
+                            width: "120px",
+                            marginRight: "10px",
+                          }}
+                          onChange={(e) => {
+                            setFirstName(e.target.value);
+                          }}
+                        />
+                        <TextField
+                          label="Last name"
+                          variant="outlined"
+                          defaultValue={teacher.lastname}
+                          style={{ height: "40px", width: "120px" }}
+                          onChange={(e) => {
+                            setLastName(e.target.value);
+                          }}
+                        />
+                      </>
+                    )}
                   </Box>
                 </TableCell>
-                <TableCell>{teacher.email}</TableCell>
+                <TableCell>
+                  {show !== key ? (
+                    teacher.email
+                  ) : (
+                    <TextField
+                      label="Email"
+                      variant="outlined"
+                      defaultValue={teacher.email}
+                      style={{ height: "40px" }}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                      }}
+                    />
+                  )}
+                </TableCell>
                 <TableCell>{teacher.username}</TableCell>
-                <TableCell>{teacher.occupation}</TableCell>
-                <TableCell></TableCell>
+                <TableCell>
+                  {show !== key ? (
+                    teacher.occupation
+                  ) : (
+                    <TextField
+                      label="Occupation"
+                      variant="outlined"
+                      defaultValue={teacher.occupation}
+                      style={{ height: "40px" }}
+                      onChange={(e) => {
+                        setOccupation(e.target.value);
+                      }}
+                    />
+                  )}
+                </TableCell>
+                <TableCell>
+                  {teacher.isVerify === 0 ? "Not verify" : "Verified"}
+                </TableCell>
+                <TableCell>
+                  {show !== key ? (
+                    <>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        style={{
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                        }}
+                        onClick={() => {
+                          setShow(key);
+                          setOccupation(teacher.occupation);
+                          setFirstName(teacher.firstname);
+                          setLastName(teacher.lastname);
+                          setEmail(teacher.email);
+                        }}
+                      >
+                        <EditIcon></EditIcon>
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        style={{
+                          marginLeft: "10px",
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                        }}
+                        onClick={() => {
+                          handleDelete(teacher.iduser);
+                        }}
+                      >
+                        <DeleteIcon></DeleteIcon>
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        style={{
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                        }}
+                        onClick={() => {
+                          handleUpdate(teacher.iduser);
+                          setShow(-1);
+                        }}
+                      >
+                        <CheckIcon></CheckIcon>
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        style={{
+                          marginLeft: "10px",
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                        }}
+                        onClick={() => {
+                          setShow(-1);
+                        }}
+                      >
+                        <ClearIcon></ClearIcon>
+                      </Button>
+                    </>
+                  )}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -98,10 +276,9 @@ const TeacherListResults = () => {
         component="div"
         count={teachers ? teachers.length : 0}
         onChangePage={handlePageChange}
-        onChangeRowsPerPage={handleLimitChange}
         page={page}
-        rowsPerPage={limit}
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPage={10}
+        rowsPerPageOptions={[10]}
       />
     </Card>
   );

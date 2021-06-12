@@ -1,4 +1,4 @@
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 import { Grid } from "@material-ui/core";
 import Account from "./pages/Account";
 import UserList from "./pages/UserList";
@@ -36,6 +36,10 @@ const Admin = ({ match }) => {
               path={`${match.url}/courses/:id`}
               component={CourseListByCat}
             />
+            <Redirect
+              from={`${match.url}/`}
+              to={`${match.url}/account`}
+            ></Redirect>
             <Route component={Error} />
           </Switch>
         </Grid>

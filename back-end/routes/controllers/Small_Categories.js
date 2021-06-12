@@ -42,7 +42,7 @@ module.exports = {
     let sql = `DELETE FROM ${tbName} WHERE idsmall_category = ?`;
     db.query(sql, [req.params.id], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Delete success!" });
+      res.json({ success: true });
     });
   },
   update: (req, res) => {
@@ -51,15 +51,20 @@ module.exports = {
     const sql = `UPDATE ${tbName} SET ? WHERE idsmall_category = ?`;
     db.query(sql, [data, id], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Update success!" });
+      res.json({ success: true });
     });
   },
-  add: async (entity) => {
+  add: (req, res) => {
     const sql = `INSERT INTO ${tbName} SET ?`;
-    let data = req.body;
-    db.query(sql, [data], (err, result) => {
+    const scat = {
+      name: req.body.name,
+      idcategory: req.body.idcategory,
+      count: req.body.count,
+      img: "/tmp/my-uploads/" + req.files["imageInput"][0].filename,
+    };
+    db.query(sql, [scat], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Create success!" });
+      res.json({ success: true });
     });
   },
 };

@@ -1,20 +1,22 @@
+import { useState } from "react";
 import { Box, Container } from "@material-ui/core";
-import CustomerListResults from "../../../components/Admin/Teacher/TeacherListResults";
-import CustomerListToolbar from "../../../components/Admin/Teacher/TeacherListToolbar";
+import TeacherListResults from "../../../components/Admin/Teacher/TeacherListResults";
+import TeacherListToolbar from "../../../components/Admin/Teacher/TeacherListToolbar";
 
-const customers = [];
+const TeacherList = () => {
+  const [update, setUpdate] = useState(false);
+  return (
+    <>
+      <Box>
+        <Container maxWidth={false}>
+          <TeacherListToolbar setUpdate={setUpdate} update={update} />
+          <Box style={{ paddingTop: 30 }}>
+            <TeacherListResults update={update} />
+          </Box>
+        </Container>
+      </Box>
+    </>
+  );
+};
 
-const CustomerList = () => (
-  <>
-    <Box>
-      <Container maxWidth={false}>
-        <CustomerListToolbar />
-        <Box style={{ paddingTop: 30 }}>
-          <CustomerListResults customers={customers} />
-        </Box>
-      </Container>
-    </Box>
-  </>
-);
-
-export default CustomerList;
+export default TeacherList;

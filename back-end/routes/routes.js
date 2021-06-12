@@ -28,7 +28,7 @@ module.exports = (app) => {
   app.route("/api/getByTeacher/:id").get(Courses.getByTeacher);
 
   app.route("/api/coursesByCatID/:catid").get(Courses.getByCatID);
-
+  app.route("/api/coursesNumber/:catid").get(Courses.getQuantityByCatID);
   app
     .route("/api/coursesbysubscribeandcat/:id")
     .get(Courses.getBySubscribeAndCat);
@@ -45,16 +45,9 @@ module.exports = (app) => {
   //Small categories controller
 
   let SmallCategories = require("./controllers/Small_Categories");
-  app
-    .route("/api/smallcategories")
-    .get(SmallCategories.getAll)
-    .post(SmallCategories.add);
+  app.route("/api/smallcategories").get(SmallCategories.getAll);
 
-  app
-    .route("/api/smallcategories/:id")
-    .get(SmallCategories.detail)
-    .put(SmallCategories.update)
-    .delete(SmallCategories.delete);
+  app.route("/api/smallcategories/:id").get(SmallCategories.detail);
 
   app.route("/api/smallcategories/byCatID/:id").get(SmallCategories.getByCatID);
   app.route("/api/smallcategoriesbycount").get(SmallCategories.getByCount);
@@ -90,6 +83,18 @@ module.exports = (app) => {
     ]),
     Courses.add
   );
+
+  app
+    .route("/api/smallcategories")
+    .post(
+      upload.fields([{ name: "imageInput", maxCount: 1 }]),
+      SmallCategories.add
+    );
+
+  app
+    .route("/api/smallcategories/:id")
+    .put(SmallCategories.update)
+    .delete(SmallCategories.delete);
 
   //Comment controller
   app.route("/api/comments/:id").put(Comment.update).delete(Comment.delete);

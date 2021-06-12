@@ -59,7 +59,7 @@ const CourseListResults = ({ match }) => {
     return () => {
       setCourses([]);
     };
-  }, []);
+  }, [match]);
 
   return (
     <Card>

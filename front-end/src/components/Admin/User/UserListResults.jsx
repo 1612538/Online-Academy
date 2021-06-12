@@ -16,6 +16,7 @@ import axios from "axios";
 
 const UserListResults = () => {
   const [limit, setLimit] = useState(10);
+  const [start, setStart] = useState(0);
   const [page, setPage] = useState(0);
   const [users, setUsers] = useState([]);
 
@@ -30,12 +31,10 @@ const UserListResults = () => {
     if (data.data) setUsers(data.data);
   };
 
-  const handleLimitChange = (event) => {
-    setLimit(event.target.value);
-  };
-
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
+    setLimit(newPage * 10 + 10);
+    setStart(newPage * 10);
   };
 
   useEffect(() => {
@@ -54,15 +53,16 @@ const UserListResults = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Avatar</TableCell>
+              <TableCell>Name</TableCell>
               <TableCell>Email</TableCell>
               <TableCell>Username</TableCell>
               <TableCell>Occupation</TableCell>
+              <TableCell>Verify</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.slice(0, limit).map((user, key) => (
+            {users.slice(start, limit).map((user, key) => (
               <TableRow hover key={key}>
                 <TableCell>
                   <Box
@@ -85,6 +85,9 @@ const UserListResults = () => {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.occupation}</TableCell>
+                <TableCell>
+                  {user.isVerify === 0 ? "Not verify" : "Verified"}
+                </TableCell>
                 <TableCell></TableCell>
               </TableRow>
             ))}
@@ -95,10 +98,9 @@ const UserListResults = () => {
         component="div"
         count={users ? users.length : 0}
         onChangePage={handlePageChange}
-        onChangeRowsPerPage={handleLimitChange}
         page={page}
-        rowsPerPage={limit}
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPage={10}
+        rowsPerPageOptions={[10]}
       />
     </Card>
   );

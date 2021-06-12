@@ -162,6 +162,16 @@ module.exports = {
     });
   },
 
+  getQuantityByCatID: (req, res) => {
+    const sql = `SELECT COUNT(*) AS count FROM ${tbName} WHERE idsmall_category = ?`;
+    db.query(sql, [req.params.catid], (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json(result[0]);
+    });
+  },
+
   getByCatIDByAdmin: (req, res) => {
     const sql = `SELECT * FROM ${tbName} WHERE idsmall_category = ?`;
     db.query(sql, [req.params.catid], (err, result) => {

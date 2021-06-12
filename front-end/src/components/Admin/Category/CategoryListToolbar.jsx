@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -9,10 +9,9 @@ import {
   SvgIcon,
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
+import Addcategory from "./Addcategory";
 
-import Addteacher from "./Addteacher";
-
-const TeacherListToolbar = ({ setUpdate, update }) => {
+const CategoryListToolbar = ({ match, setUpdate, update }) => {
   const [addform, setAddForm] = useState(false);
 
   const AddClose = () => {
@@ -31,7 +30,7 @@ const TeacherListToolbar = ({ setUpdate, update }) => {
           style={{ marginRight: 10 }}
           variant="contained"
         >
-          Delete teacher
+          Delete category
         </Button>
         <Button
           color="primary"
@@ -41,15 +40,16 @@ const TeacherListToolbar = ({ setUpdate, update }) => {
             setAddForm(true);
           }}
         >
-          Add teacher
+          Add category
         </Button>
       </Box>
-      <Addteacher
+      <Addcategory
+        match={match}
         AddClose={AddClose}
         open={addform}
         setUpdate={setUpdate}
         update={update}
-      ></Addteacher>
+      ></Addcategory>
       <Box style={{ marginTop: 30 }}>
         <Card>
           <CardContent>
@@ -65,7 +65,7 @@ const TeacherListToolbar = ({ setUpdate, update }) => {
                     </InputAdornment>
                   ),
                 }}
-                placeholder="Search teacher"
+                placeholder="Search category"
                 variant="outlined"
               />
             </Box>
@@ -75,5 +75,4 @@ const TeacherListToolbar = ({ setUpdate, update }) => {
     </Box>
   );
 };
-
-export default TeacherListToolbar;
+export default CategoryListToolbar;

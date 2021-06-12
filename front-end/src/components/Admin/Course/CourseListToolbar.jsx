@@ -17,8 +17,9 @@ const CourseListToolbar = () => (
         justifyContent: "flex-end",
       }}
     >
-      <Button>Import</Button>
-      <Button style={{ marginLeft: 10, marginRight: 10 }}>Export</Button>
+      <Button color="secondary" style={{ marginRight: 10 }} variant="contained">
+        Delete course
+      </Button>
     </Box>
     <Box style={{ marginTop: 30 }}>
       <Card>
