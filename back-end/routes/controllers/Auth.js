@@ -44,6 +44,7 @@ const login = async (req, res) => {
           refreshToken,
           role: user.role,
           username: user.username,
+          isBlocked: user.isBlocked,
         });
       } else return res.json({ message: "Invalid password", errorCode: 2 });
     } else return res.json({ message: "Invalid email address", errorCode: 1 });

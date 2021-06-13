@@ -3,7 +3,8 @@ import {
   Avatar,
   Box,
   Card,
-  Checkbox,
+  Button,
+  TextField,
   Table,
   TableBody,
   TableCell,
@@ -17,6 +18,8 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import ClearIcon from "@material-ui/icons/Clear";
 import CheckIcon from "@material-ui/icons/Check";
+import LockIcon from "@material-ui/icons/Lock";
+import LockOpenIcon from "@material-ui/icons/LockOpen";
 
 const UserListResults = () => {
   const [limit, setLimit] = useState(10);
@@ -77,6 +80,23 @@ const UserListResults = () => {
       tmp[i].firstname = firstName;
       tmp[i].lastname = lastName;
       tmp[i].username = username;
+      setUsers([...tmp]);
+    }
+  };
+
+  const handleLock = async (id, isBlock) => {
+    const data = {
+      isBlocked: isBlock === 0 ? 1 : 0,
+    };
+    const returnData = await axios.put(
+      `http://localhost:8080/api/users/${id}`,
+      data,
+      config
+    );
+    if (returnData.data.success === true) {
+      let tmp = users;
+      let i = tmp.findIndex((obj) => obj.iduser === id);
+      tmp[i].isBlocked = data.isBlocked;
       setUsers([...tmp]);
     }
   };
@@ -173,12 +193,12 @@ const UserListResults = () => {
                     user.username
                   ) : (
                     <TextField
-                      label="Occupation"
+                      label="Username"
                       variant="outlined"
                       defaultValue={user.username}
                       style={{ height: "40px" }}
                       onChange={(e) => {
-                        setOccupation(e.target.value);
+                        setUsername(e.target.value);
                       }}
                     />
                   )}
@@ -224,6 +244,27 @@ const UserListResults = () => {
                         }}
                       >
                         <DeleteIcon></DeleteIcon>
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        style={{
+                          marginLeft: "10px",
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                          backgroundColor: "#f44336",
+                        }}
+                        onClick={() => {
+                          handleLock(user.iduser, user.isBlocked);
+                        }}
+                      >
+                        {user.isBlocked === 0 ? (
+                          <LockOpenIcon></LockOpenIcon>
+                        ) : (
+                          <LockIcon></LockIcon>
+                        )}
                       </Button>
                     </>
                   ) : (

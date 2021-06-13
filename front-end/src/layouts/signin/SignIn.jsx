@@ -16,6 +16,7 @@ import Fade from "@material-ui/core/Fade";
 import { makeStyles } from "@material-ui/core/styles";
 import BackgroundImage from "../../assets/background2.jpg";
 import CheckIcon from "@material-ui/icons/CheckCircleOutline";
+import CancelIcon from "@material-ui/icons/Cancel";
 
 import History from "../../components/History";
 
@@ -78,6 +79,7 @@ const SignIn = () => {
   const [errorPasswordText, setErrorPasswordText] = useState("");
   const [errorEmailText, setErrorEmailText] = useState("");
   const [open, setOpen] = useState(false);
+  const [isBlocked, setBlocked] = useState(false);
 
   const handleEmail = (e) => {
     let re = /.+@.+\.[A-Za-z]+$/;
@@ -108,14 +110,22 @@ const SignIn = () => {
       .then((res) => {
         if (res.data.id) {
           setOpen(true);
-          setTimeout(() => {
-            localStorage.setItem("iduser", res.data.id);
-            localStorage.setItem("accessToken", res.data.accessToken);
-            localStorage.setItem("refreshToken", res.data.refreshToken);
-            localStorage.setItem("role", res.data.role);
-            localStorage.setItem("username", res.data.username);
-            History.push("/");
-          }, 2000);
+          if (res.data.isBlocked === 1) {
+            setBlocked(true);
+            setTimeout(() => {
+              setOpen(false);
+            }, 2000);
+          } else {
+            setBlocked(false);
+            setTimeout(() => {
+              localStorage.setItem("iduser", res.data.id);
+              localStorage.setItem("accessToken", res.data.accessToken);
+              localStorage.setItem("refreshToken", res.data.refreshToken);
+              localStorage.setItem("role", res.data.role);
+              localStorage.setItem("username", res.data.username);
+              History.push("/");
+            }, 2000);
+          }
         } else {
           if (res.data.errorCode === 1) setErrorEmailText(res.data.message);
           else setErrorPasswordText(res.data.message);
@@ -224,16 +234,33 @@ const SignIn = () => {
       >
         <Fade in={open}>
           <div className={classes.paper2}>
-            <CheckIcon
-              fontSize="large"
-              style={{ color: "#4caf50" }}
-            ></CheckIcon>
-            <h2
-              id="transition-modal-title"
-              style={{ color: "#4caf50", marginLeft: "10px" }}
-            >
-              Signed in successfully!
-            </h2>
+            {isBlocked === false ? (
+              <>
+                <CheckIcon
+                  fontSize="large"
+                  style={{ color: "#4caf50" }}
+                ></CheckIcon>
+                <h2
+                  id="transition-modal-title"
+                  style={{ color: "#4caf50", marginLeft: "10px" }}
+                >
+                  Signed in successfully!
+                </h2>
+              </>
+            ) : (
+              <>
+                <CancelIcon
+                  fontSize="large"
+                  style={{ color: "#f50057" }}
+                ></CancelIcon>
+                <h2
+                  id="transition-modal-title"
+                  style={{ color: "#f50057", marginLeft: "10px" }}
+                >
+                  Your account has been blocked. <br /> Please contact admin.
+                </h2>
+              </>
+            )}
           </div>
         </Fade>
       </Modal>

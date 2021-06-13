@@ -34,6 +34,19 @@ module.exports = {
     });
   },
 
+  getAllByAdmin: (req, res) => {
+    const pageNumber = parseInt(req.query.page) - 1;
+    let sql = `SELECT * FROM ${tbName}`;
+    if (pageNumber > -1)
+      sql = `SELECT * FROM ${tbName} limit ${pageNumber * 5},5`;
+    db.query(sql, (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json(result);
+    });
+  },
+
   getLength: (req, res) => {
     const sql = `SELECT COUNT(*) AS rowCount FROM ${tbName}`;
     db.query(sql, (err, result) => {
@@ -195,7 +208,7 @@ module.exports = {
     let sql = `DELETE FROM ${tbName} WHERE idcourses = ?`;
     db.query(sql, [req.params.id], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Delete success!" });
+      res.json({ success: true });
     });
   },
   update: (req, res) => {
@@ -204,7 +217,7 @@ module.exports = {
     const sql = `UPDATE ${tbName} SET ? WHERE idcourses = ?`;
     db.query(sql, [data, id], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Update success!" });
+      res.json({ success: true });
     });
   },
   add: (req, res) => {

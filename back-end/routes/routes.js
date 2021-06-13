@@ -84,6 +84,9 @@ module.exports = (app) => {
     Courses.add
   );
 
+  app.route("/api/coursesByAdmin/:catid").get(Courses.getByCatIDByAdmin);
+  app.route("/api/coursesByAdmin").get(Courses.getAllByAdmin);
+
   app
     .route("/api/smallcategories")
     .post(

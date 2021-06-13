@@ -54,10 +54,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const InforForm = (props) => {
-  const [username, setUsername] = useState(props.user.username);
-  const [firstname, setFirstname] = useState(props.user.firstname);
-  const [lastname, setLastname] = useState(props.user.lastname);
-  const [occupation, setOccupation] = useState(props.user.occupation);
+  const [username, setUsername] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [occupation, setOccupation] = useState("");
+  const [email, setEmail] = useState("");
+  const [errorEmail, setErrorEmail] = useState(false);
+  const [errorEmailText, setErrorEmailText] = useState("Invalid email address");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,25 +70,31 @@ const InforForm = (props) => {
       },
     };
 
-    if (!username) await setUsername(props.user.username);
-    if (!firstname) await setFirstname(props.user.firstname);
-    if (!lastname) await setLastname(props.user.lastname);
-    if (!occupation) await setOccupation(props.user.occupation);
-
-    const data = {
-      username: username,
-      firstname: firstname,
-      lastname: lastname,
-      occupation: occupation,
-    };
-    const returnData = await axios.put(
-      `http://localhost:8080/api/users/${localStorage.getItem("iduser")}`,
-      data,
-      config
+    const test = await axios.get(
+      `http://localhost:8080/api/usersByEmail/${email}`
     );
-    if (returnData.data.success) {
-      props.EditClose();
-      props.setUpdate(!props.update);
+    if (test.data.email) {
+      setErrorEmail(true);
+      setErrorEmailText("Email has already been used");
+    } else {
+      const data = {
+        username: username === "" ? props.user.username : username,
+        firstname: firstname === "" ? props.user.firstname : firstname,
+        lastname: lastname === "" ? props.user.lastname : lastname,
+        occupation: occupation === "" ? props.user.occupation : occupation,
+        email: email === "" ? props.user.email : email,
+      };
+      const returnData = await axios.put(
+        `http://localhost:8080/api/users/${localStorage.getItem("iduser")}`,
+        data,
+        config
+      );
+      if (returnData.data.success) {
+        setErrorEmail(false);
+        setEmail("");
+        props.EditClose();
+        props.setUpdate(!props.update);
+      }
     }
   };
 
@@ -105,13 +114,26 @@ const InforForm = (props) => {
     setOccupation(e.target.value);
   };
 
+  const handleEmail = (e) => {
+    let re = /.+@.+\.[A-Za-z]+$/;
+    if (e.target.value === "") {
+      setEmail("");
+      setErrorEmail(false);
+    } else if (re.test(e.target.value)) {
+      setEmail(e.target.value);
+      setErrorEmail(false);
+    } else {
+      setErrorEmailText("Invalid email address");
+      setErrorEmail(true);
+    }
+  };
+
   useEffect(() => {}, []);
 
   const classes = useStyles();
   return (
     <Dialog
       open={props.open}
-      keepMounted
       onClose={props.EditClose}
       aria-labelledby="alert-dialog-slide-title"
       aria-describedby="alert-dialog-slide-description"
@@ -172,6 +194,19 @@ const InforForm = (props) => {
                   onChange={handleLastname}
                 />
               </Grid>
+              <Grid item xs={10}>
+                <TextField
+                  id="email"
+                  error={errorEmail}
+                  helperText={
+                    errorEmail ? errorEmailText : "No change if empty"
+                  }
+                  label="Email"
+                  fullWidth
+                  margin="normal"
+                  onChange={handleEmail}
+                />
+              </Grid>
             </Grid>
           </Grid>
         </DialogContent>
@@ -181,7 +216,14 @@ const InforForm = (props) => {
             component="button"
             variant="contained"
             disabled={
-              username || firstname || lastname || occupation ? false : true
+              (username === "" &&
+                firstname === "" &&
+                lastname === "" &&
+                occupation === "" &&
+                email === "") ||
+              errorEmail === true
+                ? true
+                : false
             }
             className={classes.customButton1}
           >

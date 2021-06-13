@@ -5,6 +5,7 @@ import {
   Card,
   Table,
   TableBody,
+  Button,
   TableCell,
   TableHead,
   TablePagination,
@@ -12,6 +13,9 @@ import {
   Typography,
 } from "@material-ui/core";
 import axios from "axios";
+import DeleteIcon from "@material-ui/icons/Delete";
+import LockIcon from "@material-ui/icons/Lock";
+import LockOpenIcon from "@material-ui/icons/LockOpen";
 
 const CourseListResults = ({ match }) => {
   const [limit, setLimit] = useState(10);
@@ -26,9 +30,9 @@ const CourseListResults = ({ match }) => {
   };
 
   const getCourse = async () => {
-    let url = "http://localhost:8080/api/courses";
-    if (match) url = url + `ByCatID/${match.params.id}`;
-    const data = await axios.get(url);
+    let url = "http://localhost:8080/api/coursesByAdmin";
+    if (match) url = url + `/${match.params.id}`;
+    const data = await axios.get(url, config);
     let tmp = data.data;
     if (tmp) {
       const teacher = await axios.get(
@@ -49,6 +53,35 @@ const CourseListResults = ({ match }) => {
     setPage(newPage);
     setLimit(newPage * 10 + 10);
     setStart(newPage * 10);
+  };
+
+  const handleLock = async (id, isBlock) => {
+    const data = {
+      isBlocked: isBlock === 0 ? 1 : 0,
+    };
+    const returnData = await axios.put(
+      `http://localhost:8080/api/courses/${id}`,
+      data,
+      config
+    );
+    if (returnData.data.success === true) {
+      let tmp = courses;
+      let i = tmp.findIndex((obj) => obj.idcourses === id);
+      tmp[i].isBlocked = data.isBlocked;
+      setCourses([...tmp]);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const data = await axios.delete(
+      `http://localhost:8080/api/courses/${id}`,
+      config
+    );
+    if (data.data.success === true) {
+      let tmp = courses;
+      tmp = tmp.filter((obj) => obj.idcourses !== id);
+      setCourses([...tmp]);
+    }
   };
 
   useEffect(() => {
@@ -125,7 +158,45 @@ const CourseListResults = ({ match }) => {
                 <TableCell style={{ width: "13%" }}>
                   {course.lastupdate}
                 </TableCell>
-                <TableCell style={{ width: "15%" }}></TableCell>
+                <TableCell style={{ width: "15%" }}>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    style={{
+                      marginLeft: "10px",
+                      maxWidth: "35px",
+                      maxHeight: "35px",
+                      minWidth: "35px",
+                      minHeight: "35px",
+                    }}
+                    onClick={() => {
+                      handleDelete(course.idcourses);
+                    }}
+                  >
+                    <DeleteIcon></DeleteIcon>
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    style={{
+                      marginLeft: "10px",
+                      maxWidth: "35px",
+                      maxHeight: "35px",
+                      minWidth: "35px",
+                      minHeight: "35px",
+                      backgroundColor: "#f44336",
+                    }}
+                    onClick={() => {
+                      handleLock(course.idcourses, course.isBlocked);
+                    }}
+                  >
+                    {course.isBlocked === 0 ? (
+                      <LockOpenIcon></LockOpenIcon>
+                    ) : (
+                      <LockIcon></LockIcon>
+                    )}
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

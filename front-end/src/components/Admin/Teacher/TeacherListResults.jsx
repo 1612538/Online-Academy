@@ -18,6 +18,8 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import ClearIcon from "@material-ui/icons/Clear";
 import CheckIcon from "@material-ui/icons/Check";
+import LockIcon from "@material-ui/icons/Lock";
+import LockOpenIcon from "@material-ui/icons/LockOpen";
 
 const TeacherListResults = ({ update }) => {
   const [limit, setLimit] = useState(10);
@@ -75,6 +77,23 @@ const TeacherListResults = ({ update }) => {
       tmp[i].firstname = firstName;
       tmp[i].lastname = lastName;
       tmp[i].occupation = occupation;
+      setTeachers([...tmp]);
+    }
+  };
+
+  const handleLock = async (id, isBlock) => {
+    const data = {
+      isBlocked: isBlock === 0 ? 1 : 0,
+    };
+    const returnData = await axios.put(
+      `http://localhost:8080/api/users/${id}`,
+      data,
+      config
+    );
+    if (returnData.data.success === true) {
+      let tmp = teachers;
+      let i = tmp.findIndex((obj) => obj.iduser === id);
+      tmp[i].isBlocked = data.isBlocked;
       setTeachers([...tmp]);
     }
   };
@@ -228,6 +247,27 @@ const TeacherListResults = ({ update }) => {
                         }}
                       >
                         <DeleteIcon></DeleteIcon>
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        style={{
+                          marginLeft: "10px",
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                          backgroundColor: "#f44336",
+                        }}
+                        onClick={() => {
+                          handleLock(teacher.iduser, teacher.isBlocked);
+                        }}
+                      >
+                        {teacher.isBlocked === 0 ? (
+                          <LockOpenIcon></LockOpenIcon>
+                        ) : (
+                          <LockIcon></LockIcon>
+                        )}
                       </Button>
                     </>
                   ) : (

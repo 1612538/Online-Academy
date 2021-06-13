@@ -16,11 +16,7 @@ const UserListToolbar = () => (
         display: "flex",
         justifyContent: "flex-end",
       }}
-    >
-      <Button color="secondary" style={{ marginRight: 10 }} variant="contained">
-        Delete user
-      </Button>
-    </Box>
+    ></Box>
     <Box style={{ marginTop: 30 }}>
       <Card>
         <CardContent>

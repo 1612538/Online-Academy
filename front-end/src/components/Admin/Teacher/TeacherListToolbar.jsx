@@ -27,13 +27,6 @@ const TeacherListToolbar = ({ setUpdate, update }) => {
         }}
       >
         <Button
-          color="secondary"
-          style={{ marginRight: 10 }}
-          variant="contained"
-        >
-          Delete teacher
-        </Button>
-        <Button
           color="primary"
           style={{ marginRight: 10 }}
           variant="contained"

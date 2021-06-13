@@ -26,13 +26,6 @@ const CategoryListToolbar = ({ match, setUpdate, update }) => {
         }}
       >
         <Button
-          color="secondary"
-          style={{ marginRight: 10 }}
-          variant="contained"
-        >
-          Delete category
-        </Button>
-        <Button
           color="primary"
           style={{ marginRight: 10 }}
           variant="contained"

@@ -165,7 +165,6 @@ const CourseForm = (props) => {
   return (
     <Dialog
       open={props.open}
-      keepMounted
       onClose={props.AddClose}
       aria-labelledby="alert-dialog-slide-title"
       aria-describedby="alert-dialog-slide-description"

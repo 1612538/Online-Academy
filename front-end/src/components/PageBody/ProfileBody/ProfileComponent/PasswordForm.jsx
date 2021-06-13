@@ -144,7 +144,6 @@ const PasswordForm = (props) => {
   return (
     <Dialog
       open={props.open}
-      keepMounted
       onClose={props.EditClose}
       aria-labelledby="alert-dialog-slide-title"
       aria-describedby="alert-dialog-slide-description"
