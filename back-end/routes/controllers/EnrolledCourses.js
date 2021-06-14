@@ -44,6 +44,19 @@ module.exports = {
     });
   },
 
+  update: (req, res) => {
+    let data = req.body;
+    const sql = `UPDATE ${tbName} SET ? WHERE iduser = ? AND idcourses = ?`;
+    db.query(
+      sql,
+      [data, req.params.iduser, req.params.idcourses],
+      (err, result) => {
+        if (err) throw err;
+        res.json({ success: true });
+      }
+    );
+  },
+
   add: (req, res) => {
     const sql = `INSERT INTO ${tbName} SET ?`;
     let data = req.body;

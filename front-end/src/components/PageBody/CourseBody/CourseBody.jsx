@@ -107,6 +107,13 @@ const useStyles = makeStyles((theme) => ({
     borderTop: "0",
     marginTop: "-20px",
   },
+  customDiv: {
+    marginTop: "10px",
+    padding: "5px",
+    backgroundColor: "rgba(155,155,155,1)",
+    color: "white",
+    textAlign: "center",
+  },
 }));
 
 const StyledButton = withStyles({
@@ -465,6 +472,17 @@ const CourseBody = (props) => {
                   style={{ margin: "5px 10px -4px 0" }}
                 ></Phone>
                 Access on mobile and TV{" "}
+              </Typography>
+              <Typography
+                variant="body1"
+                className={classes.customDiv}
+                style={
+                  course.isCompleted === 1
+                    ? { backgroundColor: "rgba(139,195,74,1)" }
+                    : {}
+                }
+              >
+                {course.isCompleted === 1 ? "Completed" : "In progress"}
               </Typography>
             </Grid>
           </Grid>

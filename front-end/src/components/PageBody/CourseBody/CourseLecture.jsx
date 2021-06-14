@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography, Button, Box } from "@material-ui/core";
+import {
+  Grid,
+  Typography,
+  Button,
+  Box,
+  Snackbar,
+  IconButton,
+  Fade,
+} from "@material-ui/core";
 import { Pagination, PaginationItem } from "@material-ui/lab";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import "video-react/dist/video-react.css";
-
+import { useBeforeunload } from "react-beforeunload";
+import CloseIcon from "@material-ui/icons/Close";
 import {
   Player,
   ControlBar,
@@ -65,10 +74,45 @@ const StyledButton = withStyles({
     fontSize: "1rem",
     "&:hover": {
       backgroundColor: "#aa2e25",
-      color: "#white",
+      color: "white",
+    },
+    "&:disabled": {
+      backgroundColor: "rgb(155,155,155)",
+      color: "rgb(200,200,200)",
     },
   },
 })(Button);
+
+const StyledButton2 = withStyles({
+  root: {
+    width: "50%",
+    backgroundColor: "#8bc34a",
+    color: "white",
+    fontSize: "1rem",
+    "&:hover": {
+      backgroundColor: "#79955a",
+      color: "white",
+    },
+  },
+})(Button);
+
+const StyledButton3 = withStyles({
+  root: {
+    width: "50%",
+    backgroundColor: "#7cb342",
+    color: "white",
+    fontSize: "1rem",
+    textTransform: "none",
+    "&:hover": {
+      backgroundColor: "#6d8e46",
+      color: "white",
+    },
+  },
+})(Button);
+
+function secondsToHms(d) {
+  return new Date(d * 1000).toISOString().substr(11, 8);
+}
 
 const CourseLecture = (props) => {
   const classes = useStyles();
@@ -79,11 +123,23 @@ const CourseLecture = (props) => {
   const [currLecture, setCurrLecture] = useState(undefined);
   const [lectureForm, setLectureForm] = useState(false);
   const [Length, setLength] = useState(0);
+  const [isSave, setSave] = useState(false);
+  const [open, setOpen] = useState(true);
+  let myplayer = undefined;
+  const [progText, setText] = useState("");
 
   const config = {
     headers: {
       "x-access-token": localStorage.getItem("accessToken"),
     },
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
   };
 
   const checkEnrolled = async () => {
@@ -97,6 +153,18 @@ const CourseLecture = (props) => {
       if (data.data.success === false) {
         History.push("/error");
         return;
+      } else {
+        const data2 = await axios.get(
+          `http://localhost:8080/api/courselectures/${props.match.params.id}/${data.data.lastlecture}`,
+          config
+        );
+        setText(
+          `Your last lecture was "` +
+            data2.data.title +
+            `" at time: ` +
+            secondsToHms(data.data.lasttime) +
+            ``
+        );
       }
     }
   };
@@ -136,6 +204,52 @@ const CourseLecture = (props) => {
     setLectureForm(false);
   };
 
+  const handleComplete = async () => {
+    const data = {
+      isCompleted: course.isCompleted === 0 ? 1 : 0,
+    };
+    const returnData = await axios.put(
+      `http://localhost:8080/api/courses/${course.idcourses}`,
+      data,
+      config
+    );
+    if (returnData.data.success === true) {
+      let tmp = course;
+      tmp.isCompleted = data.isCompleted;
+      setCourse({ ...tmp });
+    }
+  };
+
+  const handleOnleave = async () => {
+    if (localStorage.getItem("role") === "0") {
+      const { player } = myplayer.getState();
+      const data = {
+        lastlecture: currLecture ? currLecture.idlecture : -1,
+        lasttime: player.currentTime,
+      };
+      const returnData = await axios.put(
+        `http://localhost:8080/api/enrolledcourses/${localStorage.getItem(
+          "iduser"
+        )}/${course.idcourses}`,
+        data,
+        config
+      );
+      if (returnData.data.success === true) {
+        console.log(
+          "Unmount successfully. Current lecture: " +
+            currLecture.idlecture +
+            ", time: " +
+            player.currentTime
+        );
+        setSave(true);
+      }
+    }
+  };
+
+  useBeforeunload((e) => {
+    handleOnleave();
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       if (localStorage.getItem("iduser") === null) History.push("/");
@@ -165,6 +279,27 @@ const CourseLecture = (props) => {
 
   return (
     <div className={classes.root}>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        open={open}
+        onClose={handleClose}
+        message={progText}
+        TransitionComponent={Fade}
+        transitionDuration={500}
+        action={
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleClose}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        }
+      />
       <Grid container className={classes.customGrid1}>
         <Grid item xs={8}>
           {currLecture ? (
@@ -172,23 +307,33 @@ const CourseLecture = (props) => {
               <Typography variant="h6" className={classes.customText3}>
                 {currLecture.title}
               </Typography>
-              <Player>
-                <source
-                  key={currLecture.idlecture}
-                  src={"http://localhost:8080" + currLecture.video}
-                />
-                <ControlBar autoHide>
-                  <ReplayControl seconds={10} order={1.1} />
-                  <ForwardControl seconds={30} order={1.2} />
-                  <CurrentTimeDisplay order={4.1} />
-                  <TimeDivider order={4.2} />
-                  <PlaybackRateMenuButton
-                    rates={[2, 1, 0.5, 0.1]}
-                    order={7.1}
+              <div
+                onClick={() => {
+                  setSave(false);
+                }}
+              >
+                <Player
+                  ref={(tplayer) => {
+                    myplayer = tplayer;
+                  }}
+                >
+                  <source
+                    key={currLecture.idlecture}
+                    src={"http://localhost:8080" + currLecture.video}
                   />
-                  <VolumeMenuButton order={7.2} />
-                </ControlBar>
-              </Player>
+                  <ControlBar autoHide>
+                    <ReplayControl seconds={10} order={1.1} />
+                    <ForwardControl seconds={30} order={1.2} />
+                    <CurrentTimeDisplay order={4.1} />
+                    <TimeDivider order={4.2} />
+                    <PlaybackRateMenuButton
+                      rates={[2, 1, 0.5, 0.1]}
+                      order={7.1}
+                    />
+                    <VolumeMenuButton order={7.2} />
+                  </ControlBar>
+                </Player>
+              </div>
               <Typography
                 variant="body1"
                 className={classes.customText2}
@@ -202,55 +347,79 @@ const CourseLecture = (props) => {
           container
           item
           xs={4}
-          alignItems="center"
+          alignItems="flex-start"
           justify="center"
           spacing={2}
         >
-          <Grid container item xs={10} justify="center" alignItems="center">
-            {lectures.map((obj, key) => (
-              <Grid item xs={12} key={key}>
-                <LectureCard
-                  data={obj}
-                  setCurrLecture={setCurrLecture}
-                ></LectureCard>
+          <Grid container item justify="center">
+            <Grid container item xs={10} justify="center" alignItems="center">
+              {lectures.map((obj, key) => (
+                <Grid item xs={12} key={key}>
+                  <LectureCard
+                    active={currLecture ? currLecture.idlecture : -1}
+                    data={obj}
+                    setCurrLecture={setCurrLecture}
+                  ></LectureCard>
+                </Grid>
+              ))}
+              <Box my={1} display="flex" justifyContent="center">
+                <Pagination
+                  count={pageNumberL ? pageNumberL : 1}
+                  defaultPage={1}
+                  onChange={changeHandleL}
+                  renderItem={(item) => (
+                    <PaginationItem
+                      {...item}
+                      className={classes.customPagination}
+                      classes={{ selected: classes.selected }}
+                    />
+                  )}
+                />
+              </Box>
+            </Grid>
+            <Grid container item xs={11} justify="center">
+              <Grid item>
+                <img
+                  src={"http://localhost:8080" + course.img}
+                  width="256px"
+                ></img>
               </Grid>
-            ))}
-            <Box my={1} display="flex" justifyContent="center">
-              <Pagination
-                count={pageNumberL ? pageNumberL : 1}
-                defaultPage={1}
-                onChange={changeHandleL}
-                renderItem={(item) => (
-                  <PaginationItem
-                    {...item}
-                    className={classes.customPagination}
-                    classes={{ selected: classes.selected }}
-                  />
-                )}
-              />
-            </Box>
-          </Grid>
-          <Grid container item xs={11} justify="center">
-            <Grid item>
-              <img
-                src={"http://localhost:8080" + course.img}
-                width="256px"
-              ></img>
-            </Grid>
-            <Grid item>
-              <Typography variant="h6" className={classes.customText}>
-                {course.name}
-              </Typography>
-            </Grid>
-            <Grid container item xs={12} justify="center">
+              <Grid item>
+                <Typography variant="h6" className={classes.customText}>
+                  {course.name}
+                </Typography>
+              </Grid>
+
               {localStorage.getItem("role") === "1" ? (
-                <StyledButton
-                  onClick={() => {
-                    setLectureForm(true);
-                  }}
-                >
-                  Add lectures
-                </StyledButton>
+                <Grid container item xs={12} justify="center" spacing={1}>
+                  <Grid container justify="center" item xs={12}>
+                    <StyledButton
+                      onClick={() => {
+                        setLectureForm(true);
+                      }}
+                      disabled={course.isCompleted === 0 ? false : true}
+                    >
+                      Add lectures
+                    </StyledButton>
+                  </Grid>
+                  <Grid container justify="center" item xs={12}>
+                    {course.isCompleted === 0 ? (
+                      <StyledButton2 onClick={handleComplete}>
+                        Complete?
+                      </StyledButton2>
+                    ) : (
+                      <StyledButton3 onClick={handleComplete}>
+                        COMPLETED
+                        <br />
+                        (Click to set incomplete)
+                      </StyledButton3>
+                    )}
+                  </Grid>
+                </Grid>
+              ) : localStorage.getItem("role") === "0" ? (
+                <StyledButton3 onClick={handleOnleave}>
+                  {isSave ? "Saved" : "Save progress"}
+                </StyledButton3>
               ) : undefined}
             </Grid>
           </Grid>

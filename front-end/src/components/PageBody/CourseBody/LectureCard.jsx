@@ -6,6 +6,8 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import VideoPlay from "../../../assets/videoplay.png";
 
+import axios from "axios";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -17,7 +19,16 @@ const useStyles = makeStyles((theme) => ({
     cursor: "pointer",
     borderRadius: "0px",
     "&:hover": {
-      backgroundColor: "rgba(220,220,220,1)",
+      backgroundColor: "rgba(220,210,210,1)",
+    },
+  },
+  paperActive: {
+    backgroundColor: "rgba(230,225,220,1)",
+    width: "100%",
+    cursor: "pointer",
+    borderRadius: "0px",
+    "&:hover": {
+      backgroundColor: "rgba(210,200,195,1)",
     },
   },
   image: {
@@ -42,17 +53,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const LectureCard = (props) => {
-  useEffect(() => {
-    console.log(props.data);
-  }, []);
+  useEffect(() => {}, []);
+
+  const handleClick = () => {
+    props.setCurrLecture({ ...props.data });
+  };
+
   const classes = useStyles();
   return (
     <div className={classes.root}>
       <Paper
-        className={classes.paper}
-        onClick={() => {
-          props.setCurrLecture(props.data);
-        }}
+        className={
+          props.data.idlecture === props.active
+            ? classes.paperActive
+            : classes.paper
+        }
+        onClick={handleClick}
       >
         <Grid container>
           <Grid container justify="center" item xs={4}>

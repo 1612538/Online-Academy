@@ -129,6 +129,10 @@ module.exports = (app) => {
     .get(EnrolledCourses.getByData);
   app.route("/api/enrolledcourses/:iduser").get(EnrolledCourses.getByUserId);
 
+  app
+    .route("/api/enrolledcourses/:iduser/:idcourses")
+    .put(EnrolledCourses.update);
+
   //Course lectures
   let CourseLectures = require("./controllers/CourseLectures");
 
