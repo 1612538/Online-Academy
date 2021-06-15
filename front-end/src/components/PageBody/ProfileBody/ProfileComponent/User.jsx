@@ -173,9 +173,7 @@ const ProfileBody = (props) => {
       await getLengthF();
     };
     fetchData();
-    return () => {
-      setFavoriteCourses([]);
-    };
+    return () => {};
   }, [currPageF]);
 
   useEffect(() => {
@@ -184,9 +182,7 @@ const ProfileBody = (props) => {
       await getLengthE();
     };
     fetchData();
-    return () => {
-      setEnrolledCourses([]);
-    };
+    return () => {};
   }, [currPageE]);
 
   return (

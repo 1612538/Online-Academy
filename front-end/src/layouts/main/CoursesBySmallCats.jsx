@@ -43,11 +43,7 @@ const CoursesBySmallCats = () => {
 
   useEffect(() => {
     getCoursesByID();
-    return () => {
-      setCourses([]);
-      setLength(0);
-      setCatName("");
-    };
+    return () => {};
   }, [currPage, sort]);
 
   return (

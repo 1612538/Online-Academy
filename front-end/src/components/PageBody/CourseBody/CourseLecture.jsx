@@ -39,7 +39,6 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "5px",
   },
   customText: {
-    fontWeight: "bold",
     margin: "10px 30px 5px 30px",
     textAlign: "center",
   },
@@ -278,9 +277,7 @@ const CourseLecture = (props) => {
       await getLectures();
     };
     fetchData();
-    return () => {
-      setLectures([]);
-    };
+    return () => {};
   }, [currPage]);
 
   return (
@@ -400,6 +397,13 @@ const CourseLecture = (props) => {
               <Grid item>
                 <Typography variant="h6" className={classes.customText}>
                   {course.name}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  className={classes.customText}
+                  style={{ marginBottom: "15px" }}
+                >
+                  Last update: {course.lastupdate}
                 </Typography>
               </Grid>
 

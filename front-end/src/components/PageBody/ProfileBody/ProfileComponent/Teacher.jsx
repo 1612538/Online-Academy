@@ -130,15 +130,20 @@ const ProfileBody = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       await setUser(props.user);
-      await getCourses(currPage);
       await getLength();
     };
 
     fetchData();
-    return () => {
-      setCourses([]);
+    return () => {};
+  }, [currPage]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await getCourses(currPage);
     };
-  }, [currPage, props.user]);
+    fetchData();
+    return () => {};
+  }, [props.user]);
 
   return (
     <Grid container className={classes.customGrid1} spacing={4}>

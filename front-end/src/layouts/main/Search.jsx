@@ -44,10 +44,7 @@ const Search = (props) => {
   useEffect(() => {
     searchCourses();
     getSearchLength();
-    return () => {
-      setCourses([]);
-      setLength(0);
-    };
+    return () => {};
   }, [currPage, props.location, sort]);
 
   return (

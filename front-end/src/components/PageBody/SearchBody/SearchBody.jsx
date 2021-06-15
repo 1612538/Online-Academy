@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   Typography,
@@ -67,10 +67,23 @@ const useStyles = makeStyles({
 const SearchBody = (props) => {
   const classes = useStyles();
   let pageNumber = Math.ceil(props.dataLength / 5);
+  const [open, setOpen] = useState(false);
 
   const changeHandle = (event, value) => {
-    props.setCurrPage(value);
+    setOpen(false);
+    setTimeout(() => {
+      props.setCurrPage(value);
+    }, 500);
+    setTimeout(() => {
+      setOpen(true);
+    }, 1000);
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setOpen(true);
+    }, 500);
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -113,31 +126,31 @@ const SearchBody = (props) => {
           </FormControl>
         </Grid>
       </Grid>
-      <Grid
-        container
-        direction="column"
-        spacing={3}
-        className={classes.customGrid}
-      >
-        {props.dataLength > 0 ? (
-          props.courses.map((course, key) => (
-            <Fade in={true} timeout={1000} key={key}>
-              <Grid item>
+      <Fade in={open} timeout={500}>
+        <Grid
+          container
+          direction="column"
+          spacing={3}
+          className={classes.customGrid}
+        >
+          {props.dataLength > 0 ? (
+            props.courses.map((course, key) => (
+              <Grid item key={key}>
                 <CoursesCard2 course={course}></CoursesCard2>
               </Grid>
-            </Fade>
-          ))
-        ) : (
-          <Grid item xs>
-            <Typography
-              variant="h6"
-              style={{ textAlign: "center", color: "white" }}
-            >
-              Not found
-            </Typography>
-          </Grid>
-        )}
-      </Grid>
+            ))
+          ) : (
+            <Grid item xs>
+              <Typography
+                variant="h6"
+                style={{ textAlign: "center", color: "white" }}
+              >
+                Not found
+              </Typography>
+            </Grid>
+          )}
+        </Grid>
+      </Fade>
       {props.dataLength > 0 ? (
         <Box my={1} display="flex" justifyContent="center">
           <Pagination

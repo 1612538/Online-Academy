@@ -57,6 +57,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function currentDate() {
+  var date = new Date();
+  var dateStr =
+    ("00" + date.getHours()).slice(-2) +
+    ":" +
+    ("00" + date.getMinutes()).slice(-2) +
+    ":" +
+    ("00" + date.getSeconds()).slice(-2) +
+    " " +
+    ("00" + date.getDate()).slice(-2) +
+    "/" +
+    ("00" + (date.getMonth() + 1)).slice(-2) +
+    "/" +
+    date.getFullYear();
+  return dateStr;
+}
+
 const AddLectureForm = (props) => {
   const [editor, setEditor] = useState("");
   const [title, setTitle] = useState("");
@@ -93,6 +110,14 @@ const AddLectureForm = (props) => {
     const returnData = await axios.post(
       `http://localhost:8080/api/courselectures`,
       formData,
+      config
+    );
+    const tmpData = {
+      lastupdate: currentDate(),
+    };
+    const tmp = await axios.put(
+      `http://localhost:8080/api/courses/${props.match.params.id}`,
+      tmpData,
       config
     );
     if (returnData.data.success) {

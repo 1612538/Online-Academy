@@ -21,6 +21,8 @@ import CheckIcon from "@material-ui/icons/Check";
 import LockIcon from "@material-ui/icons/Lock";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 
+import TeacherDetail from "./TeacherDetail";
+
 const TeacherListResults = ({ update }) => {
   const [limit, setLimit] = useState(10);
   const [start, setStart] = useState(0);
@@ -32,10 +34,17 @@ const TeacherListResults = ({ update }) => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
 
+  const [openD, setOpenD] = useState(false);
+  const [clickUser, setClickUser] = useState({});
+
   const config = {
     headers: {
       "x-access-token": localStorage.getItem("accessToken"),
     },
+  };
+
+  const DialogClose = () => {
+    setOpenD(false);
   };
 
   const getTeacher = async () => {
@@ -131,7 +140,13 @@ const TeacherListResults = ({ update }) => {
           <TableBody>
             {teachers.slice(start, limit).map((teacher, key) => (
               <TableRow hover key={key}>
-                <TableCell>
+                <TableCell
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    setOpenD(true);
+                    setClickUser({ ...teacher });
+                  }}
+                >
                   <Box
                     style={{
                       alignItems: "center",
@@ -320,6 +335,11 @@ const TeacherListResults = ({ update }) => {
         rowsPerPage={10}
         rowsPerPageOptions={[10]}
       />
+      <TeacherDetail
+        openD={openD}
+        DialogClose={DialogClose}
+        user={clickUser}
+      ></TeacherDetail>
     </Card>
   );
 };
