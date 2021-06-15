@@ -155,6 +155,8 @@ const SearchBody = (props) => {
         <Box my={1} display="flex" justifyContent="center">
           <Pagination
             count={pageNumber ? pageNumber : 1}
+            defaultPage={1}
+            page={props.currPage}
             onChange={changeHandle}
             size="large"
             renderItem={(item) => (

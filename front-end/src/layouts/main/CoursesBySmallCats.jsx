@@ -5,7 +5,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import ChatBox from "../../components/ChatBot/ChatBox";
 
-const CoursesBySmallCats = () => {
+const CoursesBySmallCats = ({ location }) => {
   const [courses, setCourses] = React.useState([]);
   const [length, setLength] = React.useState(0);
   const [catName, setCatName] = React.useState("");
@@ -30,7 +30,7 @@ const CoursesBySmallCats = () => {
           const data1 = res1.data;
           const data2 = res2.data.length;
           const data3 = res3.data;
-          setCourses(data1);
+          setCourses([...data1]);
           setLength(data2);
           setCatName(data3.name);
         })
@@ -44,12 +44,18 @@ const CoursesBySmallCats = () => {
   useEffect(() => {
     getCoursesByID();
     return () => {};
-  }, [currPage, sort]);
+  }, [currPage, location, sort]);
+
+  useEffect(() => {
+    setCurrPage(1);
+    return () => {};
+  }, [location, sort]);
 
   return (
     <div>
       <PageHeader></PageHeader>
       <SearchBody
+        currPage={currPage}
         courses={courses}
         dataLength={length}
         setCurrPage={setCurrPage}

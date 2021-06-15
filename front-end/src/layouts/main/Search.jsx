@@ -22,8 +22,9 @@ const Search = (props) => {
         `http://localhost:8080/api/coursesearch?keyword=${parsed.keyword}&page=${currPage}&isratedesc=${tmp1}&ispriceasc=${tmp2}`
       )
       .then((res) => {
+        console.log(res.data);
         const data = res.data;
-        setCourses(data);
+        setCourses([...data]);
       })
       .catch((err) => console.log(err));
   };
@@ -47,10 +48,16 @@ const Search = (props) => {
     return () => {};
   }, [currPage, props.location, sort]);
 
+  useEffect(() => {
+    setCurrPage(1);
+    return () => {};
+  }, [props.location, sort]);
+
   return (
     <div>
       <PageHeader></PageHeader>
       <SearchBody
+        currPage={currPage}
         courses={courses}
         dataLength={length}
         setCurrPage={setCurrPage}
