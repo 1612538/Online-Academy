@@ -110,7 +110,7 @@ module.exports = {
     const userData = {
       email: data.email,
     };
-    process.env.VERIFY_TOKEN = await jwthelpers.generateToken(
+    const verifykey = await jwthelpers.generateToken(
       userData,
       "VERIFY_TOKEN",
       "1h"
@@ -118,16 +118,25 @@ module.exports = {
     await mailer.sendMail(
       data.email,
       "Account verification",
-      `Hello, please verify your email.<br/> <a href="http://localhost:8080/api/confirmation/${data.email}/${process.env.VERIFY_TOKEN}">Click here</a>`
+      `Hello, please verify your email.<br/> <a href="http://localhost:8080/api/confirmation/${data.email}/${verifykey}">Click here</a>`
     );
     db.query(sql, [data], (err, result) => {
       if (err) throw err;
       res.json({ success: true });
     });
   },
-  confirmation: (req, res) => {
+  confirmation: async (req, res) => {
     const key = req.params.key;
-    if (key === process.env.VERIFY_TOKEN) {
+    try {
+      const decoded = await jwthelpers.verifyToken(key, "VERIFY_TOKEN");
+      req.jwtDecoded = decoded;
+    } catch (err) {
+      console.log("Error while verify token: ", err);
+      return res.redirect(
+        `http://localhost:3000/verifyaccount/${req.params.email}?success=false`
+      );
+    }
+    if (req.jwtDecoded) {
       const data = {
         isVerify: 1,
       };

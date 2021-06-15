@@ -37,7 +37,7 @@ const NavBar = () => {
         <Grid item>
           <Grid container alignItems="center" item xs style={{ height: "6vh" }}>
             <Link href="/" color="inherit">
-              <Typography variant="h6" className={classes.customText}>
+              <Typography variant="body1" className={classes.customText}>
                 Go to homepage
               </Typography>
             </Link>

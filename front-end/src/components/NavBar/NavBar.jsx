@@ -134,6 +134,31 @@ const NavBar = () => {
             <Grid container justify="flex-end">
               {localStorage.getItem("iduser") ? (
                 <>
+                  {localStorage.getItem("role") === "2" ? (
+                    <Grid
+                      container
+                      alignItems="center"
+                      justify="flex-end"
+                      item
+                      xs
+                      style={{
+                        height: "6vh",
+                        color: "white",
+                      }}
+                    >
+                      <ColorButton
+                        style={{ border: 0, textTransform: "none" }}
+                        href="/admin"
+                      >
+                        <Typography
+                          variant="body1"
+                          className={classes.customText}
+                        >
+                          Admin page
+                        </Typography>
+                      </ColorButton>
+                    </Grid>
+                  ) : undefined}
                   <ColorButton
                     style={{ border: 0, textTransform: "none" }}
                     ref={anchorRef}
@@ -167,15 +192,17 @@ const NavBar = () => {
                               id="menu-list-grow"
                               style={{ width: "150px" }}
                             >
-                              <Link
-                                color="inherit"
-                                underline="none"
-                                href="/profile"
-                              >
-                                <MenuItem onClick={handleClose}>
-                                  My profile
-                                </MenuItem>
-                              </Link>
+                              {localStorage.getItem("role") !== "2" ? (
+                                <Link
+                                  color="inherit"
+                                  underline="none"
+                                  href="/profile"
+                                >
+                                  <MenuItem onClick={handleClose}>
+                                    My profile
+                                  </MenuItem>
+                                </Link>
+                              ) : undefined}
                               <Link
                                 color="inherit"
                                 underline="none"

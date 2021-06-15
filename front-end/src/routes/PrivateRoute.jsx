@@ -1,24 +1,44 @@
-
-import {Route, Redirect} from "react-router-dom"
+import { Route, Redirect } from "react-router-dom";
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-    return (
-        <Route
-          {...rest}
-          render={props =>
-            localStorage.getItem('iduser') ? (
-              <Component {...props} />
-            ) : (
-              <Redirect
-                to={{
-                  pathname: "/signin",
-                  state: { from: props.location }
-                }}
-              />
-            )
-          }
-        />
-      );
-}
+  return (
+    <Route
+      {...rest}
+      render={(props) =>
+        localStorage.getItem("iduser") ? (
+          <Component {...props} />
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/signin",
+              state: { from: props.location },
+            }}
+          />
+        )
+      }
+    />
+  );
+};
 
-export default PrivateRoute;
+const AdminRoute = ({ component: Component, ...rest }) => {
+  return (
+    <Route
+      {...rest}
+      render={(props) =>
+        localStorage.getItem("iduser") &&
+        localStorage.getItem("role") === "2" ? (
+          <Component {...props} />
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/error",
+              state: { from: props.location },
+            }}
+          />
+        )
+      }
+    />
+  );
+};
+
+export { AdminRoute, PrivateRoute };

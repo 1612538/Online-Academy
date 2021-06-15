@@ -18,7 +18,7 @@ import History from "./components/History";
 import { makeStyles } from "@material-ui/core/styles";
 import BackgroundImage from "./assets/background.jpg";
 
-import PrivateRoute from "./routes/PrivateRoute";
+import { PrivateRoute, AdminRoute } from "./routes/PrivateRoute";
 
 import "@fontsource/roboto";
 
@@ -68,7 +68,7 @@ function App() {
             path="/courses/lectures/:id"
             component={CourseLectures}
           />
-          <PrivateRoute path="/admin" component={Admin}></PrivateRoute>
+          <AdminRoute path="/admin" component={Admin}></AdminRoute>
           <Route component={Error} />
         </Switch>
       </Router>
