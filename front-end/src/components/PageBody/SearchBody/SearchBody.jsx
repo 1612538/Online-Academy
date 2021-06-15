@@ -18,9 +18,9 @@ import UpIcon from "@material-ui/icons/ArrowUpward";
 
 const useStyles = makeStyles({
   cssLabel: {
-    color: "#000",
+    color: "#fff",
     "&.Mui-focused": {
-      color: "#000",
+      color: "#fff",
     },
   },
   formControl: {
@@ -119,28 +119,41 @@ const SearchBody = (props) => {
         spacing={3}
         className={classes.customGrid}
       >
-        {props.courses.map((course, key) => (
-          <Fade in={true} timeout={1000} key={key}>
-            <Grid item>
-              <CoursesCard2 course={course}></CoursesCard2>
-            </Grid>
-          </Fade>
-        ))}
+        {props.dataLength > 0 ? (
+          props.courses.map((course, key) => (
+            <Fade in={true} timeout={1000} key={key}>
+              <Grid item>
+                <CoursesCard2 course={course}></CoursesCard2>
+              </Grid>
+            </Fade>
+          ))
+        ) : (
+          <Grid item xs>
+            <Typography
+              variant="h6"
+              style={{ textAlign: "center", color: "white" }}
+            >
+              Not found
+            </Typography>
+          </Grid>
+        )}
       </Grid>
-      <Box my={1} display="flex" justifyContent="center">
-        <Pagination
-          count={pageNumber ? pageNumber : 1}
-          onChange={changeHandle}
-          size="large"
-          renderItem={(item) => (
-            <PaginationItem
-              {...item}
-              className={classes.customPagination}
-              classes={{ selected: classes.selected }}
-            />
-          )}
-        />
-      </Box>
+      {props.dataLength > 0 ? (
+        <Box my={1} display="flex" justifyContent="center">
+          <Pagination
+            count={pageNumber ? pageNumber : 1}
+            onChange={changeHandle}
+            size="large"
+            renderItem={(item) => (
+              <PaginationItem
+                {...item}
+                className={classes.customPagination}
+                classes={{ selected: classes.selected }}
+              />
+            )}
+          />
+        </Box>
+      ) : undefined}
     </div>
   );
 };

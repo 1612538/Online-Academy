@@ -209,21 +209,23 @@ const ProfileBody = (props) => {
             ))}
           </Grid>
         </Fade>
-        <Box my={1} display="flex" justifyContent="center">
-          <Pagination
-            count={pageNumberF ? pageNumberF : 1}
-            defaultPage={1}
-            onChange={changeHandleF}
-            size="large"
-            renderItem={(item) => (
-              <PaginationItem
-                {...item}
-                className={classes.customPagination}
-                classes={{ selected: classes.selected }}
-              />
-            )}
-          />
-        </Box>
+        {favoriteCourses.length > 0 ? (
+          <Box my={1} display="flex" justifyContent="center">
+            <Pagination
+              count={pageNumberF ? pageNumberF : 1}
+              defaultPage={1}
+              onChange={changeHandleF}
+              size="large"
+              renderItem={(item) => (
+                <PaginationItem
+                  {...item}
+                  className={classes.customPagination}
+                  classes={{ selected: classes.selected }}
+                />
+              )}
+            />
+          </Box>
+        ) : undefined}
       </Grid>
       <Grid item xs={12}>
         <Typography variant="h5" className={classes.customText3}>
@@ -243,21 +245,23 @@ const ProfileBody = (props) => {
             ))}
           </Grid>
         </Fade>
-        <Box my={1} display="flex" justifyContent="center">
-          <Pagination
-            count={pageNumberE ? pageNumberE : 1}
-            defaultPage={1}
-            onChange={changeHandleE}
-            size="large"
-            renderItem={(item) => (
-              <PaginationItem
-                {...item}
-                className={classes.customPagination}
-                classes={{ selected: classes.selected }}
-              />
-            )}
-          />
-        </Box>
+        {enrolledCourses.length > 0 ? (
+          <Box my={1} display="flex" justifyContent="center">
+            <Pagination
+              count={pageNumberE ? pageNumberE : 1}
+              defaultPage={1}
+              onChange={changeHandleE}
+              size="large"
+              renderItem={(item) => (
+                <PaginationItem
+                  {...item}
+                  className={classes.customPagination}
+                  classes={{ selected: classes.selected }}
+                />
+              )}
+            />
+          </Box>
+        ) : undefined}
       </Grid>
       <Tooltip
         title=""

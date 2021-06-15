@@ -64,6 +64,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "rgba(255,255,255, 0.7) !important",
     color: "black",
   },
+  snackbar: {
+    backgroundColor: "#0276aa",
+    color: "white",
+  },
 }));
 
 const StyledButton = withStyles({
@@ -154,17 +158,19 @@ const CourseLecture = (props) => {
         History.push("/error");
         return;
       } else {
-        const data2 = await axios.get(
-          `http://localhost:8080/api/courselectures/${props.match.params.id}/${data.data.lastlecture}`,
-          config
-        );
-        setText(
-          `Your last lecture was "` +
-            data2.data.title +
-            `" at time: ` +
-            secondsToHms(data.data.lasttime) +
-            ``
-        );
+        if (data.data.lastlecture !== null) {
+          const data2 = await axios.get(
+            `http://localhost:8080/api/courselectures/${props.match.params.id}/${data.data.lastlecture}`,
+            config
+          );
+          setText(
+            `Your last lecture was "` +
+              data2.data.title +
+              `" at time: ` +
+              secondsToHms(data.data.lasttime) +
+              ``
+          );
+        }
       }
     }
   };
@@ -279,27 +285,32 @@ const CourseLecture = (props) => {
 
   return (
     <div className={classes.root}>
-      <Snackbar
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        open={open}
-        onClose={handleClose}
-        message={progText}
-        TransitionComponent={Fade}
-        transitionDuration={500}
-        action={
-          <IconButton
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={handleClose}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        }
-      />
+      {localStorage.getItem("role") === "0" && progText !== "" ? (
+        <Snackbar
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          open={open}
+          onClose={handleClose}
+          ContentProps={{
+            className: classes.snackbar,
+          }}
+          message={progText}
+          TransitionComponent={Fade}
+          transitionDuration={500}
+          action={
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={handleClose}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          }
+        />
+      ) : undefined}
       <Grid container className={classes.customGrid1}>
         <Grid item xs={8}>
           {currLecture ? (
@@ -362,20 +373,22 @@ const CourseLecture = (props) => {
                   ></LectureCard>
                 </Grid>
               ))}
-              <Box my={1} display="flex" justifyContent="center">
-                <Pagination
-                  count={pageNumberL ? pageNumberL : 1}
-                  defaultPage={1}
-                  onChange={changeHandleL}
-                  renderItem={(item) => (
-                    <PaginationItem
-                      {...item}
-                      className={classes.customPagination}
-                      classes={{ selected: classes.selected }}
-                    />
-                  )}
-                />
-              </Box>
+              {lectures.length > 0 ? (
+                <Box my={1} display="flex" justifyContent="center">
+                  <Pagination
+                    count={pageNumberL ? pageNumberL : 1}
+                    defaultPage={1}
+                    onChange={changeHandleL}
+                    renderItem={(item) => (
+                      <PaginationItem
+                        {...item}
+                        className={classes.customPagination}
+                        classes={{ selected: classes.selected }}
+                      />
+                    )}
+                  />
+                </Box>
+              ) : undefined}
             </Grid>
             <Grid container item xs={11} justify="center">
               <Grid item>

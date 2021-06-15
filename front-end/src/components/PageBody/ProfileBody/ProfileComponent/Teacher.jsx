@@ -276,21 +276,23 @@ const ProfileBody = (props) => {
             ))}
           </Grid>
         </Fade>
-        <Box my={1} display="flex" justifyContent="center">
-          <Pagination
-            count={pageNumber ? pageNumber : 1}
-            defaultPage={1}
-            onChange={changeHandle}
-            size="large"
-            renderItem={(item) => (
-              <PaginationItem
-                {...item}
-                className={classes.customPagination}
-                classes={{ selected: classes.selected }}
-              />
-            )}
-          />
-        </Box>
+        {courses.length > 0 ? (
+          <Box my={1} display="flex" justifyContent="center">
+            <Pagination
+              count={pageNumber ? pageNumber : 1}
+              defaultPage={1}
+              onChange={changeHandle}
+              size="large"
+              renderItem={(item) => (
+                <PaginationItem
+                  {...item}
+                  className={classes.customPagination}
+                  classes={{ selected: classes.selected }}
+                />
+              )}
+            />
+          </Box>
+        ) : undefined}
       </Grid>
     </Grid>
   );
