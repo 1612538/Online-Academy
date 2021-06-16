@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AboutMeForm = (props) => {
+const EditDetailForm = (props) => {
   const [editor, setEditor] = useState("");
 
   const onEditorStateChange = (contentState) => {
@@ -77,16 +77,18 @@ const AboutMeForm = (props) => {
     const rawContentState = convertToRaw(editor.getCurrentContent());
     const markup = draftToHtml(rawContentState, hashtagConfig, true);
     const data = {
-      information: markup,
+      description2: markup,
     };
     const returnData = await axios.put(
-      `http://localhost:8080/api/users/${localStorage.getItem("iduser")}`,
+      `http://localhost:8080/api/courses/${props.course.idcourses}`,
       data,
       config
     );
     if (returnData.data.success) {
       props.EditClose();
-      props.setUpdate(!props.update);
+      let tmp = props.course;
+      tmp.description2 = markup;
+      props.setCourse({ ...tmp });
     }
   };
 
@@ -107,14 +109,14 @@ const AboutMeForm = (props) => {
           <Grid container direction="row">
             <Grid item xs={12}>
               <Typography variant="h5" className={classes.customText3}>
-                Edit "About me"
+                Edit course detail
               </Typography>
             </Grid>
           </Grid>
           <Grid container className={classes.customGrid}>
             <Grid item xs={12} style={{ marginTop: "20px" }}>
               <Typography variant="body1" style={{ color: "#9e9e9e" }}>
-                Detail
+                Detail Description
               </Typography>
               <Editor
                 editorState={editor}
@@ -135,7 +137,7 @@ const AboutMeForm = (props) => {
             variant="contained"
             className={classes.customButton1}
           >
-            Accept changes
+            Accept
           </Button>
           <Button
             variant="contained"
@@ -150,4 +152,4 @@ const AboutMeForm = (props) => {
   );
 };
 
-export default AboutMeForm;
+export default EditDetailForm;

@@ -7,6 +7,11 @@ import {
   Link,
   Collapse,
   Paper,
+  Popper,
+  Grow,
+  ClickAwayListener,
+  MenuList,
+  MenuItem,
 } from "@material-ui/core";
 import Rating from "@material-ui/lab/Rating";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
@@ -16,6 +21,8 @@ import "video-react/dist/video-react.css";
 import Expand from "@material-ui/icons/ExpandMore";
 import CourseList from "./CourseList";
 import CourseFeedback from "./CourseFeedback";
+import EditCourse from "./EditCourse";
+import EditDetail from "./EditDetail";
 
 import {
   Player,
@@ -154,6 +161,30 @@ const CourseBody = (props) => {
 
   const [isEnrolled, setEnrolled] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
+
+  const [openMenu, setOpenMenu] = useState(false);
+  const anchorRef = React.useRef(null);
+  const [editform, setEditForm] = useState(false);
+  const [detailform, setDetailForm] = useState(false);
+
+  const handleToggle = () => {
+    setOpenMenu((prevOpen) => !prevOpen);
+  };
+
+  const EditClose = () => {
+    setEditForm(false);
+  };
+
+  const handleClose = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+    setOpenMenu(false);
+  };
+
+  const DetailClose = () => {
+    setDetailForm(false);
+  };
 
   const getCourse = async () => {
     const data = await axios.get(
@@ -428,8 +459,58 @@ const CourseBody = (props) => {
                   </StyledButton>
                 </Grid>
                 <Grid item xs={12}>
-                  <StyledButton2>Edit course</StyledButton2>
+                  <StyledButton2
+                    ref={anchorRef}
+                    aria-controls={openMenu ? "menu-list-grow" : undefined}
+                    aria-haspopup="true"
+                    onClick={handleToggle}
+                  >
+                    Edit course
+                  </StyledButton2>
                 </Grid>
+                <Popper
+                  open={openMenu}
+                  anchorEl={anchorRef.current}
+                  role={undefined}
+                  transition
+                  disablePortal
+                  style={{ zIndex: "2" }}
+                >
+                  {({ TransitionProps, placement }) => (
+                    <Grow
+                      {...TransitionProps}
+                      style={{
+                        transformOrigin:
+                          placement === "bottom"
+                            ? "center top"
+                            : "center bottom",
+                      }}
+                    >
+                      <Paper>
+                        <ClickAwayListener onClickAway={handleClose}>
+                          <MenuList id="menu-list-grow">
+                            <MenuItem
+                              onClick={(e) => {
+                                handleClose(e);
+                                setEditForm(true);
+                              }}
+                            >
+                              Edit course information
+                            </MenuItem>
+                            <MenuItem
+                              onClick={(e) => {
+                                handleClose(e);
+                                setDetailForm(true);
+                              }}
+                            >
+                              Edit course detail
+                            </MenuItem>
+                          </MenuList>
+                        </ClickAwayListener>
+                      </Paper>
+                    </Grow>
+                  )}
+                </Popper>
               </>
             ) : undefined}
             <Grid container item direction="row" xs={12}>
@@ -543,6 +624,18 @@ const CourseBody = (props) => {
           </Grid>
         </Grid>
       </Grid>
+      <EditCourse
+        EditClose={EditClose}
+        open={editform}
+        course={course}
+        setCourse={setCourse}
+      ></EditCourse>
+      <EditDetail
+        EditClose={DetailClose}
+        open={detailform}
+        course={course}
+        setCourse={setCourse}
+      ></EditDetail>
     </div>
   );
 };
