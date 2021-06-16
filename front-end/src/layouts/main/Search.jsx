@@ -64,6 +64,7 @@ const Search = (props) => {
         keyword={parsed.keyword}
         handleChange={handleChange}
         setSort={setSort}
+        sort={sort}
       ></SearchBody>
       <ChatBox></ChatBox>
     </div>

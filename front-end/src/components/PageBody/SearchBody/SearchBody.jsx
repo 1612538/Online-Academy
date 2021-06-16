@@ -80,10 +80,11 @@ const SearchBody = (props) => {
   };
 
   useEffect(() => {
+    setOpen(false);
     setTimeout(() => {
       setOpen(true);
-    }, 500);
-  }, []);
+    }, 1000);
+  }, [props.sort, props.keyword]);
 
   return (
     <div className={classes.root}>

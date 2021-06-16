@@ -361,15 +361,17 @@ const CourseLecture = (props) => {
         >
           <Grid container item justify="center">
             <Grid container item xs={10} justify="center" alignItems="center">
-              {lectures.map((obj, key) => (
-                <Grid item xs={12} key={key}>
-                  <LectureCard
-                    active={currLecture ? currLecture.idlecture : -1}
-                    data={obj}
-                    setCurrLecture={setCurrLecture}
-                  ></LectureCard>
-                </Grid>
-              ))}
+              {lectures
+                ? lectures.map((obj, key) => (
+                    <Grid item xs={12} key={key}>
+                      <LectureCard
+                        active={currLecture ? currLecture.idlecture : -1}
+                        data={obj}
+                        setCurrLecture={setCurrLecture}
+                      ></LectureCard>
+                    </Grid>
+                  ))
+                : undefined}
               {lectures.length > 0 ? (
                 <Box my={1} display="flex" justifyContent="center">
                   <Pagination
