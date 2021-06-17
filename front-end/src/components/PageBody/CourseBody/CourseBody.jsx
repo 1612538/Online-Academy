@@ -619,9 +619,6 @@ const CourseBody = (props) => {
             isEnrolled={isEnrolled}
             idcourse={course.idcourses}
           ></CourseFeedback>
-          <Grid item style={{ textAlign: "center" }}>
-            <Expand></Expand>
-          </Grid>
         </Grid>
       </Grid>
       <EditCourse

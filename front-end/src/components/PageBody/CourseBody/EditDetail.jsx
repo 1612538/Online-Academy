@@ -56,6 +56,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function currentDate() {
+  var date = new Date();
+  var dateStr =
+    ("00" + date.getHours()).slice(-2) +
+    ":" +
+    ("00" + date.getMinutes()).slice(-2) +
+    ":" +
+    ("00" + date.getSeconds()).slice(-2) +
+    " " +
+    ("00" + date.getDate()).slice(-2) +
+    "/" +
+    ("00" + (date.getMonth() + 1)).slice(-2) +
+    "/" +
+    date.getFullYear();
+  return dateStr;
+}
+
 const EditDetailForm = (props) => {
   const [editor, setEditor] = useState("");
 
@@ -78,6 +95,7 @@ const EditDetailForm = (props) => {
     const markup = draftToHtml(rawContentState, hashtagConfig, true);
     const data = {
       description2: markup,
+      lastupdate: currentDate(),
     };
     const returnData = await axios.put(
       `http://localhost:8080/api/courses/${props.course.idcourses}`,
@@ -88,6 +106,7 @@ const EditDetailForm = (props) => {
       props.EditClose();
       let tmp = props.course;
       tmp.description2 = markup;
+      tmp.lastupdate = data.lastupdate;
       props.setCourse({ ...tmp });
     }
   };

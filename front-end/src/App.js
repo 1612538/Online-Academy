@@ -47,7 +47,10 @@ function App() {
           <Route path="/signin" component={SignIn} />
           <Route path="/search" component={Search} />
           <Route path="/signup" component={SignUp} />
-          <Route path="/verifyaccount/:email" component={VerifyAccount} />
+          <Route
+            path="/verifyaccount/:email/:verifykey"
+            component={VerifyAccount}
+          />
           <PrivateRoute path="/signout" component={SignOut} />
           <PrivateRoute path="/profile" component={AccountProfile} />
           <Route exact path="/" component={Home} />

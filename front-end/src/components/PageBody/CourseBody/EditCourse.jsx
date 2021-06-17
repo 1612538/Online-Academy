@@ -58,6 +58,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function currentDate() {
+  var date = new Date();
+  var dateStr =
+    ("00" + date.getHours()).slice(-2) +
+    ":" +
+    ("00" + date.getMinutes()).slice(-2) +
+    ":" +
+    ("00" + date.getSeconds()).slice(-2) +
+    " " +
+    ("00" + date.getDate()).slice(-2) +
+    "/" +
+    ("00" + (date.getMonth() + 1)).slice(-2) +
+    "/" +
+    date.getFullYear();
+  return dateStr;
+}
+
 const CourseForm = (props) => {
   const [small_cats, setSmall_Categories] = useState([]);
   const [name, setName] = useState("");
@@ -88,6 +105,7 @@ const CourseForm = (props) => {
       idsmall_category: cat === -1 ? props.course.idsmall_category : cat,
       price: price === -1 ? props.course.price : price,
       description1: briefDesc === "" ? props.course.briefDesc : briefDesc,
+      lastupdate: currentDate(),
     };
 
     const returnData = await axios.put(
@@ -98,10 +116,11 @@ const CourseForm = (props) => {
     if (returnData.data.success) {
       props.EditClose();
       let tmp = props.course;
-      tmp.name = name === "" ? props.course.name : name;
-      tmp.idsmall_category = cat === -1 ? props.course.idsmall_category : cat;
-      tmp.price = price === -1 ? props.course.price : price;
-      tmp.description1 = briefDesc === "" ? props.course.briefDesc : briefDesc;
+      tmp.name = data.name;
+      tmp.idsmall_category = data.idsmall_category;
+      tmp.price = data.price;
+      tmp.description1 = data.description1;
+      tmp.lastupdate = data.lastupdate;
       props.setCourse({ ...tmp });
     }
   };

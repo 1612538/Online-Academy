@@ -6,6 +6,7 @@ import Avatar from "@material-ui/core/Avatar";
 import Rating from "@material-ui/lab/Rating";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import Expand from "@material-ui/icons/ExpandMore";
 
 import axios from "axios";
 
@@ -69,6 +70,7 @@ const Feedback = (props) => {
       data.name = user.data.username;
       data.img = user.data.img;
       let tmp = comments;
+      setText("");
       tmp.push(data);
       setComments([...tmp]);
     }
@@ -107,7 +109,11 @@ const Feedback = (props) => {
       alignItems="center"
       className={classes.root + " example"}
     >
-      {props.isEnrolled === false ? undefined : (
+      {props.isEnrolled === false ? (
+        <Grid item xs style={{ textAlign: "center" }}>
+          You can't give feedbacks for courses that you haven't enrolled
+        </Grid>
+      ) : (
         <Grid item xs={10} style={{ marginBottom: "10px" }}>
           <form onSubmit={handleSubmit}>
             <Grid container justify="center" spacing={2}>
@@ -115,6 +121,7 @@ const Feedback = (props) => {
                 <TextField
                   variant="outlined"
                   placeholder="Your comment"
+                  value={text}
                   multiline
                   rows={4}
                   rowsMax={6}
@@ -179,6 +186,11 @@ const Feedback = (props) => {
           </Grid>
         </Grid>
       ))}
+      {comments.length || comments.length > 0 ? (
+        <Grid item xs={12} style={{ textAlign: "center" }}>
+          <Expand></Expand>
+        </Grid>
+      ) : undefined}
     </Grid>
   );
 };

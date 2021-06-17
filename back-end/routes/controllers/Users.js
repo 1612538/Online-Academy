@@ -118,7 +118,7 @@ module.exports = {
     await mailer.sendMail(
       data.email,
       "Account verification",
-      `Hello, please verify your email.<br/> <a href="http://localhost:8080/api/confirmation/${data.email}/${verifykey}">Click here</a>`
+      `Hello, please verify your email.<br/> <a href="http://localhost:3000/verifyaccount/${data.email}/${verifykey}">Click here</a>`
     );
     db.query(sql, [data], (err, result) => {
       if (err) throw err;
@@ -132,9 +132,7 @@ module.exports = {
       req.jwtDecoded = decoded;
     } catch (err) {
       console.log("Error while verify token: ", err);
-      return res.redirect(
-        `http://localhost:3000/verifyaccount/${req.params.email}?success=false`
-      );
+      return res.json({ success: false });
     }
     if (req.jwtDecoded) {
       const data = {
@@ -143,13 +141,8 @@ module.exports = {
       const sql = `UPDATE ${tbName} SET ? WHERE email = ?`;
       db.query(sql, [data, req.params.email], (err, result) => {
         if (err) throw err;
-        res.redirect(
-          `http://localhost:3000/verifyaccount/${req.params.email}?success=true`
-        );
+        res.json({ success: true });
       });
-    } else
-      res.redirect(
-        `http://localhost:3000/verifyaccount/${req.params.email}?success=false`
-      );
+    } else res.json({ success: false });
   },
 };
