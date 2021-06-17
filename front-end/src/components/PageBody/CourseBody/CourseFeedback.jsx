@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     margin: "auto",
     overflow: "auto",
-    maxHeight: "500px",
+    maxHeight: "600px",
     padding: "10px 0px",
   },
   text2: {
@@ -186,11 +186,6 @@ const Feedback = (props) => {
           </Grid>
         </Grid>
       ))}
-      {comments.length || comments.length > 0 ? (
-        <Grid item xs={12} style={{ textAlign: "center" }}>
-          <Expand></Expand>
-        </Grid>
-      ) : undefined}
     </Grid>
   );
 };

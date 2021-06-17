@@ -12,7 +12,9 @@ import {
   TableRow,
   TextField,
   Typography,
+  Snackbar,
 } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 import axios from "axios";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
@@ -26,6 +28,15 @@ const CategoryListResults = (props) => {
   const [cats, setCats] = useState([]);
   const [show, setShow] = useState(-1);
   const [name, setName] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   const config = {
     headers: {
@@ -55,15 +66,18 @@ const CategoryListResults = (props) => {
     setStart(newPage * 10);
   };
 
-  const handleDelete = async (id) => {
-    const data = await axios.delete(
-      `http://localhost:8080/api/smallcategories/${id}`,
-      config
-    );
-    if (data.data.success === true) {
-      let tmp = cats;
-      tmp = tmp.filter((obj) => obj.idsmall_category !== id);
-      setCats([...tmp]);
+  const handleDelete = async (id, count) => {
+    if (count > 0) setOpen(true);
+    else {
+      const data = await axios.delete(
+        `http://localhost:8080/api/smallcategories/${id}`,
+        config
+      );
+      if (data.data.success === true) {
+        let tmp = cats;
+        tmp = tmp.filter((obj) => obj.idsmall_category !== id);
+        setCats([...tmp]);
+      }
     }
   };
 
@@ -171,7 +185,7 @@ const CategoryListResults = (props) => {
                           minHeight: "35px",
                         }}
                         onClick={() => {
-                          handleDelete(cat.idsmall_category);
+                          handleDelete(cat.idsmall_category, cat.count);
                         }}
                       >
                         <DeleteIcon></DeleteIcon>
@@ -227,6 +241,11 @@ const CategoryListResults = (props) => {
         rowsPerPage={10}
         rowsPerPageOptions={[10]}
       />
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          You cannot delete categories that contain courses!
+        </Alert>
+      </Snackbar>
     </Card>
   );
 };
