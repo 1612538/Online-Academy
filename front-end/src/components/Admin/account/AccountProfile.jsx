@@ -13,11 +13,9 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const user = {
   avatar: "",
-  city: "Los Angeles",
-  country: "USA",
+  city: "Admin",
   jobTitle: "Senior Developer",
   name: "Katarina Smith",
-  timezone: "GTM-7",
 };
 const useStyles = makeStyles({
   text: {
@@ -53,10 +51,7 @@ const AccountProfile = (props) => {
             {user.name}
           </Typography>
           <Typography color="textSecondary" variant="body1">
-            {`${user.city} ${user.country}`}
-          </Typography>
-          <Typography color="textSecondary" variant="body1">
-            {user.timezone}
+            {`${user.city}`}
           </Typography>
         </Box>
       </CardContent>

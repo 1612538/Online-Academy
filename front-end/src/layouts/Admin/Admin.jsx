@@ -10,7 +10,7 @@ import Error from "../error/ErrorPage";
 import NavBar from "../../components/Admin/NavBar";
 import SideBar from "../../components/Admin/SideBar";
 
-const Admin = ({ match }) => {
+const DefaultAdmin = ({ match, Component }) => {
   return (
     <>
       <NavBar></NavBar>
@@ -23,27 +23,61 @@ const Admin = ({ match }) => {
           xs={10}
           style={{ padding: "50px", minHeight: "94vh", marginTop: "6vh" }}
         >
-          <Switch>
-            <Route path={`${match.url}/account`} component={Account} />
-            <Route path={`${match.url}/users`} component={UserList} />
-            <Route path={`${match.url}/teachers`} component={TeacherList} />
-            <Route
-              path={`${match.url}/categories/:id`}
-              component={CategoryList}
-            />
-            <Route exact path={`${match.url}/courses`} component={CourseList} />
-            <Route
-              path={`${match.url}/courses/:id`}
-              component={CourseListByCat}
-            />
-            <Redirect
-              from={`${match.url}/`}
-              to={`${match.url}/account`}
-            ></Redirect>
-            <Route component={Error} />
-          </Switch>
+          <Component match={match}></Component>
         </Grid>
       </Grid>
+    </>
+  );
+};
+
+const Admin = ({ match }) => {
+  return (
+    <>
+      <Switch>
+        <Route
+          path={`${match.url}/account`}
+          render={(props) => (
+            <DefaultAdmin {...props} Component={Account}></DefaultAdmin>
+          )}
+        />
+        <Route
+          path={`${match.url}/users`}
+          render={(props) => (
+            <DefaultAdmin {...props} Component={UserList}></DefaultAdmin>
+          )}
+        />
+        <Route
+          path={`${match.url}/teachers`}
+          render={(props) => (
+            <DefaultAdmin {...props} Component={TeacherList}></DefaultAdmin>
+          )}
+        />
+        <Route
+          path={`${match.url}/categories/:id`}
+          render={(props) => (
+            <DefaultAdmin {...props} Component={CategoryList}></DefaultAdmin>
+          )}
+        />
+        <Route
+          exact
+          path={`${match.url}/courses`}
+          render={(props) => (
+            <DefaultAdmin {...props} Component={CourseList}></DefaultAdmin>
+          )}
+        />
+        <Route
+          path={`${match.url}/courses/:id`}
+          render={(props) => (
+            <DefaultAdmin {...props} Component={CourseListByCat}></DefaultAdmin>
+          )}
+        />
+        <Redirect
+          exact
+          from={`${match.url}/`}
+          to={`${match.url}/account`}
+        ></Redirect>
+        <Route component={Error} />
+      </Switch>
     </>
   );
 };
