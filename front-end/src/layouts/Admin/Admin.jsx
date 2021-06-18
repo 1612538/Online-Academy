@@ -16,7 +16,7 @@ const DefaultAdmin = ({ match, Component }) => {
       <NavBar></NavBar>
       <Grid container style={{ backgroundColor: "rgb(244, 246, 248)" }}>
         <Grid item xs={2}>
-          <SideBar></SideBar>
+          <SideBar match={match}></SideBar>
         </Grid>
         <Grid
           item

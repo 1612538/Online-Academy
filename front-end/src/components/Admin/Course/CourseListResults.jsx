@@ -34,7 +34,7 @@ const CourseListResults = ({ match }) => {
     if (match) url = url + `/${match.params.id}`;
     const data = await axios.get(url, config);
     let tmp = data.data;
-    if (tmp) {
+    if (tmp.length > 0) {
       const teacher = await axios.get(
         "http://localhost:8080/api/teacherslist",
         config
@@ -113,98 +113,106 @@ const CourseListResults = ({ match }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {courses.slice(start, limit).map((course, key) => (
-              <TableRow hover key={key}>
-                <TableCell style={{ width: "30%" }}>
-                  <Box
-                    style={{
-                      alignItems: "center",
-                      display: "flex",
-                    }}
-                  >
-                    <Avatar
-                      src={"http://localhost:8080" + course.img}
-                      style={{ marginRight: "20px" }}
-                    >
-                      {course.name}
-                    </Avatar>
-                    <Typography
-                      color="textPrimary"
-                      variant="body1"
-                      style={{
-                        width: "300px",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                      }}
-                    >
-                      {course.name}
-                    </Typography>
-                  </Box>
-                </TableCell>
-                <TableCell style={{ width: "10%" }}>{course.tutor}</TableCell>
-                <TableCell style={{ width: "5%" }}>{course.price}$</TableCell>
-                <TableCell style={{ width: "5%" }}>{course.rate}</TableCell>
-                <TableCell style={{ width: "5%" }}>
-                  {course.ratevotes}
-                </TableCell>
-                <TableCell style={{ width: "7%" }}>
-                  {course.isCompleted === 0 ? "Not completed" : "Completed"}
-                </TableCell>
-                <TableCell style={{ width: "5%" }}>
-                  {course.subscribes}
-                </TableCell>
-                <TableCell style={{ width: "5%" }}>{course.views}</TableCell>
-                <TableCell style={{ width: "13%" }}>
-                  {course.lastupdate}
-                </TableCell>
-                <TableCell style={{ width: "15%" }}>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    style={{
-                      marginLeft: "10px",
-                      maxWidth: "35px",
-                      maxHeight: "35px",
-                      minWidth: "35px",
-                      minHeight: "35px",
-                    }}
-                    onClick={() => {
-                      handleDelete(course.idcourses);
-                    }}
-                  >
-                    <DeleteIcon></DeleteIcon>
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    style={{
-                      marginLeft: "10px",
-                      maxWidth: "35px",
-                      maxHeight: "35px",
-                      minWidth: "35px",
-                      minHeight: "35px",
-                      backgroundColor: "#f44336",
-                    }}
-                    onClick={() => {
-                      handleLock(course.idcourses, course.isBlocked);
-                    }}
-                  >
-                    {course.isBlocked === 0 ? (
-                      <LockOpenIcon></LockOpenIcon>
-                    ) : (
-                      <LockIcon></LockIcon>
-                    )}
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {courses.length > 0
+              ? courses.slice(start, limit).map((course, key) => (
+                  <TableRow hover key={key}>
+                    <TableCell style={{ width: "30%" }}>
+                      <Box
+                        style={{
+                          alignItems: "center",
+                          display: "flex",
+                        }}
+                      >
+                        <Avatar
+                          src={"http://localhost:8080" + course.img}
+                          style={{ marginRight: "20px" }}
+                        >
+                          {course.name}
+                        </Avatar>
+                        <Typography
+                          color="textPrimary"
+                          variant="body1"
+                          style={{
+                            width: "300px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {course.name}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell style={{ width: "10%" }}>
+                      {course.tutor}
+                    </TableCell>
+                    <TableCell style={{ width: "5%" }}>
+                      {course.price}$
+                    </TableCell>
+                    <TableCell style={{ width: "5%" }}>{course.rate}</TableCell>
+                    <TableCell style={{ width: "5%" }}>
+                      {course.ratevotes}
+                    </TableCell>
+                    <TableCell style={{ width: "7%" }}>
+                      {course.isCompleted === 0 ? "Not completed" : "Completed"}
+                    </TableCell>
+                    <TableCell style={{ width: "5%" }}>
+                      {course.subscribes}
+                    </TableCell>
+                    <TableCell style={{ width: "5%" }}>
+                      {course.views}
+                    </TableCell>
+                    <TableCell style={{ width: "13%" }}>
+                      {course.lastupdate}
+                    </TableCell>
+                    <TableCell style={{ width: "15%" }}>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        style={{
+                          marginLeft: "10px",
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                        }}
+                        onClick={() => {
+                          handleDelete(course.idcourses);
+                        }}
+                      >
+                        <DeleteIcon></DeleteIcon>
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        style={{
+                          marginLeft: "10px",
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                          backgroundColor: "#f44336",
+                        }}
+                        onClick={() => {
+                          handleLock(course.idcourses, course.isBlocked);
+                        }}
+                      >
+                        {course.isBlocked === 0 ? (
+                          <LockOpenIcon></LockOpenIcon>
+                        ) : (
+                          <LockIcon></LockIcon>
+                        )}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              : undefined}
           </TableBody>
         </Table>
       </Box>
       <TablePagination
         component="div"
-        count={courses ? courses.length : 0}
+        count={courses.length > 0 ? courses.length : 0}
         onChangePage={handlePageChange}
         page={page}
         rowsPerPage={10}

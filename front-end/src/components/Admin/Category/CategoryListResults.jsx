@@ -121,121 +121,123 @@ const CategoryListResults = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {cats.slice(start, limit).map((cat, key) => (
-              <TableRow hover key={key}>
-                <TableCell>
-                  <Box
-                    style={{
-                      alignItems: "center",
-                      display: "flex",
-                    }}
-                  >
-                    <Avatar
-                      src={"http://localhost:8080" + cat.img}
-                      style={{ marginRight: "20px" }}
-                    >
-                      {cat.name}
-                    </Avatar>
-                    {show !== key ? (
-                      <Typography color="textPrimary" variant="body1">
-                        {cat.name}
-                      </Typography>
-                    ) : (
-                      <TextField
-                        label="Category name"
-                        variant="outlined"
-                        defaultValue={cat.name}
-                        style={{ height: "40px" }}
-                        onChange={(e) => {
-                          setName(e.target.value);
-                        }}
-                      />
-                    )}
-                  </Box>
-                </TableCell>
-                <TableCell>{cat.courseCount}</TableCell>
-                <TableCell>{cat.count}</TableCell>
-                <TableCell>
-                  {show !== key ? (
-                    <>
-                      <Button
-                        variant="contained"
-                        color="primary"
+            {cats.length > 0
+              ? cats.slice(start, limit).map((cat, key) => (
+                  <TableRow hover key={key}>
+                    <TableCell>
+                      <Box
                         style={{
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                        }}
-                        onClick={() => {
-                          setShow(key);
-                          setName(cat.name);
+                          alignItems: "center",
+                          display: "flex",
                         }}
                       >
-                        <EditIcon></EditIcon>
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        style={{
-                          marginLeft: "10px",
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                        }}
-                        onClick={() => {
-                          handleDelete(cat.idsmall_category, cat.count);
-                        }}
-                      >
-                        <DeleteIcon></DeleteIcon>
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        style={{
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                        }}
-                        onClick={() => {
-                          handleUpdate(cat.idsmall_category);
-                          setShow(-1);
-                        }}
-                      >
-                        <CheckIcon></CheckIcon>
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        style={{
-                          marginLeft: "10px",
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                        }}
-                        onClick={() => {
-                          setShow(-1);
-                        }}
-                      >
-                        <ClearIcon></ClearIcon>
-                      </Button>
-                    </>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+                        <Avatar
+                          src={"http://localhost:8080" + cat.img}
+                          style={{ marginRight: "20px" }}
+                        >
+                          {cat.name}
+                        </Avatar>
+                        {show !== key ? (
+                          <Typography color="textPrimary" variant="body1">
+                            {cat.name}
+                          </Typography>
+                        ) : (
+                          <TextField
+                            label="Category name"
+                            variant="outlined"
+                            defaultValue={cat.name}
+                            style={{ height: "40px" }}
+                            onChange={(e) => {
+                              setName(e.target.value);
+                            }}
+                          />
+                        )}
+                      </Box>
+                    </TableCell>
+                    <TableCell>{cat.courseCount}</TableCell>
+                    <TableCell>{cat.count}</TableCell>
+                    <TableCell>
+                      {show !== key ? (
+                        <>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            style={{
+                              maxWidth: "35px",
+                              maxHeight: "35px",
+                              minWidth: "35px",
+                              minHeight: "35px",
+                            }}
+                            onClick={() => {
+                              setShow(key);
+                              setName(cat.name);
+                            }}
+                          >
+                            <EditIcon></EditIcon>
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            style={{
+                              marginLeft: "10px",
+                              maxWidth: "35px",
+                              maxHeight: "35px",
+                              minWidth: "35px",
+                              minHeight: "35px",
+                            }}
+                            onClick={() => {
+                              handleDelete(cat.idsmall_category, cat.count);
+                            }}
+                          >
+                            <DeleteIcon></DeleteIcon>
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            style={{
+                              maxWidth: "35px",
+                              maxHeight: "35px",
+                              minWidth: "35px",
+                              minHeight: "35px",
+                            }}
+                            onClick={() => {
+                              handleUpdate(cat.idsmall_category);
+                              setShow(-1);
+                            }}
+                          >
+                            <CheckIcon></CheckIcon>
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            style={{
+                              marginLeft: "10px",
+                              maxWidth: "35px",
+                              maxHeight: "35px",
+                              minWidth: "35px",
+                              minHeight: "35px",
+                            }}
+                            onClick={() => {
+                              setShow(-1);
+                            }}
+                          >
+                            <ClearIcon></ClearIcon>
+                          </Button>
+                        </>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              : undefined}
           </TableBody>
         </Table>
       </Box>
       <TablePagination
         component="div"
-        count={cats ? cats.length : 0}
+        count={cats.length > 0 ? cats.length : 0}
         onChangePage={handlePageChange}
         page={page}
         rowsPerPage={10}

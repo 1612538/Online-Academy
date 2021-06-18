@@ -126,192 +126,194 @@ const UserListResults = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.slice(start, limit).map((user, key) => (
-              <TableRow hover key={key}>
-                <TableCell>
-                  <Box
-                    style={{
-                      alignItems: "center",
-                      display: "flex",
-                    }}
-                  >
-                    <Avatar
-                      src={"http://localhost:8080" + user.img}
-                      style={{ marginRight: "20px" }}
-                    >
-                      {user.name}
-                    </Avatar>
-                    {show !== key ? (
-                      <Typography color="textPrimary" variant="body1">
-                        {user.firstname + " " + user.lastname}
-                      </Typography>
-                    ) : (
-                      <>
-                        <TextField
-                          label="First name"
-                          variant="outlined"
-                          defaultValue={user.firstname}
-                          style={{
-                            height: "40px",
-                            width: "120px",
-                            marginRight: "10px",
-                          }}
-                          onChange={(e) => {
-                            setFirstName(e.target.value);
-                          }}
-                        />
-                        <TextField
-                          label="Last name"
-                          variant="outlined"
-                          defaultValue={user.lastname}
-                          style={{ height: "40px", width: "120px" }}
-                          onChange={(e) => {
-                            setLastName(e.target.value);
-                          }}
-                        />
-                      </>
-                    )}
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  {show !== key ? (
-                    user.email
-                  ) : (
-                    <TextField
-                      label="Email"
-                      variant="outlined"
-                      defaultValue={user.email}
-                      style={{ height: "40px" }}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                      }}
-                    />
-                  )}
-                </TableCell>
-                <TableCell>
-                  {show !== key ? (
-                    user.username
-                  ) : (
-                    <TextField
-                      label="Username"
-                      variant="outlined"
-                      defaultValue={user.username}
-                      style={{ height: "40px" }}
-                      onChange={(e) => {
-                        setUsername(e.target.value);
-                      }}
-                    />
-                  )}
-                </TableCell>
-                <TableCell>{user.occupation}</TableCell>
-                <TableCell>
-                  {user.isVerify === 0 ? "Not verify" : "Verified"}
-                </TableCell>
-                <TableCell>
-                  {show !== key ? (
-                    <>
-                      <Button
-                        variant="contained"
-                        color="primary"
+            {users.length > 0
+              ? users.slice(start, limit).map((user, key) => (
+                  <TableRow hover key={key}>
+                    <TableCell>
+                      <Box
                         style={{
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                        }}
-                        onClick={() => {
-                          setShow(key);
-                          setUsername(user.username);
-                          setFirstName(user.firstname);
-                          setLastName(user.lastname);
-                          setEmail(user.email);
+                          alignItems: "center",
+                          display: "flex",
                         }}
                       >
-                        <EditIcon></EditIcon>
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        style={{
-                          marginLeft: "10px",
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                        }}
-                        onClick={() => {
-                          handleDelete(user.iduser);
-                        }}
-                      >
-                        <DeleteIcon></DeleteIcon>
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        style={{
-                          marginLeft: "10px",
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                          backgroundColor: "#f44336",
-                        }}
-                        onClick={() => {
-                          handleLock(user.iduser, user.isBlocked);
-                        }}
-                      >
-                        {user.isBlocked === 0 ? (
-                          <LockOpenIcon></LockOpenIcon>
+                        <Avatar
+                          src={"http://localhost:8080" + user.img}
+                          style={{ marginRight: "20px" }}
+                        >
+                          {user.name}
+                        </Avatar>
+                        {show !== key ? (
+                          <Typography color="textPrimary" variant="body1">
+                            {user.firstname + " " + user.lastname}
+                          </Typography>
                         ) : (
-                          <LockIcon></LockIcon>
+                          <>
+                            <TextField
+                              label="First name"
+                              variant="outlined"
+                              defaultValue={user.firstname}
+                              style={{
+                                height: "40px",
+                                width: "120px",
+                                marginRight: "10px",
+                              }}
+                              onChange={(e) => {
+                                setFirstName(e.target.value);
+                              }}
+                            />
+                            <TextField
+                              label="Last name"
+                              variant="outlined"
+                              defaultValue={user.lastname}
+                              style={{ height: "40px", width: "120px" }}
+                              onChange={(e) => {
+                                setLastName(e.target.value);
+                              }}
+                            />
+                          </>
                         )}
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        style={{
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                        }}
-                        onClick={() => {
-                          handleUpdate(user.iduser);
-                          setShow(-1);
-                        }}
-                      >
-                        <CheckIcon></CheckIcon>
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        style={{
-                          marginLeft: "10px",
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                        }}
-                        onClick={() => {
-                          setShow(-1);
-                        }}
-                      >
-                        <ClearIcon></ClearIcon>
-                      </Button>
-                    </>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      {show !== key ? (
+                        user.email
+                      ) : (
+                        <TextField
+                          label="Email"
+                          variant="outlined"
+                          defaultValue={user.email}
+                          style={{ height: "40px" }}
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                          }}
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {show !== key ? (
+                        user.username
+                      ) : (
+                        <TextField
+                          label="Username"
+                          variant="outlined"
+                          defaultValue={user.username}
+                          style={{ height: "40px" }}
+                          onChange={(e) => {
+                            setUsername(e.target.value);
+                          }}
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell>{user.occupation}</TableCell>
+                    <TableCell>
+                      {user.isVerify === 0 ? "Not verify" : "Verified"}
+                    </TableCell>
+                    <TableCell>
+                      {show !== key ? (
+                        <>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            style={{
+                              maxWidth: "35px",
+                              maxHeight: "35px",
+                              minWidth: "35px",
+                              minHeight: "35px",
+                            }}
+                            onClick={() => {
+                              setShow(key);
+                              setUsername(user.username);
+                              setFirstName(user.firstname);
+                              setLastName(user.lastname);
+                              setEmail(user.email);
+                            }}
+                          >
+                            <EditIcon></EditIcon>
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            style={{
+                              marginLeft: "10px",
+                              maxWidth: "35px",
+                              maxHeight: "35px",
+                              minWidth: "35px",
+                              minHeight: "35px",
+                            }}
+                            onClick={() => {
+                              handleDelete(user.iduser);
+                            }}
+                          >
+                            <DeleteIcon></DeleteIcon>
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            style={{
+                              marginLeft: "10px",
+                              maxWidth: "35px",
+                              maxHeight: "35px",
+                              minWidth: "35px",
+                              minHeight: "35px",
+                              backgroundColor: "#f44336",
+                            }}
+                            onClick={() => {
+                              handleLock(user.iduser, user.isBlocked);
+                            }}
+                          >
+                            {user.isBlocked === 0 ? (
+                              <LockOpenIcon></LockOpenIcon>
+                            ) : (
+                              <LockIcon></LockIcon>
+                            )}
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            style={{
+                              maxWidth: "35px",
+                              maxHeight: "35px",
+                              minWidth: "35px",
+                              minHeight: "35px",
+                            }}
+                            onClick={() => {
+                              handleUpdate(user.iduser);
+                              setShow(-1);
+                            }}
+                          >
+                            <CheckIcon></CheckIcon>
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            style={{
+                              marginLeft: "10px",
+                              maxWidth: "35px",
+                              maxHeight: "35px",
+                              minWidth: "35px",
+                              minHeight: "35px",
+                            }}
+                            onClick={() => {
+                              setShow(-1);
+                            }}
+                          >
+                            <ClearIcon></ClearIcon>
+                          </Button>
+                        </>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              : undefined}
           </TableBody>
         </Table>
       </Box>
       <TablePagination
         component="div"
-        count={users ? users.length : 0}
+        count={users.length > 0 ? users.length : 0}
         onChangePage={handlePageChange}
         page={page}
         rowsPerPage={10}

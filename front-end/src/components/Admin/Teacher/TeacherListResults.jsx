@@ -138,198 +138,200 @@ const TeacherListResults = ({ update }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {teachers.slice(start, limit).map((teacher, key) => (
-              <TableRow hover key={key}>
-                <TableCell
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    setOpenD(true);
-                    setClickUser({ ...teacher });
-                  }}
-                >
-                  <Box
-                    style={{
-                      alignItems: "center",
-                      display: "flex",
-                    }}
-                  >
-                    <Avatar
-                      src={"http://localhost:8080" + teacher.img}
-                      style={{ marginRight: "20px" }}
+            {teachers.length > 0
+              ? teachers.slice(start, limit).map((teacher, key) => (
+                  <TableRow hover key={key}>
+                    <TableCell
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        setOpenD(true);
+                        setClickUser({ ...teacher });
+                      }}
                     >
-                      {teacher.name}
-                    </Avatar>
-                    {show !== key ? (
-                      <Typography color="textPrimary" variant="body1">
-                        {teacher.firstname + " " + teacher.lastname}
-                      </Typography>
-                    ) : (
-                      <>
-                        <TextField
-                          label="First name"
-                          variant="outlined"
-                          defaultValue={teacher.firstname}
-                          style={{
-                            height: "40px",
-                            width: "120px",
-                            marginRight: "10px",
-                          }}
-                          onChange={(e) => {
-                            setFirstName(e.target.value);
-                          }}
-                        />
-                        <TextField
-                          label="Last name"
-                          variant="outlined"
-                          defaultValue={teacher.lastname}
-                          style={{ height: "40px", width: "120px" }}
-                          onChange={(e) => {
-                            setLastName(e.target.value);
-                          }}
-                        />
-                      </>
-                    )}
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  {show !== key ? (
-                    teacher.email
-                  ) : (
-                    <TextField
-                      label="Email"
-                      variant="outlined"
-                      defaultValue={teacher.email}
-                      style={{ height: "40px" }}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                      }}
-                    />
-                  )}
-                </TableCell>
-                <TableCell>{teacher.username}</TableCell>
-                <TableCell>
-                  {show !== key ? (
-                    teacher.occupation
-                  ) : (
-                    <TextField
-                      label="Occupation"
-                      variant="outlined"
-                      defaultValue={teacher.occupation}
-                      style={{ height: "40px" }}
-                      onChange={(e) => {
-                        setOccupation(e.target.value);
-                      }}
-                    />
-                  )}
-                </TableCell>
-                <TableCell>
-                  {teacher.isVerify === 0 ? "Not verify" : "Verified"}
-                </TableCell>
-                <TableCell>
-                  {show !== key ? (
-                    <>
-                      <Button
-                        variant="contained"
-                        color="primary"
+                      <Box
                         style={{
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                        }}
-                        onClick={() => {
-                          setShow(key);
-                          setOccupation(teacher.occupation);
-                          setFirstName(teacher.firstname);
-                          setLastName(teacher.lastname);
-                          setEmail(teacher.email);
+                          alignItems: "center",
+                          display: "flex",
                         }}
                       >
-                        <EditIcon></EditIcon>
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        style={{
-                          marginLeft: "10px",
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                        }}
-                        onClick={() => {
-                          handleDelete(teacher.iduser);
-                        }}
-                      >
-                        <DeleteIcon></DeleteIcon>
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        style={{
-                          marginLeft: "10px",
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                          backgroundColor: "#f44336",
-                        }}
-                        onClick={() => {
-                          handleLock(teacher.iduser, teacher.isBlocked);
-                        }}
-                      >
-                        {teacher.isBlocked === 0 ? (
-                          <LockOpenIcon></LockOpenIcon>
+                        <Avatar
+                          src={"http://localhost:8080" + teacher.img}
+                          style={{ marginRight: "20px" }}
+                        >
+                          {teacher.name}
+                        </Avatar>
+                        {show !== key ? (
+                          <Typography color="textPrimary" variant="body1">
+                            {teacher.firstname + " " + teacher.lastname}
+                          </Typography>
                         ) : (
-                          <LockIcon></LockIcon>
+                          <>
+                            <TextField
+                              label="First name"
+                              variant="outlined"
+                              defaultValue={teacher.firstname}
+                              style={{
+                                height: "40px",
+                                width: "120px",
+                                marginRight: "10px",
+                              }}
+                              onChange={(e) => {
+                                setFirstName(e.target.value);
+                              }}
+                            />
+                            <TextField
+                              label="Last name"
+                              variant="outlined"
+                              defaultValue={teacher.lastname}
+                              style={{ height: "40px", width: "120px" }}
+                              onChange={(e) => {
+                                setLastName(e.target.value);
+                              }}
+                            />
+                          </>
                         )}
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        style={{
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                        }}
-                        onClick={() => {
-                          handleUpdate(teacher.iduser);
-                          setShow(-1);
-                        }}
-                      >
-                        <CheckIcon></CheckIcon>
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        style={{
-                          marginLeft: "10px",
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                        }}
-                        onClick={() => {
-                          setShow(-1);
-                        }}
-                      >
-                        <ClearIcon></ClearIcon>
-                      </Button>
-                    </>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      {show !== key ? (
+                        teacher.email
+                      ) : (
+                        <TextField
+                          label="Email"
+                          variant="outlined"
+                          defaultValue={teacher.email}
+                          style={{ height: "40px" }}
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                          }}
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell>{teacher.username}</TableCell>
+                    <TableCell>
+                      {show !== key ? (
+                        teacher.occupation
+                      ) : (
+                        <TextField
+                          label="Occupation"
+                          variant="outlined"
+                          defaultValue={teacher.occupation}
+                          style={{ height: "40px" }}
+                          onChange={(e) => {
+                            setOccupation(e.target.value);
+                          }}
+                        />
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {teacher.isVerify === 0 ? "Not verify" : "Verified"}
+                    </TableCell>
+                    <TableCell>
+                      {show !== key ? (
+                        <>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            style={{
+                              maxWidth: "35px",
+                              maxHeight: "35px",
+                              minWidth: "35px",
+                              minHeight: "35px",
+                            }}
+                            onClick={() => {
+                              setShow(key);
+                              setOccupation(teacher.occupation);
+                              setFirstName(teacher.firstname);
+                              setLastName(teacher.lastname);
+                              setEmail(teacher.email);
+                            }}
+                          >
+                            <EditIcon></EditIcon>
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            style={{
+                              marginLeft: "10px",
+                              maxWidth: "35px",
+                              maxHeight: "35px",
+                              minWidth: "35px",
+                              minHeight: "35px",
+                            }}
+                            onClick={() => {
+                              handleDelete(teacher.iduser);
+                            }}
+                          >
+                            <DeleteIcon></DeleteIcon>
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            style={{
+                              marginLeft: "10px",
+                              maxWidth: "35px",
+                              maxHeight: "35px",
+                              minWidth: "35px",
+                              minHeight: "35px",
+                              backgroundColor: "#f44336",
+                            }}
+                            onClick={() => {
+                              handleLock(teacher.iduser, teacher.isBlocked);
+                            }}
+                          >
+                            {teacher.isBlocked === 0 ? (
+                              <LockOpenIcon></LockOpenIcon>
+                            ) : (
+                              <LockIcon></LockIcon>
+                            )}
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            style={{
+                              maxWidth: "35px",
+                              maxHeight: "35px",
+                              minWidth: "35px",
+                              minHeight: "35px",
+                            }}
+                            onClick={() => {
+                              handleUpdate(teacher.iduser);
+                              setShow(-1);
+                            }}
+                          >
+                            <CheckIcon></CheckIcon>
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            style={{
+                              marginLeft: "10px",
+                              maxWidth: "35px",
+                              maxHeight: "35px",
+                              minWidth: "35px",
+                              minHeight: "35px",
+                            }}
+                            onClick={() => {
+                              setShow(-1);
+                            }}
+                          >
+                            <ClearIcon></ClearIcon>
+                          </Button>
+                        </>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              : undefined}
           </TableBody>
         </Table>
       </Box>
       <TablePagination
         component="div"
-        count={teachers ? teachers.length : 0}
+        count={teachers.length > 0 ? teachers.length : 0}
         onChangePage={handlePageChange}
         page={page}
         rowsPerPage={10}

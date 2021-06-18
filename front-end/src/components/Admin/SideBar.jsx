@@ -53,14 +53,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SideBar = () => {
+const SideBar = ({ match }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
   const [cat, setCat] = React.useState([]);
   const [smallcat, setSmallCat] = React.useState([]);
   const [opens, setOpens] = React.useState([]);
-  const [active, setActive] = React.useState("0");
+  const [active, setActive] = React.useState("");
 
   const getCat = async () => {
     const data = await axios.get("http://localhost:8080/api/categories");
@@ -90,11 +90,13 @@ const SideBar = () => {
       await getSmallCat();
     };
     fetchData();
-    return () => {
-      setSmallCat([]);
-      setCat([]);
-    };
+    return () => {};
   }, []);
+
+  useEffect(() => {
+    setActive(match.url);
+  }, [match]);
+
   return (
     <Container maxWidth="xl" className={classes.root}>
       <Box
@@ -126,9 +128,8 @@ const SideBar = () => {
           button
           onClick={() => {
             History.push(`/admin/account`);
-            setActive("0");
           }}
-          className={active === "0" ? classes.customActive : ""}
+          className={active === "/admin/account" ? classes.customActive : ""}
         >
           <ListItemIcon>
             <Account />
@@ -152,13 +153,12 @@ const SideBar = () => {
                   className={
                     classes.nested +
                     " " +
-                    (active === "1." + key.toString()
+                    (active === `/admin/categories/${obj.idcategory}`
                       ? classes.customActive
                       : "")
                   }
                   onClick={() => {
                     History.push(`/admin/categories/${obj.idcategory}`);
-                    setActive("1." + key.toString());
                   }}
                 >
                   <ListItemIcon></ListItemIcon>
@@ -170,10 +170,9 @@ const SideBar = () => {
         </div>
         <ListItem
           button
-          className={active === "2" ? classes.customActive : ""}
+          className={active === "/admin/users" ? classes.customActive : ""}
           onClick={() => {
             History.push(`/admin/users`);
-            setActive("2");
           }}
         >
           <ListItemIcon>
@@ -183,10 +182,9 @@ const SideBar = () => {
         </ListItem>
         <ListItem
           button
-          className={active === "3" ? classes.customActive : ""}
+          className={active === "/admin/teachers" ? classes.customActive : ""}
           onClick={() => {
             History.push(`/admin/teachers`);
-            setActive("3");
           }}
         >
           <ListItemIcon>
@@ -207,10 +205,11 @@ const SideBar = () => {
               <ListItem
                 button
                 className={classes.nested}
-                className={active === "4" ? classes.customActive : ""}
+                className={
+                  active === "/admin/courses" ? classes.customActive : ""
+                }
                 onClick={() => {
                   History.push(`/admin/courses`);
-                  setActive("4");
                 }}
               >
                 <ListItemIcon></ListItemIcon>
@@ -243,7 +242,7 @@ const SideBar = () => {
                                 classes.nested2 +
                                 " " +
                                 (active ===
-                                "5." + key.toString() + "." + key2.toString()
+                                `/admin/courses/${obj2.idsmall_category}`
                                   ? classes.customActive
                                   : "")
                               }
