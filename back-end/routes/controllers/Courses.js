@@ -1,5 +1,6 @@
 const db = require("../../utils/db");
 const tbName = "courses";
+const fs = require("fs");
 
 function currentDate() {
   var date = new Date();
@@ -17,6 +18,33 @@ function currentDate() {
     date.getFullYear();
   return dateStr;
 }
+
+const deleteImage = async (req, res) => {
+  const sqltmp = `SELECT * FROM ${tbName} WHERE idcourses = ?`;
+  const results = await new Promise((resolve, reject) => {
+    db.query(sqltmp, [req.params.id], (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(result);
+    });
+  });
+  const results2 = await new Promise((resolve, reject) => {
+    if (req.files["imageInput"]) {
+      fs.unlink("./public" + results[0].img, (err) => {
+        if (err) reject(err);
+        else {
+          const data = {
+            img: "/tmp/my-uploads/" + req.files["imageInput"][0].filename,
+          };
+          console.log("deleted files: " + results[0].img);
+          resolve(data);
+        }
+      });
+    }
+  });
+  return results2;
+};
 
 module.exports = {
   getAll: (req, res) => {
@@ -211,13 +239,22 @@ module.exports = {
       res.json({ success: true });
     });
   },
-  update: (req, res) => {
-    let data = req.body;
+
+  update: async (req, res) => {
+    let data = {};
+    if (req.files) {
+      data = await deleteImage(req, res);
+    } else data = req.body;
     let id = req.params.id;
+    console.log(data);
     const sql = `UPDATE ${tbName} SET ? WHERE idcourses = ?`;
     db.query(sql, [data, id], (err, result) => {
       if (err) throw err;
-      res.json({ success: true });
+      res.json({
+        success: true,
+        img: data.img ? data.img : "",
+        previewvideo: data.previewvideo ? data.previewvideo : "",
+      });
     });
   },
   add: (req, res) => {

@@ -110,11 +110,32 @@ const StyledButton3 = withStyles({
       backgroundColor: "#6d8e46",
       color: "white",
     },
+    "&:disabled": {
+      backgroundColor: "rgb(155,155,155)",
+      color: "rgb(200,200,200)",
+    },
   },
 })(Button);
 
 function secondsToHms(d) {
   return new Date(d * 1000).toISOString().substr(11, 8);
+}
+
+function currentDate() {
+  var date = new Date();
+  var dateStr =
+    ("00" + date.getHours()).slice(-2) +
+    ":" +
+    ("00" + date.getMinutes()).slice(-2) +
+    ":" +
+    ("00" + date.getSeconds()).slice(-2) +
+    " " +
+    ("00" + date.getDate()).slice(-2) +
+    "/" +
+    ("00" + (date.getMonth() + 1)).slice(-2) +
+    "/" +
+    date.getFullYear();
+  return dateStr;
 }
 
 const CourseLecture = (props) => {
@@ -212,6 +233,7 @@ const CourseLecture = (props) => {
   const handleComplete = async () => {
     const data = {
       isCompleted: course.isCompleted === 0 ? 1 : 0,
+      lastupdate: currentDate(),
     };
     const returnData = await axios.put(
       `http://localhost:8080/api/courses/${course.idcourses}`,
@@ -221,6 +243,7 @@ const CourseLecture = (props) => {
     if (returnData.data.success === true) {
       let tmp = course;
       tmp.isCompleted = data.isCompleted;
+      tmp.lastupdate = data.lastupdate;
       setCourse({ ...tmp });
     }
   };
@@ -307,7 +330,9 @@ const CourseLecture = (props) => {
             </IconButton>
           }
         />
-      ) : undefined}
+      ) : (
+        undefined
+      )}
       <Grid container className={classes.customGrid1}>
         <Grid item xs={8}>
           {currLecture ? (
@@ -349,7 +374,9 @@ const CourseLecture = (props) => {
                 dangerouslySetInnerHTML={{ __html: currLecture.description }}
               ></Typography>
             </>
-          ) : undefined}
+          ) : (
+            undefined
+          )}
         </Grid>
         <Grid
           container
@@ -387,7 +414,9 @@ const CourseLecture = (props) => {
                     )}
                   />
                 </Box>
-              ) : undefined}
+              ) : (
+                undefined
+              )}
             </Grid>
             <Grid container item xs={11} justify="center">
               <Grid item>
@@ -436,10 +465,15 @@ const CourseLecture = (props) => {
                   </Grid>
                 </Grid>
               ) : localStorage.getItem("role") === "0" ? (
-                <StyledButton3 onClick={handleOnleave}>
+                <StyledButton3
+                  disabled={isSave ? true : false}
+                  onClick={handleOnleave}
+                >
                   {isSave ? "Saved" : "Save progress"}
                 </StyledButton3>
-              ) : undefined}
+              ) : (
+                undefined
+              )}
             </Grid>
           </Grid>
           <LectureForm

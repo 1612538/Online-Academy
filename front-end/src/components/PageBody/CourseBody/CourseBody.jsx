@@ -12,8 +12,9 @@ import {
   ClickAwayListener,
   MenuList,
   MenuItem,
+  Snackbar,
 } from "@material-ui/core";
-import Rating from "@material-ui/lab/Rating";
+import { Rating } from "@material-ui/lab";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Infinite from "@material-ui/icons/AllInclusive";
 import Phone from "@material-ui/icons/PhoneAndroid";
@@ -23,6 +24,7 @@ import CourseList from "./CourseList";
 import CourseFeedback from "./CourseFeedback";
 import EditCourse from "./EditCourse";
 import EditDetail from "./EditDetail";
+import AddPhoto from "@material-ui/icons/AddPhotoAlternate";
 
 import {
   Player,
@@ -121,6 +123,36 @@ const useStyles = makeStyles((theme) => ({
     color: "white",
     textAlign: "center",
   },
+  customImageButton: {
+    position: "absolute",
+    top: "0",
+    right: "0",
+    backgroundColor: "rgb(180,180,180)",
+    border: "0",
+    borderBottomLeftRadius: "5px",
+    boxShadow: "none",
+    padding: "5px 0px",
+    maxWidth: "30px",
+    maxHeight: "30px",
+    minWidth: "30px",
+    minHeight: "30px",
+    borderRadius: "0",
+    color: "white",
+    "&:hover": {
+      boxShadow: "none",
+      backgroundColor: "rgb(160,160,160)",
+    },
+  },
+  cancelButton: {
+    backgroundColor: "transparent",
+    margin: "10px 10px 10px 0px",
+    color: "white",
+    textTransform: "none",
+    "&:hover": {
+      boxShadow: "none",
+      backgroundColor: "rgb(80,80,80)",
+    },
+  },
 }));
 
 const StyledButton = withStyles({
@@ -151,6 +183,9 @@ const StyledButton2 = withStyles({
   },
 })(Button);
 
+let previousImage = "";
+let previousVideo = "";
+
 const CourseBody = (props) => {
   const classes = useStyles();
   const [col1, setCol1] = useState(false);
@@ -166,6 +201,9 @@ const CourseBody = (props) => {
   const anchorRef = React.useRef(null);
   const [editform, setEditForm] = useState(false);
   const [detailform, setDetailForm] = useState(false);
+  const [isChange, setChange] = useState(false);
+
+  const [img, setImage] = useState(null);
 
   const handleToggle = () => {
     setOpenMenu((prevOpen) => !prevOpen);
@@ -186,11 +224,52 @@ const CourseBody = (props) => {
     setDetailForm(false);
   };
 
+  const handleImage = (e) => {
+    if (e.target.files[0]) {
+      let tmp = course;
+      tmp.img = window.URL.createObjectURL(e.target.files[0]);
+      setCourse({ ...tmp });
+      setImage(e.target.files[0]);
+      setChange(true);
+    }
+  };
+
+  const handleImageChange = async () => {
+    const config = {
+      headers: {
+        "x-access-token": localStorage.getItem("accessToken"),
+      },
+    };
+    let formData = new FormData();
+    formData.append("imageInput", img);
+    const returnData = await axios.put(
+      `http://localhost:8080/api/courses/${props.match.params.id}`,
+      formData,
+      config
+    );
+    if (returnData.data.success === true) {
+      let tmp = course;
+      previousImage = returnData.data.img;
+      tmp.img = returnData.data.img;
+      setCourse({ ...tmp });
+      setChange(false);
+    }
+  };
+
+  const cancelChange = () => {
+    let tmp = course;
+    tmp.img = previousImage;
+    console.log(tmp.img);
+    setCourse({ ...tmp });
+    setChange(false);
+  };
+
   const getCourse = async () => {
     const data = await axios.get(
       `http://localhost:8080/api/courses/${props.match.params.id}`
     );
     setCourse(data.data);
+    previousImage = data.data.img;
     setVideo("http://localhost:8080" + data.data.previewvideo);
     const view = {
       views: parseInt(data.data.views) + 1,
@@ -362,14 +441,40 @@ const CourseBody = (props) => {
           alignItems="center"
           direction="column"
         >
-          <img
-            style={{ height: "170px", width: "300px" }}
-            alt={course.name}
-            src={"http://localhost:8080" + course.img}
-          />
+          <div style={{ position: "relative" }}>
+            <img
+              style={{ height: "170px", width: "300px" }}
+              alt={course.name}
+              src={isChange ? course.img : "http://localhost:8080" + course.img}
+            />
+            {localStorage.getItem("role") === "1" ? (
+              <Button
+                variant="contained"
+                component="label"
+                className={classes.customImageButton}
+              >
+                <AddPhoto></AddPhoto>
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={(e) => {
+                    handleImage(e);
+                  }}
+                  onClick={(e) => {
+                    e.target.value = null;
+                  }}
+                />
+              </Button>
+            ) : (
+              undefined
+            )}
+          </div>
           {bestseller ? (
             <div className={classes.bestseller}>Bestseller</div>
-          ) : undefined}
+          ) : (
+            undefined
+          )}
         </Grid>
       </Grid>
       <Grid container className={classes.customGrid1} spacing={4}>
@@ -512,7 +617,9 @@ const CourseBody = (props) => {
                   )}
                 </Popper>
               </>
-            ) : undefined}
+            ) : (
+              undefined
+            )}
             <Grid container item direction="row" xs={12}>
               <Grid item xs={3}>
                 <Typography variant="body1">Rating:</Typography>
@@ -636,6 +743,29 @@ const CourseBody = (props) => {
         course={course}
         setCourse={setCourse}
       ></EditDetail>
+      <Snackbar
+        open={isChange}
+        action={
+          <React.Fragment>
+            Your changes haven't been saved.
+            <Button
+              color="secondary"
+              variant="contained"
+              style={{ margin: "10px", textTransform: "none" }}
+              onClick={handleImageChange}
+            >
+              Save changes
+            </Button>
+            <Button
+              variant="contained"
+              className={classes.cancelButton}
+              onClick={cancelChange}
+            >
+              Cancel
+            </Button>
+          </React.Fragment>
+        }
+      ></Snackbar>
     </div>
   );
 };

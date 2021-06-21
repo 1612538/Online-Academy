@@ -110,7 +110,15 @@ const Feedback = (props) => {
       className={classes.root + " example"}
     >
       {props.isEnrolled === false ? (
-        <Grid item xs style={{ textAlign: "center" }}>
+        <Grid
+          item
+          xs={10}
+          style={{
+            textAlign: "center",
+            marginBottom: "15px",
+            fontFamily: "roboto",
+          }}
+        >
           You can't give feedbacks for courses that you haven't enrolled
         </Grid>
       ) : (
