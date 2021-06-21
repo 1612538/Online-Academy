@@ -104,7 +104,7 @@ const CourseForm = (props) => {
       name: name === "" ? props.course.name : name,
       idsmall_category: cat === -1 ? props.course.idsmall_category : cat,
       price: price === -1 ? props.course.price : price,
-      description1: briefDesc === "" ? props.course.briefDesc : briefDesc,
+      description1: briefDesc === "" ? props.course.description1 : briefDesc,
       lastupdate: currentDate(),
     };
 
