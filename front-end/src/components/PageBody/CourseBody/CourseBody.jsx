@@ -25,6 +25,7 @@ import CourseFeedback from "./CourseFeedback";
 import EditCourse from "./EditCourse";
 import EditDetail from "./EditDetail";
 import AddPhoto from "@material-ui/icons/AddPhotoAlternate";
+import AddVideo from "@material-ui/icons/AddCircleRounded";
 
 import {
   Player,
@@ -143,6 +144,23 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "rgb(160,160,160)",
     },
   },
+  customVideoButton: {
+    backgroundColor: "transparent",
+    border: "0",
+    boxShadow: "none",
+    padding: "5px 0px",
+    maxWidth: "30px",
+    maxHeight: "30px",
+    minWidth: "30px",
+    minHeight: "30px",
+    borderRadius: "0",
+    color: "rgb(180,180,180)",
+    "&:hover": {
+      boxShadow: "none",
+      color: "rgb(220,220,220)",
+      backgroundColor: "transparent",
+    },
+  },
   cancelButton: {
     backgroundColor: "transparent",
     margin: "10px 10px 10px 0px",
@@ -192,7 +210,6 @@ const CourseBody = (props) => {
   const [course, setCourse] = useState({});
   const [teacher, setTeacher] = useState({});
   const [bestseller, setBestSeller] = useState(false);
-  const [video, setVideo] = useState("");
 
   const [isEnrolled, setEnrolled] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
@@ -204,6 +221,7 @@ const CourseBody = (props) => {
   const [isChange, setChange] = useState(false);
 
   const [img, setImage] = useState(null);
+  const [pvideo, setPVideo] = useState(null);
 
   const handleToggle = () => {
     setOpenMenu((prevOpen) => !prevOpen);
@@ -234,14 +252,26 @@ const CourseBody = (props) => {
     }
   };
 
-  const handleImageChange = async () => {
+  const handlePVideo = (e) => {
+    if (e.target.files[0]) {
+      let tmp = course;
+      tmp.previewvideo = window.URL.createObjectURL(e.target.files[0]);
+      console.log(tmp.previewvideo);
+      setCourse({ ...tmp });
+      setPVideo(e.target.files[0]);
+      setChange(true);
+    }
+  };
+
+  const handleDataChange = async () => {
     const config = {
       headers: {
         "x-access-token": localStorage.getItem("accessToken"),
       },
     };
     let formData = new FormData();
-    formData.append("imageInput", img);
+    if (img !== null) formData.append("imageInput", img);
+    if (pvideo !== null) formData.append("videoInput", pvideo);
     const returnData = await axios.put(
       `http://localhost:8080/api/courses/${props.match.params.id}`,
       formData,
@@ -249,9 +279,16 @@ const CourseBody = (props) => {
     );
     if (returnData.data.success === true) {
       let tmp = course;
-      previousImage = returnData.data.img;
-      tmp.img = returnData.data.img;
+      if (returnData.data.img !== "") {
+        previousImage = returnData.data.img;
+        tmp.img = returnData.data.img;
+      } else if (returnData.data.previewvideo !== "") {
+        previousVideo = returnData.data.previewvideo;
+        tmp.previewvideo = returnData.data.previewvideo;
+      }
       setCourse({ ...tmp });
+      setPVideo(null);
+      setImage(null);
       setChange(false);
     }
   };
@@ -259,7 +296,9 @@ const CourseBody = (props) => {
   const cancelChange = () => {
     let tmp = course;
     tmp.img = previousImage;
-    console.log(tmp.img);
+    tmp.previewvideo = previousVideo;
+    setPVideo(null);
+    setImage(null);
     setCourse({ ...tmp });
     setChange(false);
   };
@@ -270,7 +309,7 @@ const CourseBody = (props) => {
     );
     setCourse(data.data);
     previousImage = data.data.img;
-    setVideo("http://localhost:8080" + data.data.previewvideo);
+    previousVideo = data.data.previewvideo;
     const view = {
       views: parseInt(data.data.views) + 1,
     };
@@ -445,9 +484,14 @@ const CourseBody = (props) => {
             <img
               style={{ height: "170px", width: "300px" }}
               alt={course.name}
-              src={isChange ? course.img : "http://localhost:8080" + course.img}
+              src={
+                isChange && img
+                  ? course.img
+                  : "http://localhost:8080" + course.img
+              }
             />
-            {localStorage.getItem("role") === "1" ? (
+            {localStorage.getItem("iduser") &&
+            parseInt(localStorage.getItem("iduser")) === teacher.iduser ? (
               <Button
                 variant="contained"
                 component="label"
@@ -479,12 +523,52 @@ const CourseBody = (props) => {
       </Grid>
       <Grid container className={classes.customGrid1} spacing={4}>
         <Grid item xs={8}>
-          <Typography variant="h5" className={classes.customText3}>
-            Preview video
+          <Typography
+            variant="h5"
+            className={classes.customText3}
+            component="div"
+          >
+            Preview video{" "}
+            {localStorage.getItem("iduser") &&
+            parseInt(localStorage.getItem("iduser")) === teacher.iduser ? (
+              <Button
+                variant="contained"
+                component="label"
+                className={classes.customVideoButton}
+              >
+                <AddVideo></AddVideo>
+                <input
+                  type="file"
+                  hidden
+                  accept="video/*"
+                  onChange={(e) => {
+                    handlePVideo(e);
+                  }}
+                  onClick={(e) => {
+                    e.target.value = null;
+                  }}
+                />
+              </Button>
+            ) : (
+              undefined
+            )}
           </Typography>
           <div style={{ margin: "20px 0 20px 20px" }}>
-            <Player poster={"http://localhost:8080" + course.img}>
-              <source key={video} src={video} />
+            <Player
+              poster={
+                isChange && img
+                  ? course.img
+                  : "http://localhost:8080" + course.img
+              }
+              key={course.previewvideo}
+            >
+              <source
+                src={
+                  isChange && pvideo
+                    ? course.previewvideo
+                    : "http://localhost:8080" + course.previewvideo
+                }
+              />
               <ControlBar autoHide>
                 <ReplayControl seconds={10} order={1.1} />
                 <ForwardControl seconds={30} order={1.2} />
@@ -752,7 +836,7 @@ const CourseBody = (props) => {
               color="secondary"
               variant="contained"
               style={{ margin: "10px", textTransform: "none" }}
-              onClick={handleImageChange}
+              onClick={handleDataChange}
             >
               Save changes
             </Button>

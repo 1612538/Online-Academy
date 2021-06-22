@@ -30,20 +30,30 @@ const deleteImage = async (req, res) => {
     });
   });
   const results2 = await new Promise((resolve, reject) => {
-    if (req.files["imageInput"]) {
+    if (req.files["imageInput"] !== undefined) {
       fs.unlink("./public" + results[0].img, (err) => {
-        if (err) reject(err);
-        else {
-          const data = {
-            img: "/tmp/my-uploads/" + req.files["imageInput"][0].filename,
-          };
-          console.log("deleted files: " + results[0].img);
-          resolve(data);
-        }
+        if (err) console.log(err);
+        else console.log("File deleted: " + results[0].img);
       });
-    }
+      const img = "/tmp/my-uploads/" + req.files["imageInput"][0].filename;
+      resolve(img);
+    } else resolve("");
   });
-  return results2;
+  const results3 = await new Promise((resolve, reject) => {
+    if (req.files["videoInput"] !== undefined) {
+      fs.unlink("./public" + results[0].previewvideo, (err) => {
+        if (err) console.log(err);
+        else console.log("File deleted: " + results[0].previewvideo);
+      });
+      const previewvideo =
+        "/tmp/my-uploads/" + req.files["videoInput"][0].filename;
+      resolve(previewvideo);
+    } else resolve("");
+  });
+  let data = {};
+  if (results2 !== "") data.img = results2;
+  if (results3 !== "") data.previewvideo = results3;
+  return data;
 };
 
 module.exports = {
@@ -102,9 +112,9 @@ module.exports = {
 
   getAllByDate: (req, res) => {
     const pageNumber = parseInt(req.query.page) - 1;
-    let sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY STR_TO_DATE(lastupdate,'%T %d/%m/%Y') DESC limit 10;`;
+    let sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY STR_TO_DATE(createAt,'%T %d/%m/%Y') DESC limit 10;`;
     if (pageNumber > -1)
-      sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY STR_TO_DATE(lastupdate,'%T %d/%m/%Y') DESC limit ${
+      sql = `SELECT * FROM ${tbName} WHERE isBlocked=0 ORDER BY STR_TO_DATE(createAt,'%T %d/%m/%Y') DESC limit ${
         pageNumber * 5
       },5`;
     db.query(sql, (err, result) => {
@@ -269,6 +279,7 @@ module.exports = {
       description1: req.body.briefDesc,
       description2: req.body.detailDesc,
       lastupdate: currentDate(),
+      createAt: currentDate(),
       isCompleted: 0,
       img: "/tmp/my-uploads/" + req.files["imageInput"][0].filename,
       subscribes: 0,
