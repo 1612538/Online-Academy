@@ -56,6 +56,7 @@ const LectureCard = (props) => {
   useEffect(() => {}, []);
 
   const handleClick = () => {
+    props.getCurrentState(props.data.idlecture, props.data.title);
     props.setCurrLecture({ ...props.data });
   };
 

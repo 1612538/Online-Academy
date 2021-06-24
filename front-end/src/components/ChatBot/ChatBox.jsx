@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { ThemeProvider } from "styled-components";
+import { Grid, Button } from "@material-ui/core";
 import ChatBot from "react-simple-chatbot";
+import "../../assets/chatbot.css";
 import axios from "axios";
 
 const theme = {
@@ -15,22 +17,13 @@ const theme = {
   userFontColor: "#4a4a4a",
 };
 
-const ChatBox = () => {
+const SmallCats = (props) => {
   const [categories, setCategories] = useState([]);
-  const catOption = [];
-
   const getSmallCategories = () => {
     axios
       .get(`http://localhost:8080/api/smallcategories`)
       .then((res) => {
-        const smallcats = res.data;
-        setCategories(smallcats);
-        for (let obj of res.data)
-          catOption.push({
-            value: obj.idsmall_category,
-            label: obj.name,
-            trigger: "1",
-          });
+        setCategories(res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -39,6 +32,32 @@ const ChatBox = () => {
     getSmallCategories();
   }, []);
 
+  const handleClick = () => {
+    props.triggerNextStep({ trigger: "1" });
+    setCategories([]);
+  };
+
+  return (
+    <Grid container justify="flex-start" spacing={1} style={{ width: "100%" }}>
+      {categories.length > 0
+        ? categories.map((obj, key) => (
+            <Grid item xs={12} key={key}>
+              <Button
+                color="primary"
+                variant="contained"
+                style={{ textTransform: "none" }}
+                onClick={handleClick}
+              >
+                {obj.name}
+              </Button>
+            </Grid>
+          ))
+        : undefined}
+    </Grid>
+  );
+};
+
+const ChatBox = () => {
   return (
     <ThemeProvider theme={theme}>
       <ChatBot
@@ -85,7 +104,8 @@ const ChatBox = () => {
           },
           {
             id: "category",
-            options: catOption,
+            component: <SmallCats></SmallCats>,
+            waitAction: true,
           },
           {
             id: "handleSearch",

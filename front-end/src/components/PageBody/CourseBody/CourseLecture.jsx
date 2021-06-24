@@ -149,6 +149,7 @@ const CourseLecture = (props) => {
   const [Length, setLength] = useState(0);
   const [isSave, setSave] = useState(false);
   const [open, setOpen] = useState(true);
+  const [lectureState, setLectureState] = useState([]);
   let myplayer = undefined;
   const [progText, setText] = useState("");
 
@@ -177,20 +178,6 @@ const CourseLecture = (props) => {
       if (data.data.success === false) {
         History.push("/error");
         return;
-      } else {
-        if (data.data.lastlecture !== null) {
-          const data2 = await axios.get(
-            `http://localhost:8080/api/courselectures/${props.match.params.id}/${data.data.lastlecture}`,
-            config
-          );
-          setText(
-            `Your last lecture was "` +
-              data2.data.title +
-              `" at time: ` +
-              secondsToHms(data.data.lasttime) +
-              ``
-          );
-        }
       }
     }
   };
@@ -219,6 +206,7 @@ const CourseLecture = (props) => {
     setPageNumberL(Math.ceil(length.data.length / 5));
     setLength(length.data.length);
     setLectures(data.data);
+
     return data.data[0];
   };
 
@@ -252,13 +240,12 @@ const CourseLecture = (props) => {
     if (localStorage.getItem("role") === "0") {
       const { player } = myplayer.getState();
       const data = {
-        lastlecture: currLecture ? currLecture.idlecture : -1,
-        lasttime: player.currentTime,
+        time: player.currentTime,
       };
       const returnData = await axios.put(
-        `http://localhost:8080/api/enrolledcourses/${localStorage.getItem(
+        `http://localhost:8080/api/lecturestate/${localStorage.getItem(
           "iduser"
-        )}/${course.idcourses}`,
+        )}/${course.idcourses}/${currLecture.idlecture}`,
         data,
         config
       );
@@ -274,9 +261,41 @@ const CourseLecture = (props) => {
     }
   };
 
-  useBeforeunload((e) => {
-    handleOnleave();
-  });
+  const getLectureState = async () => {
+    const returnData = await axios.get(
+      `http://localhost:8080/api/lecturestate/${localStorage.getItem(
+        "iduser"
+      )}/${props.match.params.id}`,
+      config
+    );
+    if (returnData.data.length > 0) setLectureState(returnData.data);
+  };
+
+  const getCurrLectureState = async (idlecture, title) => {
+    const returnData = await axios.get(
+      `http://localhost:8080/api/lecturestate/${localStorage.getItem(
+        "iduser"
+      )}/${props.match.params.id}/${idlecture}`,
+      config
+    );
+    let time = 0;
+    if (returnData.data.isExist === false) {
+      const data = {
+        idlecture: idlecture,
+        iduser: parseInt(localStorage.getItem("iduser")),
+        idcourses: props.match.params.id,
+        time: 0,
+      };
+      const tmp = await axios.post(
+        `http://localhost:8080/api/lecturestate/`,
+        data,
+        config
+      );
+    } else {
+      time = returnData.data.lecturestate.time;
+    }
+    setText(`Your current progress of "${title}" is ` + secondsToHms(time));
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -286,6 +305,9 @@ const CourseLecture = (props) => {
         await getCourse();
         const data = await getLectures();
         setCurrLecture(data);
+        if (localStorage.getItem("role") === "0") {
+          await getCurrLectureState(data.idlecture, data.title);
+        }
       }
     };
     fetchData();
@@ -349,11 +371,9 @@ const CourseLecture = (props) => {
                   ref={(tplayer) => {
                     myplayer = tplayer;
                   }}
+                  key={currLecture.idlecture}
                 >
-                  <source
-                    key={currLecture.idlecture}
-                    src={"http://localhost:8080" + currLecture.video}
-                  />
+                  <source src={"http://localhost:8080" + currLecture.video} />
                   <ControlBar autoHide>
                     <ReplayControl seconds={10} order={1.1} />
                     <ForwardControl seconds={30} order={1.2} />
@@ -388,13 +408,14 @@ const CourseLecture = (props) => {
         >
           <Grid container item justify="center">
             <Grid container item xs={10} justify="center" alignItems="center">
-              {lectures
+              {lectures.length > 0
                 ? lectures.map((obj, key) => (
                     <Grid item xs={12} key={key}>
                       <LectureCard
                         active={currLecture ? currLecture.idlecture : -1}
                         data={obj}
                         setCurrLecture={setCurrLecture}
+                        getCurrentState={getCurrLectureState}
                       ></LectureCard>
                     </Grid>
                   ))

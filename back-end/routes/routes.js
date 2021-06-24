@@ -153,4 +153,16 @@ module.exports = (app) => {
   app
     .route("/api/courselectures/:idcourse/:idlecture")
     .get(CourseLectures.getDetail);
+
+  //Lectures state
+  let LectureState = require("./controllers/LectureState");
+  app
+    .route("/api/lecturestate/:iduser/:idcourses")
+    .get(LectureState.getByUserAndCourse)
+    .delete(LectureState.delete);
+  app
+    .route("/api/lecturestate/:iduser/:idcourses/:idlecture")
+    .get(LectureState.checkExist)
+    .put(LectureState.update);
+  app.route("/api/lecturestate").post(LectureState.add);
 };
