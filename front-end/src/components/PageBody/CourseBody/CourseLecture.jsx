@@ -242,6 +242,7 @@ const CourseLecture = (props) => {
       const data = {
         time: player.currentTime,
       };
+      if (player.currentTime === player.duration) data.isCompleted = 1;
       const returnData = await axios.put(
         `http://localhost:8080/api/lecturestate/${localStorage.getItem(
           "iduser"
@@ -256,7 +257,18 @@ const CourseLecture = (props) => {
             ", time: " +
             player.currentTime
         );
+        const index = lectureState.findIndex(
+          (obj) => obj.idlecture === currLecture.idlecture
+        );
+        let tmp = lectureState;
+        tmp[index].time = data.time;
+        if (data.isCompleted) tmp[index].isCompleted = data.isCompleted;
+        setLectureState([...tmp]);
         setSave(true);
+        setText(
+          `Your current progress of "${currLecture.title}" is ` +
+            secondsToHms(data.time)
+        );
       }
     }
   };
@@ -285,6 +297,7 @@ const CourseLecture = (props) => {
         iduser: parseInt(localStorage.getItem("iduser")),
         idcourses: props.match.params.id,
         time: 0,
+        isCompleted: 0,
       };
       const tmp = await axios.post(
         `http://localhost:8080/api/lecturestate/`,
@@ -306,6 +319,7 @@ const CourseLecture = (props) => {
         const data = await getLectures();
         setCurrLecture(data);
         if (localStorage.getItem("role") === "0") {
+          await getLectureState();
           await getCurrLectureState(data.idlecture, data.title);
         }
       }
@@ -416,6 +430,14 @@ const CourseLecture = (props) => {
                         data={obj}
                         setCurrLecture={setCurrLecture}
                         getCurrentState={getCurrLectureState}
+                        setOpen={setOpen}
+                        isCompleted={() => {
+                          const tmp = lectureState.find(
+                            (obj2) => obj2.idlecture === obj.idlecture
+                          );
+                          if (tmp) return tmp.isCompleted;
+                          else return 0;
+                        }}
                       ></LectureCard>
                     </Grid>
                   ))

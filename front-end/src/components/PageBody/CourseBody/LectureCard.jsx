@@ -5,7 +5,7 @@ import ButtonBase from "@material-ui/core/ButtonBase";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import VideoPlay from "../../../assets/videoplay.png";
-
+import CheckIcon from "@material-ui/icons/Check";
 import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
@@ -42,22 +42,22 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: "100%",
   },
   custom: {
-    display: "-webkit-box",
-    boxOrient: "vertical",
-    lineClamp: 2,
     overflow: "hidden",
     lineHeight: 1.3,
     width: "90%",
     textTransform: "none",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   },
 }));
 
 const LectureCard = (props) => {
   useEffect(() => {}, []);
 
-  const handleClick = () => {
-    props.getCurrentState(props.data.idlecture, props.data.title);
-    props.setCurrLecture({ ...props.data });
+  const handleClick = async () => {
+    await props.getCurrentState(props.data.idlecture, props.data.title);
+    await props.setCurrLecture({ ...props.data });
+    props.setOpen(true);
   };
 
   const classes = useStyles();
@@ -78,8 +78,8 @@ const LectureCard = (props) => {
             </ButtonBase>
           </Grid>
           <Grid item xs={8} container>
-            <Grid item xs container direction="column">
-              <Grid item xs>
+            <Grid item xs container>
+              <Grid item xs={8}>
                 <Typography
                   gutterBottom
                   variant="h6"
@@ -89,7 +89,22 @@ const LectureCard = (props) => {
                   {props.data.title}
                 </Typography>
               </Grid>
-              <Grid item xs>
+              {props.isCompleted() === 1 ? (
+                <Grid
+                  item
+                  xs={4}
+                  style={{
+                    color: "#388e3c",
+                    fontSize: "0.7rem",
+                    paddingTop: "5px",
+                  }}
+                >
+                  <CheckIcon fontSize="small"></CheckIcon>Completed
+                </Grid>
+              ) : (
+                <Grid item xs={4}></Grid>
+              )}
+              <Grid item xs={12}>
                 <Typography
                   gutterBottom
                   variant="subtitle1"
