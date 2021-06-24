@@ -206,8 +206,8 @@ const CourseLecture = (props) => {
     setPageNumberL(Math.ceil(length.data.length / 5));
     setLength(length.data.length);
     setLectures(data.data);
-
-    return data.data[0];
+    if (data.data.length > 0) return data.data[0];
+    else return undefined;
   };
 
   const changeHandleL = (event, value) => {
@@ -320,7 +320,7 @@ const CourseLecture = (props) => {
         setCurrLecture(data);
         if (localStorage.getItem("role") === "0") {
           await getLectureState();
-          await getCurrLectureState(data.idlecture, data.title);
+          if (data) await getCurrLectureState(data.idlecture, data.title);
         }
       }
     };
@@ -409,7 +409,11 @@ const CourseLecture = (props) => {
               ></Typography>
             </>
           ) : (
-            undefined
+            <>
+              <Typography variant="h4">
+                This course hasn't have any lecture yet. Please come back later
+              </Typography>
+            </>
           )}
         </Grid>
         <Grid
@@ -432,11 +436,13 @@ const CourseLecture = (props) => {
                         getCurrentState={getCurrLectureState}
                         setOpen={setOpen}
                         isCompleted={() => {
-                          const tmp = lectureState.find(
-                            (obj2) => obj2.idlecture === obj.idlecture
-                          );
-                          if (tmp) return tmp.isCompleted;
-                          else return 0;
+                          if (localStorage.getItem("role") === "0") {
+                            const tmp = lectureState.find(
+                              (obj2) => obj2.idlecture === obj.idlecture
+                            );
+                            if (tmp) return tmp.isCompleted;
+                            else return 0;
+                          } else return 0;
                         }}
                       ></LectureCard>
                     </Grid>
@@ -507,7 +513,7 @@ const CourseLecture = (props) => {
                     )}
                   </Grid>
                 </Grid>
-              ) : localStorage.getItem("role") === "0" ? (
+              ) : localStorage.getItem("role") === "0" && currLecture ? (
                 <StyledButton3
                   disabled={isSave ? true : false}
                   onClick={handleOnleave}

@@ -14,10 +14,11 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "left",
   },
   paper: {
-    backgroundColor: "rgba(250,242,237,1)",
+    backgroundColor: "rgba(245,242,237,1)",
     width: "100%",
     cursor: "pointer",
     borderRadius: "0px",
+    borderBottom: "1px solid rgba(0,0,0,0.2)",
     "&:hover": {
       backgroundColor: "rgba(220,210,210,1)",
     },
@@ -55,9 +56,11 @@ const LectureCard = (props) => {
   useEffect(() => {}, []);
 
   const handleClick = async () => {
-    await props.getCurrentState(props.data.idlecture, props.data.title);
     await props.setCurrLecture({ ...props.data });
-    props.setOpen(true);
+    if (localStorage.getItem("role") === "0") {
+      await props.getCurrentState(props.data.idlecture, props.data.title);
+      props.setOpen(true);
+    }
   };
 
   const classes = useStyles();
