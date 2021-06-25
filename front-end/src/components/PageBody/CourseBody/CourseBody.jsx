@@ -314,7 +314,7 @@ const CourseBody = (props) => {
       views: parseInt(data.data.views) + 1,
     };
     const tmp = await axios.put(
-      `http://localhost:8080/api/courses/${props.match.params.id}`,
+      `http://localhost:8080/api/coursesView/${props.match.params.id}`,
       view
     );
     return data.data;
@@ -372,7 +372,8 @@ const CourseBody = (props) => {
         };
         const tmp = await axios.put(
           `http://localhost:8080/api/courses/${props.match.params.id}`,
-          subscribe
+          subscribe,
+          config
         );
         setEnrolled(true);
       }
@@ -809,6 +810,8 @@ const CourseBody = (props) => {
           <CourseFeedback
             isEnrolled={isEnrolled}
             idcourse={course.idcourses}
+            rate={course.rate}
+            votes={course.ratevotes}
           ></CourseFeedback>
           <Grid item xs={12} style={{ textAlign: "center" }}>
             <Expand></Expand>

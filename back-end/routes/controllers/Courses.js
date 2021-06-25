@@ -267,6 +267,21 @@ module.exports = {
       });
     });
   },
+
+  updateView: (req, res) => {
+    const data = {
+      views: req.body.views,
+    };
+    let id = req.params.id;
+    const sql = `UPDATE ${tbName} SET ? WHERE idcourses = ?`;
+    db.query(sql, [data, id], (err, result) => {
+      if (err) throw err;
+      res.json({
+        success: true,
+      });
+    });
+  },
+
   add: (req, res) => {
     const sql = `INSERT INTO ${tbName} SET ?`;
     const course = {

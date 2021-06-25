@@ -73,6 +73,15 @@ const Feedback = (props) => {
       setText("");
       tmp.push(data);
       setComments([...tmp]);
+      const calcRating = {
+        rate: (props.rate * props.votes + value) / (props.votes + 1),
+        ratevotes: props.votes + 1,
+      };
+      const update = await axios.put(
+        `http://localhost:8080/api/courses/${props.idcourse}`,
+        calcRating,
+        config
+      );
     }
   };
 

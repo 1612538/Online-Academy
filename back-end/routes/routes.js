@@ -9,6 +9,8 @@ module.exports = (app) => {
   let Courses = require("./controllers/Courses");
   app.route("/api/courses").get(Courses.getAll);
 
+  app.route("/api/coursesView/:id").put(Courses.updateView);
+
   app.route("/api/courses/:id").get(Courses.detail);
 
   app.route("/api/coursesbysubscribe").get(Courses.getAllBySubscribe);
@@ -80,17 +82,14 @@ module.exports = (app) => {
     Courses.add
   );
 
-  app
-    .route("/api/courses/:id")
-    .put(
-      upload.fields([
-        { name: "imageInput", maxCount: 1 },
-        { name: "videoInput", maxCount: 1 },
-      ]),
-      Courses.update
-    )
-    .delete(Courses.delete);
-
+  app.route("/api/courses/:id").put(
+    upload.fields([
+      { name: "imageInput", maxCount: 1 },
+      { name: "videoInput", maxCount: 1 },
+    ]),
+    Courses.update
+  );
+  app.route("/api/courses/:id").delete(Courses.delete);
   app.route("/api/coursesByAdmin/:catid").get(Courses.getByCatIDByAdmin);
   app.route("/api/coursesByAdmin").get(Courses.getAllByAdmin);
 
