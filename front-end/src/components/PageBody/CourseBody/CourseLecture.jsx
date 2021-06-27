@@ -410,7 +410,7 @@ const CourseLecture = (props) => {
             </>
           ) : (
             <>
-              <Typography variant="h4">
+              <Typography variant="h5">
                 This course hasn't have any lecture yet. Please come back later
               </Typography>
             </>

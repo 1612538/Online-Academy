@@ -23,6 +23,7 @@ import "video-react/dist/video-react.css";
 import Expand from "@material-ui/icons/ExpandMore";
 import CourseList from "./CourseList";
 import CourseFeedback from "./CourseFeedback";
+import CourseContent from "./CourseContent";
 import EditCourse from "./EditCourse";
 import EditDetail from "./EditDetail";
 import AddPhoto from "@material-ui/icons/AddPhotoAlternate";
@@ -556,7 +557,7 @@ const CourseBody = (props) => {
             className={classes.customText3}
             component="div"
           >
-            Preview video{" "}
+            Preview video
             {localStorage.getItem("iduser") &&
             parseInt(localStorage.getItem("iduser")) === teacher.iduser ? (
               <Button
@@ -611,7 +612,11 @@ const CourseBody = (props) => {
             </Player>
           </div>
           <Typography variant="h5" className={classes.customText3}>
-            About courses
+            Course content
+          </Typography>
+          <CourseContent idcourse={props.match.params.id}></CourseContent>
+          <Typography variant="h5" className={classes.customText3}>
+            About course
           </Typography>
           <div
             className={classes.customText2}

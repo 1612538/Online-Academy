@@ -30,6 +30,10 @@ module.exports = (app) => {
   app
     .route("/api/coursesbysubscribeandcat/:id")
     .get(Courses.getBySubscribeAndCat);
+
+  let CourseLectures = require("./controllers/CourseLectures");
+
+  app.route("/api/courselectures/:id").get(CourseLectures.getByCourse);
   //Categories controller
 
   let Categories = require("./controllers/Categories");
@@ -140,7 +144,6 @@ module.exports = (app) => {
     .put(EnrolledCourses.update);
 
   //Course lectures
-  let CourseLectures = require("./controllers/CourseLectures");
 
   app
     .route("/api/courselectures")
@@ -148,7 +151,6 @@ module.exports = (app) => {
       upload.fields([{ name: "videoInput", maxCount: 1 }]),
       CourseLectures.add
     );
-  app.route("/api/courselectures/:id").get(CourseLectures.getByCourse);
   app
     .route("/api/courselectures/:idcourse/:idlecture")
     .get(CourseLectures.getDetail);
