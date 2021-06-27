@@ -17,11 +17,12 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import LockIcon from "@material-ui/icons/Lock";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 
-const CourseListResults = ({ match }) => {
+const CourseListResults = ({ match, cname, tname }) => {
   const [limit, setLimit] = useState(10);
   const [start, setStart] = useState(0);
   const [page, setPage] = useState(0);
   const [courses, setCourses] = useState([]);
+  const [currLength, setLength] = useState(0);
 
   const config = {
     headers: {
@@ -45,6 +46,7 @@ const CourseListResults = ({ match }) => {
           course.tutor = tutor.firstname + " " + tutor.lastname;
         }
         setCourses(tmp);
+        setLength(tmp.length);
       }
     }
   };
@@ -94,6 +96,19 @@ const CourseListResults = ({ match }) => {
     };
   }, [match]);
 
+  useEffect(() => {
+    setPage(0);
+    setLimit(10);
+    setStart(0);
+    setLength(
+      courses.filter(
+        (obj) =>
+          obj.name.toLowerCase().includes(cname.toLowerCase()) &&
+          obj.tutor.toLowerCase().includes(tname.toLowerCase())
+      ).length
+    );
+  }, [cname, tname]);
+
   return (
     <Card>
       <Box style={{ minWidth: 1050 }}>
@@ -114,105 +129,116 @@ const CourseListResults = ({ match }) => {
           </TableHead>
           <TableBody>
             {courses.length > 0
-              ? courses.slice(start, limit).map((course, key) => (
-                  <TableRow hover key={key}>
-                    <TableCell style={{ width: "30%" }}>
-                      <Box
-                        style={{
-                          alignItems: "center",
-                          display: "flex",
-                        }}
-                      >
-                        <Avatar
-                          src={"http://localhost:8080" + course.img}
-                          style={{ marginRight: "20px" }}
-                        >
-                          {course.name}
-                        </Avatar>
-                        <Typography
-                          color="textPrimary"
-                          variant="body1"
+              ? courses
+                  .filter(
+                    (obj) =>
+                      obj.name.toLowerCase().includes(cname.toLowerCase()) &&
+                      obj.tutor.toLowerCase().includes(tname.toLowerCase())
+                  )
+                  .slice(start, limit)
+                  .map((course, key) => (
+                    <TableRow hover key={key}>
+                      <TableCell style={{ width: "30%" }}>
+                        <Box
                           style={{
-                            width: "300px",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
+                            alignItems: "center",
+                            display: "flex",
                           }}
                         >
-                          {course.name}
-                        </Typography>
-                      </Box>
-                    </TableCell>
-                    <TableCell style={{ width: "10%" }}>
-                      {course.tutor}
-                    </TableCell>
-                    <TableCell style={{ width: "5%" }}>
-                      {course.price}$
-                    </TableCell>
-                    <TableCell style={{ width: "5%" }}>{course.rate}</TableCell>
-                    <TableCell style={{ width: "5%" }}>
-                      {course.ratevotes}
-                    </TableCell>
-                    <TableCell style={{ width: "7%" }}>
-                      {course.isCompleted === 0 ? "Not completed" : "Completed"}
-                    </TableCell>
-                    <TableCell style={{ width: "5%" }}>
-                      {course.subscribes}
-                    </TableCell>
-                    <TableCell style={{ width: "5%" }}>
-                      {course.views}
-                    </TableCell>
-                    <TableCell style={{ width: "13%" }}>
-                      {course.lastupdate}
-                    </TableCell>
-                    <TableCell style={{ width: "15%" }}>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        style={{
-                          marginLeft: "10px",
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                        }}
-                        onClick={() => {
-                          handleDelete(course.idcourses);
-                        }}
-                      >
-                        <DeleteIcon></DeleteIcon>
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        style={{
-                          marginLeft: "10px",
-                          maxWidth: "35px",
-                          maxHeight: "35px",
-                          minWidth: "35px",
-                          minHeight: "35px",
-                          backgroundColor: "#f44336",
-                        }}
-                        onClick={() => {
-                          handleLock(course.idcourses, course.isBlocked);
-                        }}
-                      >
-                        {course.isBlocked === 0 ? (
-                          <LockOpenIcon></LockOpenIcon>
-                        ) : (
-                          <LockIcon></LockIcon>
-                        )}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
+                          <Avatar
+                            src={"http://localhost:8080" + course.img}
+                            style={{ marginRight: "20px" }}
+                          >
+                            {course.name}
+                          </Avatar>
+                          <Typography
+                            color="textPrimary"
+                            variant="body1"
+                            style={{
+                              width: "300px",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {course.name}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell style={{ width: "10%" }}>
+                        {course.tutor}
+                      </TableCell>
+                      <TableCell style={{ width: "5%" }}>
+                        {course.price}$
+                      </TableCell>
+                      <TableCell style={{ width: "5%" }}>
+                        {course.rate}
+                      </TableCell>
+                      <TableCell style={{ width: "5%" }}>
+                        {course.ratevotes}
+                      </TableCell>
+                      <TableCell style={{ width: "7%" }}>
+                        {course.isCompleted === 0
+                          ? "Not completed"
+                          : "Completed"}
+                      </TableCell>
+                      <TableCell style={{ width: "5%" }}>
+                        {course.subscribes}
+                      </TableCell>
+                      <TableCell style={{ width: "5%" }}>
+                        {course.views}
+                      </TableCell>
+                      <TableCell style={{ width: "13%" }}>
+                        {course.lastupdate}
+                      </TableCell>
+                      <TableCell style={{ width: "15%" }}>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          style={{
+                            marginLeft: "10px",
+                            maxWidth: "35px",
+                            maxHeight: "35px",
+                            minWidth: "35px",
+                            minHeight: "35px",
+                          }}
+                          onClick={() => {
+                            handleDelete(course.idcourses);
+                          }}
+                        >
+                          <DeleteIcon></DeleteIcon>
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          style={{
+                            marginLeft: "10px",
+                            maxWidth: "35px",
+                            maxHeight: "35px",
+                            minWidth: "35px",
+                            minHeight: "35px",
+                            backgroundColor: "#f44336",
+                          }}
+                          onClick={() => {
+                            handleLock(course.idcourses, course.isBlocked);
+                          }}
+                        >
+                          {course.isBlocked === 0 ? (
+                            <LockOpenIcon></LockOpenIcon>
+                          ) : (
+                            <LockIcon></LockIcon>
+                          )}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
               : undefined}
           </TableBody>
         </Table>
       </Box>
       <TablePagination
         component="div"
-        count={courses.length > 0 ? courses.length : 0}
+        count={courses.length > 0 ? currLength : 0}
         onChangePage={handlePageChange}
         page={page}
         rowsPerPage={10}

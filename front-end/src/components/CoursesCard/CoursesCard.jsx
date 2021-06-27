@@ -54,14 +54,23 @@ const useStyles = makeStyles({
     padding: "4px 10px 4px 10px",
     backgroundColor: "#ffc107",
     color: "#f50057",
-    position: "absolute",
-    right: "0",
-    bottom: "10px",
     boxShadow: "0 3px 4px 0px rgba(0,0,0,0.5)",
     borderTopLeftRadius: "3px",
     borderBottomLeftRadius: "3px",
     fontWeight: "bold",
     fontSize: "0.8rem",
+  },
+  newest: {
+    padding: "4px 10px 4px 10px",
+    backgroundColor: blue[500],
+    color: "white",
+    boxShadow: "0 3px 4px 0px rgba(0,0,0,0.5)",
+    borderTopLeftRadius: "3px",
+    borderBottomLeftRadius: "3px",
+    fontWeight: "bold",
+    fontSize: "0.8rem",
+    width: "max-content",
+    float: "right",
   },
 });
 
@@ -70,6 +79,7 @@ export default function CourseCard(props) {
   const [teacherName, setTeacherName] = React.useState("");
   const [categoryName, setCategoryName] = React.useState("");
   const [bestseller, setBestSeller] = React.useState(false);
+  const [newest, setNewest] = React.useState(false);
 
   const getTeacherById = (id) => {
     axios
@@ -99,11 +109,20 @@ export default function CourseCard(props) {
     });
   };
 
+  const getNewest = () => {
+    axios.get(`http://localhost:8080/api/coursesbydate`).then((res) => {
+      const data = res.data;
+      if (data.find((object) => object.idcourses === course.idcourses))
+        setNewest(true);
+    });
+  };
+
   useEffect(() => {
     const fetchData = () => {
       getTeacherById(course.teacher);
       getCategoryById(course.idsmall_category);
       getBestSeller();
+      getNewest();
     };
     fetchData();
     return () => {
@@ -125,9 +144,14 @@ export default function CourseCard(props) {
             image={"http://localhost:8080" + course.img}
             title={course.name}
           >
-            {bestseller ? (
-              <div className={classes.bestseller}>Bestseller</div>
-            ) : undefined}
+            <div style={{ position: "absolute", right: "0", bottom: "10px" }}>
+              {bestseller ? (
+                <div className={classes.bestseller}>Bestseller</div>
+              ) : (
+                undefined
+              )}
+              {newest ? <div className={classes.newest}>New</div> : undefined}
+            </div>
           </CardMedia>
         </Link>
         <CardContent>

@@ -15,6 +15,7 @@ import {
   Snackbar,
 } from "@material-ui/core";
 import { Rating } from "@material-ui/lab";
+import { blue } from "@material-ui/core/colors";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Infinite from "@material-ui/icons/AllInclusive";
 import Phone from "@material-ui/icons/PhoneAndroid";
@@ -94,6 +95,19 @@ const useStyles = makeStyles((theme) => ({
     borderBottomLeftRadius: "3px",
     fontWeight: "bold",
     fontSize: "1rem",
+    marginRight: 5,
+    marginTop: "-5px",
+  },
+  newest: {
+    padding: "4px 10px 4px 10px",
+    backgroundColor: blue[500],
+    color: "white",
+    boxShadow: "0 3px 4px 0px rgba(0,0,0,0.5)",
+    borderBottomRightRadius: "3px",
+    borderBottomLeftRadius: "3px",
+    fontWeight: "bold",
+    fontSize: "1rem",
+    marginTop: "-5px",
   },
   paper: {
     marginTop: "16px",
@@ -210,6 +224,7 @@ const CourseBody = (props) => {
   const [course, setCourse] = useState({});
   const [teacher, setTeacher] = useState({});
   const [bestseller, setBestSeller] = useState(false);
+  const [newest, setNewest] = useState(false);
 
   const [isEnrolled, setEnrolled] = useState(false);
   const [isFavorite, setFavorite] = useState(false);
@@ -333,6 +348,11 @@ const CourseBody = (props) => {
       setBestSeller(true);
   };
 
+  const getNewest = async (id) => {
+    const data = await axios.get(`http://localhost:8080/api/coursesbydate`);
+    if (data.data.find((object) => object.idcourses === id)) setNewest(true);
+  };
+
   const checkEnrolled = async () => {
     const config = {
       headers: {
@@ -444,6 +464,7 @@ const CourseBody = (props) => {
       const data = await getCourse();
       await getTeacher(data.teacher);
       await getBestSeller(data.idcourses);
+      await getNewest(data.idcourses);
       if (localStorage.getItem("iduser") !== null) {
         await checkEnrolled();
         await checkFavorite();
@@ -473,53 +494,59 @@ const CourseBody = (props) => {
             </Typography>
           </Grid>
         </Grid>
-        <Grid
-          container
-          item
-          xs={4}
-          justify="center"
-          alignItems="center"
-          direction="column"
-        >
-          <div style={{ position: "relative" }}>
-            <img
-              style={{ height: "170px", width: "300px" }}
-              alt={course.name}
-              src={
-                isChange && img
-                  ? course.img
-                  : "http://localhost:8080" + course.img
-              }
-            />
-            {localStorage.getItem("iduser") &&
-            parseInt(localStorage.getItem("iduser")) === teacher.iduser ? (
-              <Button
-                variant="contained"
-                component="label"
-                className={classes.customImageButton}
-              >
-                <AddPhoto></AddPhoto>
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  onChange={(e) => {
-                    handleImage(e);
-                  }}
-                  onClick={(e) => {
-                    e.target.value = null;
-                  }}
-                />
-              </Button>
+        <Grid container item xs={4} justify="center" alignItems="center">
+          <Grid item>
+            <div style={{ position: "relative" }}>
+              <img
+                style={{ height: "170px", width: "300px" }}
+                alt={course.name}
+                src={
+                  isChange && img
+                    ? course.img
+                    : "http://localhost:8080" + course.img
+                }
+              />
+              {localStorage.getItem("iduser") &&
+              parseInt(localStorage.getItem("iduser")) === teacher.iduser ? (
+                <Button
+                  variant="contained"
+                  component="label"
+                  className={classes.customImageButton}
+                >
+                  <AddPhoto></AddPhoto>
+                  <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={(e) => {
+                      handleImage(e);
+                    }}
+                    onClick={(e) => {
+                      e.target.value = null;
+                    }}
+                  />
+                </Button>
+              ) : (
+                undefined
+              )}
+            </div>
+          </Grid>
+          <Grid item container xs={12} justify="center">
+            {bestseller ? (
+              <Grid item>
+                <div className={classes.bestseller}>Bestseller</div>
+              </Grid>
             ) : (
               undefined
             )}
-          </div>
-          {bestseller ? (
-            <div className={classes.bestseller}>Bestseller</div>
-          ) : (
-            undefined
-          )}
+            {newest ? (
+              <Grid item>
+                <div className={classes.newest}>New</div>
+              </Grid>
+            ) : (
+              undefined
+            )}
+          </Grid>
         </Grid>
       </Grid>
       <Grid container className={classes.customGrid1} spacing={4}>

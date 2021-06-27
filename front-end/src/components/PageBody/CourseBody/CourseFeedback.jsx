@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     width: "100%",
     margin: "auto",
     overflow: "auto",
-    maxHeight: "600px",
+    maxHeight: "800px",
     padding: "10px 0px",
   },
   text2: {
@@ -73,8 +73,9 @@ const Feedback = (props) => {
       setText("");
       tmp.push(data);
       setComments([...tmp]);
+      const num = (props.rate * props.votes + value) / (props.votes + 1);
       const calcRating = {
-        rate: (props.rate * props.votes + value) / (props.votes + 1),
+        rate: Math.round((num + Number.EPSILON) * 10) / 10,
         ratevotes: props.votes + 1,
       };
       const update = await axios.put(
