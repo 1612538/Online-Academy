@@ -476,7 +476,7 @@ const CourseBody = (props) => {
       setCourse({});
       setTeacher({});
     };
-  }, []);
+  }, [props.match]);
 
   return (
     <div className={classes.root}>

@@ -12,7 +12,7 @@ import {
 import CoursesCard2 from "../../CoursesCard/CoursesCard2";
 import Pagination from "@material-ui/lab/Pagination";
 import PaginationItem from "@material-ui/lab/PaginationItem";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import DownIcon from "@material-ui/icons/ArrowDownward";
 import UpIcon from "@material-ui/icons/ArrowUpward";
 
@@ -169,7 +169,9 @@ const SearchBody = (props) => {
             )}
           />
         </Box>
-      ) : undefined}
+      ) : (
+        undefined
+      )}
     </div>
   );
 };
