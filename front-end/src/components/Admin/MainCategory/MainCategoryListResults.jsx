@@ -76,6 +76,7 @@ const CategoryListResults = (props) => {
         let tmp = cats;
         tmp = tmp.filter((obj) => obj.idcategory !== id);
         setCats([...tmp]);
+        props.setUpdate(!props.update2);
       }
     }
   };
@@ -94,6 +95,7 @@ const CategoryListResults = (props) => {
       let i = tmp.findIndex((obj) => obj.idcategory === id);
       tmp[i].name = name;
       setCats([...tmp]);
+      props.setUpdate(!props.update2);
     }
   };
 

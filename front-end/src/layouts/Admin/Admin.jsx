@@ -10,21 +10,28 @@ import CourseListByCat from "./pages/CourseListByCat";
 import Error from "../error/ErrorPage";
 import NavBar from "../../components/Admin/NavBar";
 import SideBar from "../../components/Admin/SideBar";
+import { useState } from "react";
 
 const DefaultAdmin = ({ match, Component }) => {
+  const [update, setUpdate] = useState(false);
+
   return (
     <>
       <NavBar></NavBar>
       <Grid container style={{ backgroundColor: "rgb(244, 246, 248)" }}>
         <Grid item xs={2}>
-          <SideBar match={match}></SideBar>
+          <SideBar match={match} update={update}></SideBar>
         </Grid>
         <Grid
           item
           xs={10}
           style={{ padding: "50px", minHeight: "94vh", marginTop: "6vh" }}
         >
-          <Component match={match}></Component>
+          <Component
+            match={match}
+            update={update}
+            setUpdate={setUpdate}
+          ></Component>
         </Grid>
       </Grid>
     </>

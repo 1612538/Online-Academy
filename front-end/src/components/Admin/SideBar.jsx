@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SideBar = ({ match }) => {
+const SideBar = ({ match, update }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
@@ -91,7 +91,7 @@ const SideBar = ({ match }) => {
     };
     fetchData();
     return () => {};
-  }, []);
+  }, [update]);
 
   useEffect(() => {
     setActive(match.url);
