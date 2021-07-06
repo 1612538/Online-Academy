@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
     position: "sticky",
     top: "6vh",
     padding: "20px 0",
+    overflowY: "auto",
   },
   customText: {
     fontWeight: "bold",
