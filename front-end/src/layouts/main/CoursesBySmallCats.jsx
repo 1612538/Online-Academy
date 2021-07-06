@@ -51,6 +51,27 @@ const CoursesBySmallCats = ({ location }) => {
     return () => {};
   }, [location, sort]);
 
+  const handleCount = async () => {
+    const returnData = await axios.get(
+      `http://localhost:8080/api/smallcategories/${smallcatID}`
+    );
+    if (returnData.data) {
+      const data = { count: returnData.data.count + 1 };
+      const returnData2 = await axios.put(
+        `http://localhost:8080/api/smallcategories/${returnData.data.idsmall_category}`,
+        data
+      );
+      if (returnData2.data.success !== true) console.log("Failed count update");
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await handleCount();
+    };
+    fetchData();
+  }, [location]);
+
   return (
     <div>
       <PageHeader></PageHeader>
