@@ -396,6 +396,18 @@ const CourseBody = (props) => {
           subscribe,
           config
         );
+        const returnData2 = await axios.get(
+          `http://localhost:8080/api/smallcategories/${course.idsmall_category}`
+        );
+        if (returnData2.data) {
+          const data = { count: returnData2.data.count + 1 };
+          const returnData3 = await axios.put(
+            `http://localhost:8080/api/smallcategories/${course.idsmall_category}`,
+            data
+          );
+          if (returnData3.data.success !== true)
+            console.log("Failed count update");
+        }
         setEnrolled(true);
       }
     }

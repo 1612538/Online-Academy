@@ -118,7 +118,7 @@ const CategoryListResults = (props) => {
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>Number of courses</TableCell>
-              <TableCell>Searched times</TableCell>
+              <TableCell>Total enrollment</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
