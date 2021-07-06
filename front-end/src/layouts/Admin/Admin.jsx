@@ -4,6 +4,7 @@ import Account from "./pages/Account";
 import UserList from "./pages/UserList";
 import TeacherList from "./pages/TeacherList";
 import CategoryList from "./pages/CategoryList";
+import MainCategoryList from "./pages/MainCategoryList";
 import CourseList from "./pages/CourseList";
 import CourseListByCat from "./pages/CourseListByCat";
 import Error from "../error/ErrorPage";
@@ -50,6 +51,15 @@ const Admin = ({ match }) => {
           path={`${match.url}/teachers`}
           render={(props) => (
             <DefaultAdmin {...props} Component={TeacherList}></DefaultAdmin>
+          )}
+        />
+        <Route
+          path={`${match.url}/maincategories/`}
+          render={(props) => (
+            <DefaultAdmin
+              {...props}
+              Component={MainCategoryList}
+            ></DefaultAdmin>
           )}
         />
         <Route

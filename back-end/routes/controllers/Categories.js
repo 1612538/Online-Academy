@@ -24,7 +24,7 @@ module.exports = {
     let sql = `DELETE FROM ${tbName} WHERE idcategory = ?`;
     db.query(sql, [req.params.id], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Delete success!" });
+      res.json({ success: true });
     });
   },
   update: (req, res) => {
@@ -33,7 +33,7 @@ module.exports = {
     const sql = `UPDATE ${tbName} SET ? WHERE idcategory = ?`;
     db.query(sql, [data, id], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Update success!" });
+      res.json({ success: true });
     });
   },
   add: (req, res) => {
@@ -41,7 +41,7 @@ module.exports = {
     let data = req.body;
     db.query(sql, [data], (err, result) => {
       if (err) throw err;
-      res.json({ message: "Create success!" });
+      res.json({ success: true });
     });
   },
 };

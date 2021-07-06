@@ -54,6 +54,17 @@ module.exports = {
       res.json({ success: true });
     });
   },
+  updateCount: (req, res) => {
+    let data = {
+      count: req.body.count,
+    };
+    let id = req.params.id;
+    const sql = `UPDATE ${tbName} SET ? WHERE idsmall_category = ?`;
+    db.query(sql, [data, id], (err, result) => {
+      if (err) throw err;
+      res.json({ success: true });
+    });
+  },
   add: (req, res) => {
     const sql = `INSERT INTO ${tbName} SET ?`;
     const scat = {

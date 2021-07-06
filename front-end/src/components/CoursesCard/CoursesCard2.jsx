@@ -136,6 +136,8 @@ export default function CourseCard(props) {
     return () => {
       setCategoryName("");
       setTeacherName("");
+      setBestSeller(false);
+      setNewest(false);
     };
   }, [props.course]);
   const classes = useStyles();

@@ -136,6 +136,20 @@ const SideBar = ({ match }) => {
           </ListItemIcon>
           <ListItemText primary="My account" />
         </ListItem>
+        <ListItem
+          button
+          className={
+            active === "/admin/maincategories" ? classes.customActive : ""
+          }
+          onClick={() => {
+            History.push(`/admin/maincategories`);
+          }}
+        >
+          <ListItemIcon>
+            <Category />
+          </ListItemIcon>
+          <ListItemText primary="Main categories" />
+        </ListItem>
         <ListItem button onClick={handleClick2}>
           <ListItemIcon>
             <Category />

@@ -6,6 +6,7 @@ import SignOut from "./layouts/signin/SignOut";
 import Error from "./layouts/error/ErrorPage";
 import TeacherProfile from "./layouts/profile/TeacherProfile";
 import CoursesBySmallCats from "./layouts/main/CoursesBySmallCats";
+import CoursesByMainCats from "./layouts/main/CoursesByMainCats";
 import CourseDetail from "./layouts/courseDetail/CourseDetail";
 import CourseLectures from "./layouts/courseDetail/CourseLectures";
 import AccountProfile from "./layouts/profile/AccountProfile";
@@ -57,6 +58,10 @@ function App() {
           <Route
             path="/categories/:id"
             render={(props) => <CoursesBySmallCats {...props} />}
+          />
+          <Route
+            path="/maincategories/:id"
+            render={(props) => <CoursesByMainCats {...props} />}
           />
           <Route
             path="/lecturer/:id"

@@ -213,6 +213,34 @@ module.exports = {
     });
   },
 
+  getByMainCatID: (req, res) => {
+    const pageNumber = parseInt(req.query.page) - 1;
+    const isRateDesc = parseInt(req.query.isratedesc);
+    const isPriceAsc = parseInt(req.query.ispriceasc);
+    const cmd =
+      "courses.idcourses, courses.name, courses.teacher, courses.rate, courses.ratevotes, courses.price, courses.description1, courses.description2, courses.lastupdate, courses.isCompleted, courses.idsmall_category, courses.img, courses.previewvideo, courses.subscribes, courses.views, courses.isBlocked, courses.createAt";
+    let sql = `SELECT ${cmd} FROM ${tbName} INNER JOIN small_category ON small_category.idcategory = ? AND ${tbName}.idsmall_category = small_category.idsmall_category WHERE isBlocked=0`;
+    if (pageNumber > -1)
+      if (isRateDesc === 1)
+        sql = `SELECT ${cmd} FROM ${tbName} INNER JOIN small_category ON small_category.idcategory = ? AND ${tbName}.idsmall_category = small_category.idsmall_category WHERE isBlocked=0 ORDER BY rate DESC limit ${
+          pageNumber * 5
+        },5;`;
+      else if (isPriceAsc === 1)
+        sql = `SELECT ${cmd} FROM ${tbName} INNER JOIN small_category ON small_category.idcategory = ? AND ${tbName}.idsmall_category = small_category.idsmall_category WHERE isBlocked=0 ORDER BY price ASC limit ${
+          pageNumber * 5
+        },5;`;
+      else
+        sql = `SELECT ${cmd} FROM ${tbName} INNER JOIN small_category ON small_category.idcategory = ? AND ${tbName}.idsmall_category = small_category.idsmall_category WHERE isBlocked=0 limit ${
+          pageNumber * 5
+        },5;`;
+    db.query(sql, [req.params.catid], (err, result) => {
+      if (err) {
+        throw err;
+      }
+      res.json(result);
+    });
+  },
+
   getQuantityByCatID: (req, res) => {
     const sql = `SELECT COUNT(*) AS count FROM ${tbName} WHERE idsmall_category = ?`;
     db.query(sql, [req.params.catid], (err, result) => {

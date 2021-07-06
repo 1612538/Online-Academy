@@ -26,6 +26,9 @@ module.exports = (app) => {
   app.route("/api/getByTeacher/:id").get(Courses.getByTeacher);
 
   app.route("/api/coursesByCatID/:catid").get(Courses.getByCatID);
+
+  app.route("/api/coursesByMainCatID/:catid").get(Courses.getByMainCatID);
+
   app.route("/api/coursesNumber/:catid").get(Courses.getQuantityByCatID);
   app
     .route("/api/coursesbysubscribeandcat/:id")
@@ -37,12 +40,8 @@ module.exports = (app) => {
   //Categories controller
 
   let Categories = require("./controllers/Categories");
-  app.route("/api/categories").get(Categories.getAll).post(Categories.add);
-  app
-    .route("/api/categories/:id")
-    .get(Categories.detail)
-    .put(Categories.update)
-    .delete(Categories.delete);
+  app.route("/api/categories").get(Categories.getAll);
+  app.route("/api/categories/:id").get(Categories.detail);
 
   //Small categories controller
 
@@ -53,6 +52,8 @@ module.exports = (app) => {
 
   app.route("/api/smallcategories/byCatID/:id").get(SmallCategories.getByCatID);
   app.route("/api/smallcategoriesbycount").get(SmallCategories.getByCount);
+
+  app.route("/api/smallcategories/:id").put(SmallCategories.updateCount);
 
   //Comment controller
   let Comment = require("./controllers/Comment");
@@ -166,4 +167,11 @@ module.exports = (app) => {
     .get(LectureState.checkExist)
     .put(LectureState.update);
   app.route("/api/lecturestate").post(LectureState.add);
+
+  //Categories
+  app.route("/api/categories").post(Categories.add);
+  app
+    .route("/api/categories/:id")
+    .put(Categories.update)
+    .delete(Categories.delete);
 };
