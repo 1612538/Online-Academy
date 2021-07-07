@@ -432,7 +432,7 @@ const CourseDetail = (props) => {
         alignItems="flex-start"
         style={{
           width: "400px",
-          height: "550px",
+          height: "500px",
           overflowY: "auto",
           cursor: "default",
         }}
@@ -451,7 +451,7 @@ const CourseDetail = (props) => {
           >
             <img
               width="100px"
-              height="70px"
+              height="60px"
               src={"http://localhost:8080" + course.img}
             ></img>
           </Grid>

@@ -70,6 +70,7 @@ export default function CustomizedAccordions({ idcourse }) {
   const [expanded, setExpanded] = useState("panel0");
   const [lectures, setLectures] = useState([]);
   const classes = useStyles();
+  let myplayer = [];
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
@@ -81,6 +82,17 @@ export default function CustomizedAccordions({ idcourse }) {
 
     if (data.data.length > 0) setLectures(data.data);
     else setLectures([]);
+  };
+
+  const handleVideo = (key) => {
+    setTimeout(() => {
+      myplayer[key].load();
+      myplayer[key].pause();
+    }, 61000);
+    if (myplayer[key].getState().player.currentTime >= 60) {
+      myplayer[key].load();
+      myplayer[key].pause();
+    }
   };
 
   useEffect(() => {
@@ -114,7 +126,15 @@ export default function CustomizedAccordions({ idcourse }) {
             </AccordionSummary>
             <AccordionDetails>
               <Grid container direction="column">
-                <Player key={lecture.idlecture}>
+                <Player
+                  ref={(player) => {
+                    myplayer.push(player);
+                  }}
+                  key={lecture.idlecture}
+                  onPlaying={() => {
+                    handleVideo(key);
+                  }}
+                >
                   <source src={"http://localhost:8080" + lecture.video} />
                   <ControlBar autoHide>
                     <ReplayControl seconds={10} order={1.1} />
