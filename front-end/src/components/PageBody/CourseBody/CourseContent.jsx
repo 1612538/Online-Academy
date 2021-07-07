@@ -16,7 +16,8 @@ import {
   VolumeMenuButton,
 } from "video-react";
 import { useState, useEffect } from "react";
-
+import Background from "../../../assets/signin.png";
+import "video-react/dist/video-react.css";
 import axios from "axios";
 
 const Accordion = withStyles({
@@ -85,13 +86,17 @@ export default function CustomizedAccordions({ idcourse }) {
   };
 
   const handleVideo = (key) => {
-    setTimeout(() => {
+    let time = myplayer[key].getState().player.currentTime;
+    if (time >= 60) {
       myplayer[key].load();
       myplayer[key].pause();
-    }, 61000);
-    if (myplayer[key].getState().player.currentTime >= 60) {
-      myplayer[key].load();
-      myplayer[key].pause();
+    } else {
+      setTimeout(() => {
+        if (myplayer[key].getState().player.currentTime >= 60) {
+          myplayer[key].load();
+          myplayer[key].pause();
+        }
+      }, 61000 - time * 1000);
     }
   };
 
@@ -134,6 +139,7 @@ export default function CustomizedAccordions({ idcourse }) {
                   onPlaying={() => {
                     handleVideo(key);
                   }}
+                  poster={Background}
                 >
                   <source src={"http://localhost:8080" + lecture.video} />
                   <ControlBar autoHide>

@@ -553,6 +553,7 @@ const ChatBox = () => {
   return (
     <ThemeProvider theme={theme}>
       <ChatBot
+        botAvatar="https://i.pinimg.com/originals/5a/8b/0f/5a8b0f9f1ab53ce94a04ee18483f8310.jpg"
         floating
         headerTitle="Online Academy - User support"
         bubbleStyle={{ width: "max-content" }}
