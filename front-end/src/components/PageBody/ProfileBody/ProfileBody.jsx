@@ -103,7 +103,9 @@ const ProfileBody = (props) => {
     <div className={classes.root}>
       {user.role === 0 || user.role === 2 || !user ? (
         <Redirect to="/"></Redirect>
-      ) : undefined}
+      ) : (
+        undefined
+      )}
       <Grid
         container
         direction="row"
@@ -177,7 +179,9 @@ const ProfileBody = (props) => {
                 )}
               />
             </Box>
-          ) : undefined}
+          ) : (
+            undefined
+          )}
         </Grid>
       </Grid>
     </div>

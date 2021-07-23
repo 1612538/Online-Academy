@@ -129,8 +129,7 @@ const ProfileBody = (props) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await setUser(props.user);
-      await getLength();
+      await getCourses(currPage);
     };
 
     fetchData();
@@ -139,7 +138,8 @@ const ProfileBody = (props) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await getCourses(currPage);
+      await getLength();
+      await setUser(props.user);
     };
     fetchData();
     return () => {};
@@ -297,7 +297,9 @@ const ProfileBody = (props) => {
               )}
             />
           </Box>
-        ) : undefined}
+        ) : (
+          undefined
+        )}
       </Grid>
     </Grid>
   );

@@ -4,8 +4,10 @@ import Paper from "@material-ui/core/Paper";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
 import VideoPlay from "../../../assets/videoplay.png";
 import CheckIcon from "@material-ui/icons/Check";
+import DeleteIcon from "@material-ui/icons/Delete";
 import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
@@ -63,6 +65,16 @@ const LectureCard = (props) => {
     }
   };
 
+  const handleDelete = async (idcourse, idlecture) => {
+    const data = await axios.delete(
+      `http://localhost:8080/api/courselectures/${idcourse}/${idlecture}`,
+      props.config
+    );
+    if (data.data.success === true) {
+      props.setUpdate(!props.update);
+    }
+  };
+
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -103,6 +115,31 @@ const LectureCard = (props) => {
                   }}
                 >
                   <CheckIcon fontSize="small"></CheckIcon>Completed
+                </Grid>
+              ) : localStorage.getItem("role") === "1" ? (
+                <Grid
+                  container
+                  item
+                  xs={4}
+                  justify="flex-end"
+                  style={{ paddingTop: "3px" }}
+                >
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    style={{
+                      marginRight: "10px",
+                      maxWidth: "35px",
+                      maxHeight: "35px",
+                      minWidth: "35px",
+                      minHeight: "35px",
+                    }}
+                    onClick={() => {
+                      handleDelete(props.data.idcourse, props.data.idlecture);
+                    }}
+                  >
+                    <DeleteIcon></DeleteIcon>
+                  </Button>
                 </Grid>
               ) : (
                 <Grid item xs={4}></Grid>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Grid,
   Typography,
@@ -13,6 +13,7 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import "video-react/dist/video-react.css";
 import { useBeforeunload } from "react-beforeunload";
 import CloseIcon from "@material-ui/icons/Close";
+import EditIcon from "@material-ui/icons/Edit";
 import {
   Player,
   ControlBar,
@@ -66,6 +67,39 @@ const useStyles = makeStyles((theme) => ({
   snackbar: {
     backgroundColor: "#0276aa",
     color: "white",
+  },
+  customImageButton: {
+    backgroundColor: "#4287f5",
+    border: "1px solid #263de0",
+    boxShadow: "none",
+    padding: "5px 0px",
+    maxWidth: "30px",
+    maxHeight: "30px",
+    minWidth: "30px",
+    minHeight: "30px",
+    borderRadius: "5px",
+    marginLeft: "10px",
+    marginBottom: "2px",
+    color: "white",
+    "&:hover": {
+      boxShadow: "none",
+      backgroundColor: "#4251f5",
+    },
+  },
+  customButton: {
+    backgroundColor: "#4287f5",
+    border: "1px solid #263de0",
+    boxShadow: "none",
+    padding: "5px 0px",
+    borderRadius: "5px",
+    margin: "10px",
+    color: "white",
+    padding: "5px 8px",
+    textTransform: "none",
+    "&:hover": {
+      boxShadow: "none",
+      backgroundColor: "#4251f5",
+    },
   },
 }));
 
@@ -152,6 +186,12 @@ const CourseLecture = (props) => {
   const [lectureState, setLectureState] = useState([]);
   let myplayer = undefined;
   const [progText, setText] = useState("");
+
+  const [video, setVideo] = useState(null);
+  const [isChange, setChange] = useState(false);
+
+  const [update, setUpdate] = useState(false);
+  const firstUpdate = useRef(true);
 
   const config = {
     headers: {
@@ -310,6 +350,17 @@ const CourseLecture = (props) => {
     setText(`Your current progress of "${title}" is ` + secondsToHms(time));
   };
 
+  const handleVideo = (e) => {
+    if (e.target.files[0]) {
+      let tmp = course;
+      tmp.previewvideo = window.URL.createObjectURL(e.target.files[0]);
+      console.log(tmp.previewvideo);
+      setCourse({ ...tmp });
+      setVideo(e.target.files[0]);
+      setChange(true);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       if (localStorage.getItem("iduser") === null) History.push("/");
@@ -338,6 +389,20 @@ const CourseLecture = (props) => {
     fetchData();
     return () => {};
   }, [currPage]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getLectures();
+      setCurrLecture(data);
+    };
+    if (firstUpdate.current) {
+      firstUpdate.current = false;
+      console.log("success");
+      return;
+    }
+    fetchData();
+    console.log("failed");
+  }, [update]);
 
   return (
     <div className={classes.root}>
@@ -375,6 +440,17 @@ const CourseLecture = (props) => {
             <>
               <Typography variant="h6" className={classes.customText3}>
                 {currLecture.title}
+                {localStorage.getItem("role") === "1" ? (
+                  <Button
+                    variant="contained"
+                    component="label"
+                    className={classes.customImageButton}
+                  >
+                    <EditIcon></EditIcon>
+                  </Button>
+                ) : (
+                  undefined
+                )}
               </Typography>
               <div
                 onClick={() => {
@@ -401,6 +477,43 @@ const CourseLecture = (props) => {
                   </ControlBar>
                 </Player>
               </div>
+              {localStorage.getItem("role") === "1" ? (
+                <Button
+                  color="primary"
+                  variant="contained"
+                  component="label"
+                  className={classes.customButton}
+                >
+                  Click to change video
+                  <input
+                    type="file"
+                    hidden
+                    accept="video/*"
+                    onChange={(e) => {
+                      handleVideo(e);
+                    }}
+                    onClick={(e) => {
+                      e.target.value = null;
+                    }}
+                  />
+                </Button>
+              ) : (
+                undefined
+              )}
+              <Typography variant="h6" className={classes.customText3}>
+                Lecture description
+                {localStorage.getItem("role") === "1" ? (
+                  <Button
+                    variant="contained"
+                    component="label"
+                    className={classes.customImageButton}
+                  >
+                    <EditIcon></EditIcon>
+                  </Button>
+                ) : (
+                  undefined
+                )}
+              </Typography>
               <Typography
                 variant="body1"
                 className={classes.customText2}
@@ -432,9 +545,12 @@ const CourseLecture = (props) => {
                       <LectureCard
                         active={currLecture ? currLecture.idlecture : -1}
                         data={obj}
+                        config={config}
                         setCurrLecture={setCurrLecture}
                         getCurrentState={getCurrLectureState}
                         setOpen={setOpen}
+                        setUpdate={setUpdate}
+                        update={update}
                         isCompleted={() => {
                           if (localStorage.getItem("role") === "0") {
                             const tmp = lectureState.find(

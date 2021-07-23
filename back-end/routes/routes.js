@@ -154,7 +154,8 @@ module.exports = (app) => {
     );
   app
     .route("/api/courselectures/:idcourse/:idlecture")
-    .get(CourseLectures.getDetail);
+    .get(CourseLectures.getDetail)
+    .delete(CourseLectures.delete);
 
   //Lectures state
   let LectureState = require("./controllers/LectureState");
