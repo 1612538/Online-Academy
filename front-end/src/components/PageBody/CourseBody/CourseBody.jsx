@@ -298,7 +298,8 @@ const CourseBody = (props) => {
       if (returnData.data.img !== "") {
         previousImage = returnData.data.img;
         tmp.img = returnData.data.img;
-      } else if (returnData.data.previewvideo !== "") {
+      }
+      if (returnData.data.previewvideo !== "") {
         previousVideo = returnData.data.previewvideo;
         tmp.previewvideo = returnData.data.previewvideo;
       }

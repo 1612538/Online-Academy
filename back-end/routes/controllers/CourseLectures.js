@@ -1,9 +1,10 @@
 const db = require("../../utils/db");
 const tbName = "courselectures";
 const upload = require("../../utils/multer");
+const fs = require("fs");
 
 const deleteVideo = async (req, res) => {
-  const sqltmp = `SELECT * FROM ${tbName} WHERE idcourses = ? AND idlecture = ?`;
+  const sqltmp = `SELECT * FROM ${tbName} WHERE idcourse = ? AND idlecture = ?`;
   const results = await new Promise((resolve, reject) => {
     db.query(
       sqltmp,
@@ -89,7 +90,9 @@ module.exports = {
     let data = {};
     if (req.files) {
       data = await deleteVideo(req, res);
-    } else data = req.body;
+    }
+    if (req.body.title) data.title = req.body.title;
+    if (req.body.description) data.description = req.body.description;
     console.log(data);
     const sql = `UPDATE ${tbName} SET ? WHERE idcourse = ? AND idlecture = ?`;
     db.query(

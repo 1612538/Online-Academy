@@ -58,20 +58,26 @@ const LectureCard = (props) => {
   useEffect(() => {}, []);
 
   const handleClick = async () => {
-    await props.setCurrLecture({ ...props.data });
-    if (localStorage.getItem("role") === "0") {
-      await props.getCurrentState(props.data.idlecture, props.data.title);
-      props.setOpen(true);
+    if (props.canClick) {
+      await props.setCurrLecture({ ...props.data });
+      props.setPVideo(props.data.video);
+      if (localStorage.getItem("role") === "0") {
+        await props.getCurrentState(props.data.idlecture, props.data.title);
+        props.setOpen(true);
+      }
     }
+    console.log(props.data);
   };
 
   const handleDelete = async (idcourse, idlecture) => {
-    const data = await axios.delete(
-      `http://localhost:8080/api/courselectures/${idcourse}/${idlecture}`,
-      props.config
-    );
-    if (data.data.success === true) {
-      props.setUpdate(!props.update);
+    if (props.canClick) {
+      const data = await axios.delete(
+        `http://localhost:8080/api/courselectures/${idcourse}/${idlecture}`,
+        props.config
+      );
+      if (data.data.success === true) {
+        props.setUpdate(!props.update);
+      }
     }
   };
 

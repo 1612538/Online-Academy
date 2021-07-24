@@ -101,6 +101,16 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "#4251f5",
     },
   },
+  cancelButton: {
+    backgroundColor: "transparent",
+    margin: "10px 10px 10px 0px",
+    color: "white",
+    textTransform: "none",
+    "&:hover": {
+      boxShadow: "none",
+      backgroundColor: "rgb(80,80,80)",
+    },
+  },
 }));
 
 const StyledButton = withStyles({
@@ -186,11 +196,13 @@ const CourseLecture = (props) => {
   const [lectureState, setLectureState] = useState([]);
   let myplayer = undefined;
   const [progText, setText] = useState("");
+  const [previousVideo, setPVideo] = useState("");
 
   const [video, setVideo] = useState(null);
   const [isChange, setChange] = useState(false);
 
   const [update, setUpdate] = useState(false);
+  const [canClick, setCanClick] = useState(true);
   const firstUpdate = useRef(true);
 
   const config = {
@@ -352,13 +364,57 @@ const CourseLecture = (props) => {
 
   const handleVideo = (e) => {
     if (e.target.files[0]) {
-      let tmp = course;
-      tmp.previewvideo = window.URL.createObjectURL(e.target.files[0]);
-      console.log(tmp.previewvideo);
-      setCourse({ ...tmp });
+      let tmp = currLecture;
+      tmp.video = window.URL.createObjectURL(e.target.files[0]);
+      console.log(tmp.video);
+      setCurrLecture({ ...tmp });
       setVideo(e.target.files[0]);
       setChange(true);
+      setCanClick(false);
     }
+  };
+
+  const handleDataChange = async () => {
+    let formData = new FormData();
+    if (video !== null) formData.append("videoInput", video);
+    const returnData = await axios.put(
+      `http://localhost:8080/api/courselectures/${currLecture.idcourse}/${currLecture.idlecture}`,
+      formData,
+      config
+    );
+    if (returnData.data.success === true) {
+      let tmp = currLecture;
+      if (returnData.data.video !== "") {
+        setPVideo(returnData.data.video);
+        tmp.video = returnData.data.video;
+      }
+      setCurrLecture({ ...tmp });
+      let index = lectures.findIndex(
+        (obj) =>
+          obj.idlecture === tmp.idlecture && obj.idcourse === tmp.idcourse
+      );
+      let tmp2 = lectures;
+      tmp2[index].video = tmp.video;
+      setLectures([...tmp2]);
+      setVideo(null);
+      setChange(false);
+      setCanClick(true);
+    }
+  };
+
+  const cancelChange = () => {
+    let tmp = currLecture;
+    tmp.video = previousVideo;
+    setVideo(null);
+    setCurrLecture({ ...tmp });
+    let index = lectures.findIndex(
+      (obj) => obj.idlecture === tmp.idlecture && obj.idcourse === tmp.idcourse
+    );
+    let tmp2 = lectures;
+    tmp2[index].video = tmp.video;
+    setLectures([...tmp2]);
+    setChange(false);
+    setCanClick(true);
   };
 
   useEffect(() => {
@@ -369,6 +425,7 @@ const CourseLecture = (props) => {
         await getCourse();
         const data = await getLectures();
         setCurrLecture(data);
+        setPVideo(data.video);
         if (localStorage.getItem("role") === "0") {
           await getLectureState();
           if (data) await getCurrLectureState(data.idlecture, data.title);
@@ -394,14 +451,13 @@ const CourseLecture = (props) => {
     const fetchData = async () => {
       const data = await getLectures();
       setCurrLecture(data);
+      setPVideo(data.video);
     };
     if (firstUpdate.current) {
       firstUpdate.current = false;
-      console.log("success");
       return;
     }
     fetchData();
-    console.log("failed");
   }, [update]);
 
   return (
@@ -461,9 +517,15 @@ const CourseLecture = (props) => {
                   ref={(tplayer) => {
                     myplayer = tplayer;
                   }}
-                  key={currLecture.idlecture}
+                  key={currLecture.video}
                 >
-                  <source src={"http://localhost:8080" + currLecture.video} />
+                  <source
+                    src={
+                      isChange && video
+                        ? currLecture.video
+                        : "http://localhost:8080" + currLecture.video
+                    }
+                  />
                   <ControlBar autoHide>
                     <ReplayControl seconds={10} order={1.1} />
                     <ForwardControl seconds={30} order={1.2} />
@@ -551,6 +613,8 @@ const CourseLecture = (props) => {
                         setOpen={setOpen}
                         setUpdate={setUpdate}
                         update={update}
+                        setPVideo={setPVideo}
+                        canClick={canClick}
                         isCompleted={() => {
                           if (localStorage.getItem("role") === "0") {
                             const tmp = lectureState.find(
@@ -610,18 +674,30 @@ const CourseLecture = (props) => {
                       onClick={() => {
                         setLectureForm(true);
                       }}
-                      disabled={course.isCompleted === 0 ? false : true}
+                      disabled={
+                        course.isCompleted === 0
+                          ? isChange === false
+                            ? false
+                            : true
+                          : true
+                      }
                     >
                       Add lectures
                     </StyledButton>
                   </Grid>
                   <Grid container justify="center" item xs={12}>
                     {course.isCompleted === 0 ? (
-                      <StyledButton2 onClick={handleComplete}>
+                      <StyledButton2
+                        disabled={isChange === false ? false : true}
+                        onClick={handleComplete}
+                      >
                         Complete?
                       </StyledButton2>
                     ) : (
-                      <StyledButton3 onClick={handleComplete}>
+                      <StyledButton3
+                        disabled={isChange === false ? false : true}
+                        onClick={handleComplete}
+                      >
                         COMPLETED
                         <br />
                         (Click to set incomplete)
@@ -652,6 +728,29 @@ const CourseLecture = (props) => {
           ></LectureForm>
         </Grid>
       </Grid>
+      <Snackbar
+        open={isChange}
+        action={
+          <React.Fragment>
+            Your video changes haven't been saved.
+            <Button
+              color="secondary"
+              variant="contained"
+              style={{ margin: "10px", textTransform: "none" }}
+              onClick={handleDataChange}
+            >
+              Save changes
+            </Button>
+            <Button
+              variant="contained"
+              className={classes.cancelButton}
+              onClick={cancelChange}
+            >
+              Cancel
+            </Button>
+          </React.Fragment>
+        }
+      ></Snackbar>
     </div>
   );
 };

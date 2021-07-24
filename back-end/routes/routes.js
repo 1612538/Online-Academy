@@ -155,7 +155,11 @@ module.exports = (app) => {
   app
     .route("/api/courselectures/:idcourse/:idlecture")
     .get(CourseLectures.getDetail)
-    .delete(CourseLectures.delete);
+    .delete(CourseLectures.delete)
+    .put(
+      upload.fields([{ name: "videoInput", maxCount: 1 }]),
+      CourseLectures.update
+    );
 
   //Lectures state
   let LectureState = require("./controllers/LectureState");
