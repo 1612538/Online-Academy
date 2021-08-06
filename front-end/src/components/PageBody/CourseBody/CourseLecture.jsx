@@ -7,6 +7,7 @@ import {
   Snackbar,
   IconButton,
   Fade,
+  TextField,
 } from "@material-ui/core";
 import { Pagination, PaginationItem } from "@material-ui/lab";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
@@ -14,6 +15,8 @@ import "video-react/dist/video-react.css";
 import { useBeforeunload } from "react-beforeunload";
 import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from "@material-ui/icons/Edit";
+import ClearIcon from "@material-ui/icons/Clear";
+import CheckIcon from "@material-ui/icons/Check";
 import {
   Player,
   ControlBar,
@@ -24,6 +27,11 @@ import {
   PlaybackRateMenuButton,
   VolumeMenuButton,
 } from "video-react";
+
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { convertToRaw } from "draft-js";
+import draftToHtml from "draftjs-to-html";
 
 import History from "../../History";
 import LectureCard from "./LectureCard";
@@ -90,7 +98,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#4287f5",
     border: "1px solid #263de0",
     boxShadow: "none",
-    padding: "5px 0px",
     borderRadius: "5px",
     margin: "10px",
     color: "white",
@@ -203,6 +210,8 @@ const CourseLecture = (props) => {
 
   const [update, setUpdate] = useState(false);
   const [canClick, setCanClick] = useState(true);
+  const [isChange1, setChange1] = useState(false);
+  const [isChange2, setChange2] = useState(false);
   const firstUpdate = useRef(true);
 
   const config = {
@@ -393,9 +402,24 @@ const CourseLecture = (props) => {
         (obj) =>
           obj.idlecture === tmp.idlecture && obj.idcourse === tmp.idcourse
       );
-      let tmp2 = lectures;
-      tmp2[index].video = tmp.video;
-      setLectures([...tmp2]);
+      if (index >= 0) {
+        let tmp2 = lectures;
+        tmp2[index].video = tmp.video;
+        setLectures([...tmp2]);
+      }
+      const data2 = {
+        lastupdate: currentDate(),
+      };
+      const returnData2 = await axios.put(
+        `http://localhost:8080/api/courses/${course.idcourses}`,
+        data2,
+        config
+      );
+      if (returnData2.data.success === true) {
+        let temp = course;
+        temp.lastupdate = data2.lastupdate;
+        setCourse({ ...temp });
+      }
       setVideo(null);
       setChange(false);
       setCanClick(true);
@@ -410,11 +434,115 @@ const CourseLecture = (props) => {
     let index = lectures.findIndex(
       (obj) => obj.idlecture === tmp.idlecture && obj.idcourse === tmp.idcourse
     );
-    let tmp2 = lectures;
-    tmp2[index].video = tmp.video;
-    setLectures([...tmp2]);
+    if (index >= 0) {
+      let tmp2 = lectures;
+      tmp2[index].video = tmp.video;
+      setLectures([...tmp2]);
+    }
     setChange(false);
     setCanClick(true);
+  };
+
+  const [titleText, setTitleText] = useState("");
+
+  const handleUpdate1 = async () => {
+    if (titleText !== currLecture.title) {
+      const data = {
+        title: titleText,
+      };
+      const returnData = await axios.put(
+        `http://localhost:8080/api/courselectures/${currLecture.idcourse}/${currLecture.idlecture}`,
+        data,
+        config
+      );
+      if (returnData.data.success === true) {
+        let tmp = currLecture;
+        tmp.title = titleText;
+        setCurrLecture({ ...tmp });
+        let index = lectures.findIndex(
+          (obj) =>
+            obj.idlecture === tmp.idlecture && obj.idcourse === tmp.idcourse
+        );
+        if (index >= 0) {
+          let tmp2 = lectures;
+          tmp2[index].title = tmp.title;
+          setLectures([...tmp2]);
+        }
+        const data2 = {
+          lastupdate: currentDate(),
+        };
+        const returnData2 = await axios.put(
+          `http://localhost:8080/api/courses/${course.idcourses}`,
+          data2,
+          config
+        );
+        if (returnData2.data.success === true) {
+          let temp = course;
+          temp.lastupdate = data2.lastupdate;
+          setCourse({ ...temp });
+        }
+      }
+    }
+    setChange1(false);
+  };
+
+  const cancelUpdate1 = () => {
+    setChange1(false);
+  };
+
+  const handleUpdate2 = async () => {
+    const hashtagConfig = {
+      trigger: "#",
+      separator: " ",
+    };
+    const rawContentState = convertToRaw(editor.getCurrentContent());
+    const markup = draftToHtml(rawContentState, hashtagConfig, true);
+    const data = {
+      description: markup,
+    };
+    const returnData = await axios.put(
+      `http://localhost:8080/api/courselectures/${currLecture.idcourse}/${currLecture.idlecture}`,
+      data,
+      config
+    );
+    if (returnData.data.success === true) {
+      let tmp = currLecture;
+      tmp.description = markup;
+      setCurrLecture({ ...tmp });
+      let index = lectures.findIndex(
+        (obj) =>
+          obj.idlecture === tmp.idlecture && obj.idcourse === tmp.idcourse
+      );
+      if (index >= 0) {
+        let tmp2 = lectures;
+        tmp2[index].description = tmp.description;
+        setLectures([...tmp2]);
+      }
+      const data2 = {
+        lastupdate: currentDate(),
+      };
+      const returnData2 = await axios.put(
+        `http://localhost:8080/api/courses/${course.idcourses}`,
+        data2,
+        config
+      );
+      if (returnData2.data.success === true) {
+        let temp = course;
+        temp.lastupdate = data2.lastupdate;
+        setCourse({ ...temp });
+      }
+    }
+    setChange2(false);
+  };
+
+  const cancelUpdate2 = () => {
+    setChange2(false);
+  };
+
+  const [editor, setEditor] = useState("");
+
+  const onEditorStateChange = (contentState) => {
+    setEditor(contentState);
   };
 
   useEffect(() => {
@@ -495,15 +623,80 @@ const CourseLecture = (props) => {
           {currLecture ? (
             <>
               <Typography variant="h6" className={classes.customText3}>
-                {currLecture.title}
+                {isChange1 === false ? (
+                  currLecture.title
+                ) : (
+                  <TextField
+                    variant="outlined"
+                    defaultValue={currLecture.title}
+                    label="Title"
+                    style={{ width: "500px" }}
+                    onChange={(e) => {
+                      setTitleText(e.target.value);
+                    }}
+                  ></TextField>
+                )}
                 {localStorage.getItem("role") === "1" ? (
-                  <Button
-                    variant="contained"
-                    component="label"
-                    className={classes.customImageButton}
-                  >
-                    <EditIcon></EditIcon>
-                  </Button>
+                  isChange1 === false ? (
+                    <Button
+                      variant="contained"
+                      component="label"
+                      style={{
+                        maxWidth: "35px",
+                        maxHeight: "35px",
+                        minWidth: "35px",
+                        minHeight: "35px",
+                      }}
+                      className={classes.customImageButton}
+                      onClick={() => {
+                        setTitleText(currLecture.title);
+                        setChange1(true);
+                      }}
+                    >
+                      <EditIcon></EditIcon>
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        variant="contained"
+                        className={classes.customImageButton}
+                        style={{
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                          marginTop: "9px",
+                        }}
+                        onClick={() => {
+                          handleUpdate1();
+                        }}
+                      >
+                        <CheckIcon></CheckIcon>
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        style={{
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                          border: "1px solid #ab1d1d",
+                          boxShadow: "none",
+                          borderRadius: "5px",
+                          margin: "9px 0px 2px 10px",
+                          color: "white",
+                          padding: "5px 8px",
+                          textTransform: "none",
+                        }}
+                        onClick={() => {
+                          cancelUpdate1();
+                        }}
+                      >
+                        <ClearIcon></ClearIcon>
+                      </Button>
+                    </>
+                  )
                 ) : (
                   undefined
                 )}
@@ -565,23 +758,96 @@ const CourseLecture = (props) => {
               <Typography variant="h6" className={classes.customText3}>
                 Lecture description
                 {localStorage.getItem("role") === "1" ? (
-                  <Button
-                    variant="contained"
-                    component="label"
-                    className={classes.customImageButton}
-                  >
-                    <EditIcon></EditIcon>
-                  </Button>
+                  isChange2 === false ? (
+                    <Button
+                      variant="contained"
+                      component="label"
+                      style={{
+                        maxWidth: "35px",
+                        maxHeight: "35px",
+                        minWidth: "35px",
+                        minHeight: "35px",
+                      }}
+                      className={classes.customImageButton}
+                      onClick={() => {
+                        setTitleText(currLecture.title);
+                        setChange2(true);
+                      }}
+                    >
+                      <EditIcon></EditIcon>
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        variant="contained"
+                        className={classes.customImageButton}
+                        style={{
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                          marginTop: "9px",
+                        }}
+                        onClick={() => {
+                          handleUpdate2();
+                        }}
+                      >
+                        <CheckIcon></CheckIcon>
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        style={{
+                          maxWidth: "35px",
+                          maxHeight: "35px",
+                          minWidth: "35px",
+                          minHeight: "35px",
+                          border: "1px solid #ab1d1d",
+                          boxShadow: "none",
+                          borderRadius: "5px",
+                          margin: "9px 0px 2px 10px",
+                          color: "white",
+                          padding: "5px 8px",
+                          textTransform: "none",
+                        }}
+                        onClick={() => {
+                          cancelUpdate2();
+                        }}
+                      >
+                        <ClearIcon></ClearIcon>
+                      </Button>
+                    </>
+                  )
                 ) : (
                   undefined
                 )}
               </Typography>
-              <Typography
-                variant="body1"
-                className={classes.customText2}
-                key={Date()}
-                dangerouslySetInnerHTML={{ __html: currLecture.description }}
-              ></Typography>
+              {isChange2 ? (
+                <div
+                  style={{
+                    backgroundColor: "white",
+                    margin: "10px",
+                    padding: "10px",
+                  }}
+                >
+                  <Editor
+                    editorState={editor}
+                    toolbarClassName="toolbarClassName"
+                    wrapperClassName="wrapperClassName"
+                    editorClassName="editorClassName"
+                    onEditorStateChange={onEditorStateChange}
+                    editorStyle={{ height: "200px" }}
+                    handlePastedText={() => false}
+                  />
+                </div>
+              ) : (
+                <Typography
+                  variant="body1"
+                  className={classes.customText2}
+                  key={Date()}
+                  dangerouslySetInnerHTML={{ __html: currLecture.description }}
+                ></Typography>
+              )}
             </>
           ) : (
             <>
