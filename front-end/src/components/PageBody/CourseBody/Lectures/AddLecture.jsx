@@ -121,20 +121,34 @@ const AddLectureForm = (props) => {
       config
     );
     if (returnData.data.success) {
-      if (props.lectures.length === 5)
-        props.setPageNumberL((prevPage) => prevPage + 1);
-      else {
+      if (props.length === 0) {
+        props.setPage(1);
         let tmp = props.lectures;
         tmp.push({
           title: title,
           description: markup,
           idcourse: props.match.params.id,
           idlecture: props.length,
-          video: "",
+          video: returnData.data.video,
         });
         props.setLectures([...tmp]);
-        props.lectureClose();
+      } else if (props.length % 5 === 0) {
+        props.setPage((prevPage) => prevPage + 1);
+      } else {
+        let tmp = props.lectures;
+        tmp.push({
+          title: title,
+          description: markup,
+          idcourse: props.match.params.id,
+          idlecture: props.length,
+          video: returnData.data.video,
+        });
+        props.setLectures([...tmp]);
       }
+      props.setLength((prevLength) => prevLength + 1);
+      setFilename(null);
+      setFile(null);
+      props.lectureClose();
     }
   };
 
@@ -242,7 +256,7 @@ const AddLectureForm = (props) => {
             variant="contained"
             className={classes.customButton1}
           >
-            Accept changes
+            Add lecture
           </Button>
           <Button
             variant="contained"

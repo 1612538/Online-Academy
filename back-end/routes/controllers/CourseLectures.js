@@ -63,16 +63,16 @@ module.exports = {
   },
   add: (req, res) => {
     const sql = `INSERT INTO ${tbName} SET ?`;
-    const course = {
+    const lecture = {
       idcourse: req.body.idcourse,
       idlecture: req.body.idlecture,
       title: req.body.title,
       description: req.body.description,
       video: "/tmp/my-uploads/" + req.files["videoInput"][0].filename,
     };
-    db.query(sql, [course], (err, result) => {
+    db.query(sql, [lecture], (err, result) => {
       if (err) throw err;
-      res.json({ success: 1 });
+      res.json({ success: 1, video: lecture.video });
     });
   },
   delete: (req, res) => {

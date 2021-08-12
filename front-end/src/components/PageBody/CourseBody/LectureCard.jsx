@@ -105,7 +105,7 @@ const LectureCard = (props) => {
                   gutterBottom
                   variant="h6"
                   className={classes.custom}
-                  style={{ margin: "10px 0 -10px 0" }}
+                  style={{ margin: "10px 0 -10px 0", fontSize: "19px" }}
                 >
                   {props.data.title}
                 </Typography>

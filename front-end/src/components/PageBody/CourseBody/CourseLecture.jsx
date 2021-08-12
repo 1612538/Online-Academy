@@ -552,8 +552,10 @@ const CourseLecture = (props) => {
         await checkEnrolled();
         await getCourse();
         const data = await getLectures();
-        setCurrLecture(data);
-        setPVideo(data.video);
+        if (data) {
+          setCurrLecture(data);
+          setPVideo(data.video);
+        }
         if (localStorage.getItem("role") === "0") {
           await getLectureState();
           if (data) await getCurrLectureState(data.idlecture, data.title);
@@ -578,8 +580,13 @@ const CourseLecture = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await getLectures();
-      setCurrLecture(data);
-      setPVideo(data.video);
+      if (data) {
+        setCurrLecture(data);
+        setPVideo(data.video);
+      } else {
+        setCurrLecture(undefined);
+        setPVideo(undefined);
+      }
     };
     if (firstUpdate.current) {
       firstUpdate.current = false;
@@ -866,53 +873,62 @@ const CourseLecture = (props) => {
           spacing={2}
         >
           <Grid container item justify="center">
-            <Grid container item xs={10} justify="center" alignItems="center">
-              {lectures.length > 0
-                ? lectures.map((obj, key) => (
-                    <Grid item xs={12} key={key}>
-                      <LectureCard
-                        active={currLecture ? currLecture.idlecture : -1}
-                        data={obj}
-                        config={config}
-                        setCurrLecture={setCurrLecture}
-                        getCurrentState={getCurrLectureState}
-                        setOpen={setOpen}
-                        setUpdate={setUpdate}
-                        update={update}
-                        setPVideo={setPVideo}
-                        canClick={canClick}
-                        isCompleted={() => {
-                          if (localStorage.getItem("role") === "0") {
-                            const tmp = lectureState.find(
-                              (obj2) => obj2.idlecture === obj.idlecture
-                            );
-                            if (tmp) return tmp.isCompleted;
-                            else return 0;
-                          } else return 0;
-                        }}
-                      ></LectureCard>
-                    </Grid>
-                  ))
-                : undefined}
-              {lectures.length > 0 ? (
-                <Box my={1} display="flex" justifyContent="center">
-                  <Pagination
-                    count={pageNumberL ? pageNumberL : 1}
-                    defaultPage={1}
-                    onChange={changeHandleL}
-                    renderItem={(item) => (
-                      <PaginationItem
-                        {...item}
-                        className={classes.customPagination}
-                        classes={{ selected: classes.selected }}
-                      />
-                    )}
-                  />
-                </Box>
-              ) : (
-                undefined
-              )}
+            <Grid
+              container
+              item
+              xs={10}
+              justify="center"
+              alignItems="flex-start"
+              style={{ height: "405px" }}
+            >
+              <Grid container item justify="center" alignItems="flex-start">
+                {lectures.length > 0
+                  ? lectures.map((obj, key) => (
+                      <Grid item xs={12} key={key}>
+                        <LectureCard
+                          active={currLecture ? currLecture.idlecture : -1}
+                          data={obj}
+                          config={config}
+                          setCurrLecture={setCurrLecture}
+                          getCurrentState={getCurrLectureState}
+                          setOpen={setOpen}
+                          setUpdate={setUpdate}
+                          update={update}
+                          setPVideo={setPVideo}
+                          canClick={canClick}
+                          isCompleted={() => {
+                            if (localStorage.getItem("role") === "0") {
+                              const tmp = lectureState.find(
+                                (obj2) => obj2.idlecture === obj.idlecture
+                              );
+                              if (tmp) return tmp.isCompleted;
+                              else return 0;
+                            } else return 0;
+                          }}
+                        ></LectureCard>
+                      </Grid>
+                    ))
+                  : undefined}
+              </Grid>
             </Grid>
+            {lectures.length > 0 ? (
+              <Box my={1} display="flex" justifyContent="center">
+                <Pagination
+                  count={pageNumberL ? pageNumberL : 1}
+                  defaultPage={1}
+                  onChange={changeHandleL}
+                  renderItem={(item) => (
+                    <PaginationItem
+                      {...item}
+                      className={classes.customPagination}
+                      classes={{ selected: classes.selected }}
+                    />
+                  )}
+                />
+              </Box>
+            ) : (
+              undefined
+            )}
             <Grid container item xs={11} justify="center">
               <Grid item>
                 <img
@@ -991,6 +1007,7 @@ const CourseLecture = (props) => {
             setLectures={setLectures}
             match={props.match}
             length={Length}
+            setLength={setLength}
           ></LectureForm>
         </Grid>
       </Grid>
