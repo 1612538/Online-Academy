@@ -179,4 +179,9 @@ module.exports = (app) => {
     .route("/api/categories/:id")
     .put(Categories.update)
     .delete(Categories.delete);
+
+  //Web hook
+  let webhook = require("./controllers/Webhook");
+  app.route("/webhook").get(webhook.webhookget);
+  app.route("/webhook").post(webhook.webhookpost);
 };

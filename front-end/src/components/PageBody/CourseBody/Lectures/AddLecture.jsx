@@ -134,7 +134,7 @@ const AddLectureForm = (props) => {
         props.setLectures([...tmp]);
       } else if (props.length % 5 === 0) {
         props.setPage((prevPage) => prevPage + 1);
-      } else {
+      } else if (props.lectures.length < 5) {
         let tmp = props.lectures;
         tmp.push({
           title: title,

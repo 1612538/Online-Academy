@@ -896,6 +896,7 @@ const CourseLecture = (props) => {
                           update={update}
                           setPVideo={setPVideo}
                           canClick={canClick}
+                          idcourse={course.idcourses}
                           isCompleted={() => {
                             if (localStorage.getItem("role") === "0") {
                               const tmp = lectureState.find(

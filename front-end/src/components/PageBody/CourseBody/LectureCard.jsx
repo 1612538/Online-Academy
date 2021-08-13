@@ -54,6 +54,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function currentDate() {
+  var date = new Date();
+  var dateStr =
+    ("00" + date.getHours()).slice(-2) +
+    ":" +
+    ("00" + date.getMinutes()).slice(-2) +
+    ":" +
+    ("00" + date.getSeconds()).slice(-2) +
+    " " +
+    ("00" + date.getDate()).slice(-2) +
+    "/" +
+    ("00" + (date.getMonth() + 1)).slice(-2) +
+    "/" +
+    date.getFullYear();
+  return dateStr;
+}
+
 const LectureCard = (props) => {
   useEffect(() => {}, []);
 
@@ -76,7 +93,17 @@ const LectureCard = (props) => {
         props.config
       );
       if (data.data.success === true) {
-        props.setUpdate(!props.update);
+        const data2 = {
+          lastupdate: currentDate(),
+        };
+        const returnData2 = await axios.put(
+          `http://localhost:8080/api/courses/${props.idcourse}`,
+          data2,
+          props.config
+        );
+        if (returnData2.data.success === true) {
+          props.setUpdate(!props.update);
+        }
       }
     }
   };
@@ -155,7 +182,7 @@ const LectureCard = (props) => {
                   gutterBottom
                   variant="subtitle1"
                   className={classes.custom}
-                  style={{ margin: "-10px 0px -6px 0px" }}
+                  style={{ margin: "-10px 0px -6px 0px", height: "45px" }}
                   key={Date()}
                   dangerouslySetInnerHTML={{ __html: props.data.description }}
                 ></Typography>
