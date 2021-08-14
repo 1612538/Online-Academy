@@ -4,6 +4,11 @@ const AuthMiddleware = require("../utils/AuthMiddleware");
 const AuthController = require("./controllers/Auth");
 const upload = require("../utils/multer");
 module.exports = (app) => {
+  //Web hook
+  let webhook = require("./controllers/Webhook");
+  app.route("/webhook").get(webhook.webhookget);
+  app.route("/webhook").post(webhook.webhookpost);
+
   //Courses controller
 
   let Courses = require("./controllers/Courses");
@@ -179,9 +184,4 @@ module.exports = (app) => {
     .route("/api/categories/:id")
     .put(Categories.update)
     .delete(Categories.delete);
-
-  //Web hook
-  let webhook = require("./controllers/Webhook");
-  app.route("/webhook").get(webhook.webhookget);
-  app.route("/webhook").post(webhook.webhookpost);
 };
