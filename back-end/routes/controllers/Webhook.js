@@ -5,14 +5,14 @@ function callSendAPI(senderId, message) {
     recipient: {
       id: senderId,
     },
-    message: { text: message },
+    message: message,
   };
   request(
     {
       uri: "https://graph.facebook.com/v2.6/me/messages",
       qs: {
         access_token:
-          "EAADYReC9qMYBAGDJtGX9sPOZCvZCFOoiaeoeGJcnwGvYFBMakc5ra4rWRKoW5m8EW8og5xACLZBfNjKqN9CzZAyXhlbg1dkicyhf6ZA9PhsTFCjqZCovl9BOidrj748eY0h5mMqaKv9ib2mvjgMw54UZB8EodWRRTCZBdpwvfbzUremFcQsQ1J0m",
+          "EAADYReC9qMYBAIwPfPTlsJOf1qdnoDMmWKaOHbZCmV0NRfgCWyglpO9ZC0GDx4zZAwfrgBFHl8ZArwAfzBdJl61QQzSdBeAbh9NtXhXhccNCZBn68aeoHE4tDFH9sZA0L1gMwGBZAZCyVNsA6LaUrAcz6nC2D9OYIt9DxkrZB9rqm9toXZAgwB0yXX",
       },
       method: "POST",
       json: request_body,
@@ -31,7 +31,7 @@ function firstTrait(nlp, name) {
   return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
 }
 
-function handleMessage(sender_psid, message) {
+function handleMessage(sender_psid, received_message) {
   let response;
 
   // Checks if the message contains text
