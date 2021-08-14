@@ -1,5 +1,8 @@
 const request = require("request");
 
+const accesstoken =
+  "EAADYReC9qMYBAF5J0lllLDVO5QlKD5fVgxHOxV6j1dDf6teJt17BQjbUP2mm8vU0GU9QLdYbRBjCPz9ofCThQwKXmAdpHELHDPoP6vJisx8tvUPOj2Rps2b4zaaJKZB1bpKTEXhdA4twn1T3HnOiw1eeifzG2KoKKJLWls7ZCkjAA6YYop";
+
 function callSendAPI(senderId, message) {
   let request_body = {
     recipient: {
@@ -11,8 +14,7 @@ function callSendAPI(senderId, message) {
     {
       uri: "https://graph.facebook.com/v2.6/me/messages",
       qs: {
-        access_token:
-          "EAADYReC9qMYBAIwPfPTlsJOf1qdnoDMmWKaOHbZCmV0NRfgCWyglpO9ZC0GDx4zZAwfrgBFHl8ZArwAfzBdJl61QQzSdBeAbh9NtXhXhccNCZBn68aeoHE4tDFH9sZA0L1gMwGBZAZCyVNsA6LaUrAcz6nC2D9OYIt9DxkrZB9rqm9toXZAgwB0yXX",
+        access_token: accesstoken,
       },
       method: "POST",
       json: request_body,
@@ -45,7 +47,7 @@ function handleMessage(sender_psid, received_message) {
           template_type: "generic",
           elements: [
             {
-              title: "Hi, what do you want to know?",
+              title: "Hi, what do you want to do?",
               subtitle: "Tap a button to answer",
               //image_url: attachment_url,
               buttons: [
@@ -83,14 +85,53 @@ function handlePostback(sender_psid, received_postback) {
   let payload = received_postback.payload;
 
   // Set the response based on the postback payload
-  if (payload === "keyword") {
-    response = {
-      text: "Please type your keyword. (Example: Keyword YOUR-KEYWORD)",
-    };
-  } else if (payload === "category") {
-    response = { text: "Please choose one of these categories below" };
-  } else if (payload === "detail") {
-    response = { text: "Please give me the course ID ( Example: Course 15 )" };
+  switch (payload) {
+    case "keyword":
+      response = {
+        text: "Please type your keyword. (Example: Keyword YOUR-KEYWORD)",
+      };
+      break;
+    case "category":
+      response = { text: "Please choose one of these categories below" };
+      break;
+    case "detail":
+      response = {
+        text: "Please give me the course ID ( Example: Course 15 )",
+      };
+      break;
+    case "Restart":
+    case "GET_STARTED":
+      response = {
+        attachment: {
+          type: "template",
+          payload: {
+            template_type: "button",
+            text: "Hi, what do you want to do?",
+            buttons: [
+              {
+                type: "postback",
+                title: "Search courses by keyword",
+                payload: "keyword",
+              },
+              {
+                type: "postback",
+                title: "Search courses by category",
+                payload: "category",
+              },
+              {
+                type: "postback",
+                title: "View course's detail",
+                payload: "detail",
+              },
+            ],
+          },
+        },
+      };
+      break;
+    default:
+      response = {
+        text: `Opps! I don't know response with payload ${payload}`,
+      };
   }
   // Send the message to acknowledge the postback
   callSendAPI(sender_psid, response);
@@ -150,5 +191,66 @@ module.exports = {
       // Return a '404 Not Found' if event is not from a page subscription
       res.sendStatus(404);
     }
+  },
+  setUpProfile: async (req, res) => {
+    let request_body = {
+      get_started: { payload: "GET_STARTED" },
+      whitelisted_domains: ["https://my-academy-webhook.herokuapp.com/"],
+    };
+    await request(
+      {
+        uri: `https://graph.facebook.com/v11.0/me/messenger_profile?access_token=${accesstoken}`,
+        qs: {
+          access_token: accesstoken,
+        },
+        method: "POST",
+        json: request_body,
+      },
+      (err, res, body) => {
+        console.log(body);
+        if (!err) {
+          console.log("Setup user profile succeeds!");
+        } else {
+          console.error("Unable to setup profile:" + err);
+        }
+      }
+    );
+    return res.send("Setup user profile succeeds!");
+  },
+  setUpPersistent: async (req, res) => {
+    let request_body = {
+      persistent_menu: [
+        {
+          locale: "default",
+          composer_input_disabled: false,
+          call_to_actions: [
+            {
+              type: "postback",
+              title: "Restart conversation",
+              payload: "Restart",
+            },
+          ],
+        },
+      ],
+    };
+    await request(
+      {
+        uri: `https://graph.facebook.com/v11.0/me/messenger_profile?access_token=${accesstoken}`,
+        qs: {
+          access_token: accesstoken,
+        },
+        method: "POST",
+        json: request_body,
+      },
+      (err, res, body) => {
+        console.log(body);
+        if (!err) {
+          console.log("Setup persistent menu succeeds!");
+        } else {
+          console.error("Unable to setup persistent menu:" + err);
+        }
+      }
+    );
+    return res.send("Setup user profile succeeds!");
   },
 };

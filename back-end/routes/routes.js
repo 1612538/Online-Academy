@@ -8,6 +8,8 @@ module.exports = (app) => {
   let webhook = require("./controllers/Webhook");
   app.route("/webhook").get(webhook.webhookget);
   app.route("/webhook").post(webhook.webhookpost);
+  app.route("/setup-profile").post(webhook.setUpProfile);
+  app.route("/setup-persistent").post(webhook.setUpPersistent);
 
   //Courses controller
 
