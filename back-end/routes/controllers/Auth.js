@@ -1,10 +1,11 @@
 const jwtHelper = require("../../helpers/jwthelpers");
 const Users = require("./Users");
 const bcrypt = require("../../utils/bcrypt");
+const db = require("../../utils/db");
 
 let tokenList = {};
 
-const accessTokenLife = process.env.ACCESS_TOKEN_LIFE || "2h";
+const accessTokenLife = process.env.ACCESS_TOKEN_LIFE || "1h";
 
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET || "my-access-token";
 
@@ -38,6 +39,18 @@ const login = async (req, res) => {
           refreshTokenLife
         );
         tokenList[refreshToken] = { accessToken, refreshToken };
+        const data = {
+          refreshToken: refreshToken,
+        };
+        const sql = `UPDATE user SET ? WHERE iduser = ?`;
+        const results = await new Promise((resolve, reject) => {
+          db.query(sql, [data, user.iduser], (err, result) => {
+            if (err) {
+              reject(err);
+            }
+            resolve(result);
+          });
+        });
         return res.status(200).json({
           id: user.iduser,
           accessToken,

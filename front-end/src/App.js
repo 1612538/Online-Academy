@@ -21,7 +21,11 @@ import BackgroundImage from "./assets/background.jpg";
 
 import { PrivateRoute, AdminRoute } from "./routes/PrivateRoute";
 
+import { isJwtExpired } from "jwt-check-expiration";
+
 import "@fontsource/roboto";
+import { useEffect } from "react";
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,6 +44,32 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
   const classes = useStyles();
+  const getToken = async () => {
+    if (localStorage.getItem("accessToken")) {
+      const check = isJwtExpired(localStorage.getItem("accessToken"));
+      console.log("is expired: ", check);
+      if (check) {
+        const data = {
+          refreshToken: localStorage.getItem("refreshToken"),
+        };
+        const returnData = await axios.post(
+          "http://localhost:8080/refresh-token",
+          data
+        );
+        if (returnData.data.accessToken) {
+          localStorage.setItem("accessToken", returnData.data.accessToken);
+        } else if (returnData.data.message) {
+          History.push("/signout");
+        }
+      }
+    }
+  };
+  useEffect(() => {
+    const fetchData = async () => {
+      await getToken();
+    };
+    fetchData();
+  }, []);
   return (
     <div className="App">
       <div className={classes.root}></div>
