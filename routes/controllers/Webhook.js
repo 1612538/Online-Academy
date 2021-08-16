@@ -225,11 +225,11 @@ async function showDetail(sender_psid, course_id) {
   };
   await callSendAPI(sender_psid, response);
   return {
-    text: `Title: ${data.name}
+    text: `    Title: ${data.name}
     Description: ${data.description1} 
-    Price: ${data.price} Rate: ${data.rate} (${data.ratevotes})
-    Instructor: ${data.teacher_name} Category: ${data.cat_name}
-    Last update: ${data.lastupdate}  Completed: ${
+    Price: ${data.price}    Rate: ${data.rate} (${data.ratevotes})
+    Instructor: ${data.teacher_name}    Category: ${data.cat_name}
+    Last update: ${data.lastupdate}     Completed: ${
       data.isCompleted === 1 ? "Completed" : "Not completed"
     }`,
   };
