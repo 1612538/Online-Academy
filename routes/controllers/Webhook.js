@@ -229,11 +229,11 @@ async function showDetail(sender_psid, course_id) {
               data.isCompleted === 1 ? "Completed" : "Not completed"
             }     Instructor: ${data.teacher_name}  Category: ${data.cat_name}`,
             buttons: [
-              // {
-              //   type: "web_url",
-              //   title: "View more",
-              //   url: "https://www.google.com/",
-              // },
+              {
+                type: "web_url",
+                title: "View more",
+                url: "https://www.google.com/",
+              },
             ],
           },
         ],
