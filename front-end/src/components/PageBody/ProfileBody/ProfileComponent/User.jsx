@@ -221,7 +221,9 @@ const ProfileBody = (props) => {
               )}
             />
           </Box>
-        ) : undefined}
+        ) : (
+          undefined
+        )}
       </Grid>
       <Grid item xs={12}>
         <Typography variant="h5" className={classes.customText3}>
@@ -236,7 +238,12 @@ const ProfileBody = (props) => {
           >
             {enrolledCourses.map((course, key) => (
               <Grid item key={key}>
-                <CoursesCard course={course}></CoursesCard>
+                <CoursesCard
+                  course={course}
+                  pole={
+                    course.isCompleted === 1 ? "Completed" : "Not completed"
+                  }
+                ></CoursesCard>
               </Grid>
             ))}
           </Grid>
@@ -257,7 +264,9 @@ const ProfileBody = (props) => {
               )}
             />
           </Box>
-        ) : undefined}
+        ) : (
+          undefined
+        )}
       </Grid>
       <Tooltip
         title=""

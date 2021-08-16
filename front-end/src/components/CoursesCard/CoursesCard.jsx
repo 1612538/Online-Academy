@@ -50,6 +50,14 @@ const useStyles = makeStyles({
     fontSize: "1rem",
     fontWeight: "bold",
   },
+  complete: {
+    color: "green",
+    fontSize: "0.8rem",
+  },
+  notComplete: {
+    color: "gray",
+    fontSize: "0.8rem",
+  },
   bestseller: {
     padding: "4px 10px 4px 10px",
     backgroundColor: "#ffc107",
@@ -204,12 +212,30 @@ export default function CourseCard(props) {
                     readOnly
                   />
                 </Grid>
-                <Grid item xs={3} style={{ marginLeft: "7px" }}>
+                <Grid
+                  item
+                  xs={props.pole ? 2 : 3}
+                  style={{ marginLeft: "7px" }}
+                >
                   ({course.ratevotes})
                 </Grid>
-                <Grid item xs={3} className={classes.price}>
-                  ${course.price}
-                </Grid>
+                {props.pole ? (
+                  <Grid
+                    item
+                    xs={4}
+                    className={
+                      props.pole === "Completed"
+                        ? classes.complete
+                        : classes.notComplete
+                    }
+                  >
+                    {props.pole}
+                  </Grid>
+                ) : (
+                  <Grid item xs={3} className={classes.price}>
+                    ${course.price}
+                  </Grid>
+                )}
               </Grid>
             </Grid>
           </Grid>
