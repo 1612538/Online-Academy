@@ -223,11 +223,7 @@ async function showDetail(sender_psid, course_id) {
           {
             title: data.name,
             image_url: `https://my-academy-webhook.herokuapp.com${data.img}`,
-            subtitle: `Price: ${data.price}  Rate: ${data.rate} (${
-              data.ratevotes
-            })    Last update: ${data.lastupdate}  Complete: ${
-              data.isCompleted === 1 ? "Completed" : "Not completed"
-            }     Instructor: ${data.teacher_name}  Category: ${data.cat_name}`,
+            subtitle: `Price: ${data.price}  Rate: ${data.rate} (${data.ratevotes}) Last update: ${data.lastupdate} Instructor: ${data.teacher_name} Category: ${data.cat_name}`,
             buttons: [
               {
                 type: "web_url",
