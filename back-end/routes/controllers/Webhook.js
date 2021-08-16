@@ -81,13 +81,15 @@ async function handleMessage(sender_psid, received_message) {
     if (received_message.text.includes("Keyword ")) {
       const allwords = received_message.text.split(" ");
       let keyword = "";
-      for (let i = 1; i < allwords.length; i++) keyword += allwords[i];
+      for (let i = 1; i < allwords.length; i++)
+        keyword = keyword + allwords[i] + " ";
       console.log(keyword);
       response = await showCourses(sender_psid, keyword, 2);
     }
   }
-  let payload = received_message.quick_reply.payload;
-  if (payload) {
+
+  if (received_message.quick_reply.payload) {
+    let payload = received_message.quick_reply.payload;
     if (payload.includes("cat-")) {
       const catid = parseInt(payload.split("-")[1]);
       console.log(catid);
@@ -192,6 +194,7 @@ async function showCourses(sender_psid, value, type) {
   let data;
   if (type === 1) data = await getCoursesByCat(value);
   else if (type === 2) data = await getCoursesByKeyword(value);
+  console.log(data[0].name);
   let array = [];
   for (let item of data) {
     array.push({
