@@ -85,13 +85,13 @@ async function handleMessage(sender_psid, received_message) {
         keyword = keyword + allwords[i] + " ";
       console.log(keyword);
       response = await showCourses(sender_psid, keyword, 2);
-    }
-  } else if (typeof received_message.quick_reply.payload === "string") {
-    let payload = received_message.quick_reply.payload;
-    if (payload.includes("cat-")) {
-      const catid = parseInt(payload.split("-")[1]);
-      console.log(catid);
-      response = await showCourses(sender_psid, catid, 1);
+    } else if (typeof received_message.quick_reply.payload === "string") {
+      let payload = received_message.quick_reply.payload;
+      if (payload.includes("cat-")) {
+        const catid = parseInt(payload.split("-")[1]);
+        console.log(catid);
+        response = await showCourses(sender_psid, catid, 1);
+      }
     }
   }
   callSendAPI(sender_psid, response);
