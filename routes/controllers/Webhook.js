@@ -163,7 +163,7 @@ async function getDetail(course_id) {
       else return null;
     });
   });
-  results.teacher_name = results2.firstname + results2.lastname;
+  results.teacher_name = results2.firstname + " " + results2.lastname;
   sql = `SELECT * FROM small_category WHERE idsmall_category = ?`;
   const results3 = await new Promise((resolve, reject) => {
     db.query(sql, [results.idsmall_category], (err, result) => {
@@ -214,27 +214,18 @@ async function showDetail(sender_psid, course_id) {
   let response = { text: "Here you go" };
   callSendAPI(sender_psid, response);
   const data = await getDetail(course_id);
-  return {
+  response = {
     attachment: {
-      type: "template",
+      type: "image",
       payload: {
-        template_type: "generic",
-        elements: [
-          {
-            title: data.name,
-            image_url: `https://my-academy-webhook.herokuapp.com${data.img}`,
-            subtitle: `Price: ${data.price}  Rate: ${data.rate} (${data.ratevotes}) Last update: ${data.lastupdate} Instructor: ${data.teacher_name} Category: ${data.cat_name}`,
-            buttons: [
-              {
-                type: "web_url",
-                title: "View more",
-                url: "https://www.google.com/",
-              },
-            ],
-          },
-        ],
+        url: `https://my-academy-webhook.herokuapp.com${data.img}`,
+        is_reusable: true,
       },
     },
+  };
+  callSendAPI(sender_psid, response);
+  return {
+    text: `<p>Title: ${data.name}</p>`,
   };
 }
 
