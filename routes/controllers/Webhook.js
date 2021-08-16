@@ -75,14 +75,23 @@ async function handleMessage(sender_psid, received_message) {
       },
     };
   } else {
-    response = { text: `Type "Start" to chat with bot` };
+    response = { text: `I can't recognize your command` };
+  }
+  if (received_message.text) {
+    if (received_message.text.includes("Keyword ")) {
+      const allwords = received_message.text.split(" ");
+      let keyword = "";
+      for (let i = 1; i < allwords.length; i++) keyword += allwords[i];
+      console.log(keyword);
+      response = await showCourses(sender_psid, keyword, 2);
+    }
   }
   let payload = received_message.quick_reply.payload;
   if (payload) {
     if (payload.includes("cat-")) {
       const catid = parseInt(payload.split("-")[1]);
       console.log(catid);
-      response = await showCoursesByCat(sender_psid, catid);
+      response = await showCourses(sender_psid, catid, 1);
     }
   }
   callSendAPI(sender_psid, response);
@@ -143,6 +152,22 @@ async function getCoursesByCat(cat_id) {
   return results;
 }
 
+async function getCoursesByKeyword(keyword) {
+  const sql1 = `ALTER TABLE courses ADD FULLTEXT(name);`;
+  let sql2 = `SELECT * FROM courses WHERE MATCH(name) AGAINST ('${keyword}') AND isBlocked=0;`;
+  const sql3 = ` ALTER TABLE courses DROP INDEX name;`;
+  const sql = sql1 + sql2 + sql3;
+  const results = await new Promise((resolve, reject) => {
+    db.query(sql, (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(result[1]);
+    });
+  });
+  return results;
+}
+
 async function showCategories() {
   const data = await getCategories();
   let array = [];
@@ -161,10 +186,12 @@ async function showCategories() {
 
 async function showDetail(sender_psid, cat_id) {}
 
-async function showCoursesByCat(sender_psid, cat_id) {
+async function showCourses(sender_psid, value, type) {
   let response = { text: "This list is what I have found" };
   callSendAPI(sender_psid, response);
-  const data = await getCoursesByCat(cat_id);
+  let data;
+  if (type === 1) data = await getCoursesByCat(value);
+  else if (type === 2) data = await getCoursesByKeyword(value);
   let array = [];
   for (let item of data) {
     array.push({
@@ -202,7 +229,7 @@ async function handlePostback(sender_psid, received_postback) {
     switch (payload) {
       case "keyword":
         response = {
-          text: "Please type your keyword. (Example: Keyword YOUR-KEYWORD)",
+          text: "Please type your keyword. (Example: Keyword <YOUR-KEYWORD>)",
         };
         break;
       case "category":
