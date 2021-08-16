@@ -63,11 +63,6 @@ async function handleMessage(sender_psid, received_message) {
                   title: "Search courses by category",
                   payload: "category",
                 },
-                {
-                  type: "postback",
-                  title: "View course's detail",
-                  payload: "detail",
-                },
               ],
             },
           ],
@@ -152,6 +147,42 @@ async function getCoursesByCat(cat_id) {
   return results;
 }
 
+async function getDetail(course_id) {
+  let sql = `SELECT * FROM courses WHERE idcourses = ?`;
+  const results = await new Promise((resolve, reject) => {
+    db.query(sql, [course_id], (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      if (result.length > 0) resolve(result[0]);
+      else return null;
+    });
+  });
+  sql = `SELECT * FROM user WHERE iduser = ?`;
+  const results2 = await new Promise((resolve, reject) => {
+    db.query(sql, [results.teacher], (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      if (result.length > 0) resolve(result[0]);
+      else return null;
+    });
+  });
+  results.teacher_name = results2.name;
+  sql = `SELECT * FROM small_category WHERE idsmall_category = ?`;
+  const results3 = await new Promise((resolve, reject) => {
+    db.query(sql, [results.idsmall_category], (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      if (result.length > 0) resolve(result[0]);
+      else return null;
+    });
+  });
+  results.cat_name = results3.name;
+  return results;
+}
+
 async function getCoursesByKeyword(keyword) {
   const sql1 = `ALTER TABLE courses ADD FULLTEXT(name);`;
   let sql2 = `SELECT * FROM courses WHERE MATCH(name) AGAINST ('${keyword}') AND isBlocked=0;`;
@@ -184,7 +215,39 @@ async function showCategories() {
   };
 }
 
-async function showDetail(sender_psid, cat_id) {}
+async function showDetail(sender_psid, course_id) {
+  let response = { text: "Here you go" };
+  callSendAPI(sender_psid, response);
+  const data = await getDetail(course_id);
+  return {
+    attachment: {
+      type: "template",
+      payload: {
+        template_type: "generic",
+        elements: [
+          {
+            title: data.name,
+            image_url: `https://my-academy-webhook.herokuapp.com${data.img}`,
+            subtitle: ` ${data.description1}
+            Price: ${data.price}   Rate: ${data.rate} (${data.ratevotes})
+            Last update: ${data.lastupdate}  Complete: ${
+              data.isCompleted === 1 ? "Completed" : "Not completed"
+            }
+            Instructor: ${data.teacher_name}  Category: ${data.cat_name}
+            ${data.description2}`,
+            buttons: [
+              {
+                type: "web_url",
+                title: "View detail",
+                url: "https://www.google.com/",
+              },
+            ],
+          },
+        ],
+      },
+    },
+  };
+}
 
 async function showCourses(sender_psid, value, type) {
   let response = { text: "This list is what I have found" };
@@ -257,7 +320,8 @@ async function handlePostback(sender_psid, received_postback) {
   //   response = await showCoursesByCat(catid);
   // }
   if (payload.includes("course-")) {
-    const courseid = parseInt(payload.split("-"[1]));
+    const courseid = parseInt(payload.split("-")[1]);
+    response = await showDetail(sender_psid, courseid);
   }
   // Send the message to acknowledge the postback
   callSendAPI(sender_psid, response);
