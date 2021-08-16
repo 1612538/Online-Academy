@@ -212,7 +212,7 @@ async function showCategories() {
 
 async function showDetail(sender_psid, course_id) {
   let response = { text: "Here you go" };
-  callSendAPI(sender_psid, response);
+  await callSendAPI(sender_psid, response);
   const data = await getDetail(course_id);
   response = {
     attachment: {
@@ -223,9 +223,15 @@ async function showDetail(sender_psid, course_id) {
       },
     },
   };
-  callSendAPI(sender_psid, response);
+  await callSendAPI(sender_psid, response);
   return {
-    text: `<p>Title: ${data.name}</p>`,
+    text: `Title: ${data.name}
+    Description: ${data.description1} 
+    Price: ${data.price} Rate: ${data.rate} (${data.ratevotes})
+    Instructor: ${data.teacher_name} Category: ${data.cat_name}
+    Last update: ${data.lastupdate}  Completed: ${
+      data.isCompleted === 1 ? "Completed" : "Not completed"
+    }`,
   };
 }
 
