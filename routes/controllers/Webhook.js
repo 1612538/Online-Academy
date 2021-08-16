@@ -86,9 +86,7 @@ async function handleMessage(sender_psid, received_message) {
       console.log(keyword);
       response = await showCourses(sender_psid, keyword, 2);
     }
-  }
-
-  if (received_message.quick_reply.payload) {
+  } else if (typeof received_message.quick_reply.payload === "string") {
     let payload = received_message.quick_reply.payload;
     if (payload.includes("cat-")) {
       const catid = parseInt(payload.split("-")[1]);
@@ -193,7 +191,7 @@ async function showCourses(sender_psid, value, type) {
   callSendAPI(sender_psid, response);
   let data;
   if (type === 1) data = await getCoursesByCat(value);
-  else if (type === 2) data = await getCoursesByKeyword(value);
+  if (type === 2) data = await getCoursesByKeyword(value);
   console.log(data[0].name);
   let array = [];
   for (let item of data) {
