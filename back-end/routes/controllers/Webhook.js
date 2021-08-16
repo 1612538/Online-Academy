@@ -1,7 +1,9 @@
 const request = require("request");
+const db = require("../../utils/db");
+const dotenv = require("dotenv");
+dotenv.config();
 
-const accesstoken =
-  "EAADYReC9qMYBAF5J0lllLDVO5QlKD5fVgxHOxV6j1dDf6teJt17BQjbUP2mm8vU0GU9QLdYbRBjCPz9ofCThQwKXmAdpHELHDPoP6vJisx8tvUPOj2Rps2b4zaaJKZB1bpKTEXhdA4twn1T3HnOiw1eeifzG2KoKKJLWls7ZCkjAA6YYop";
+const accesstoken = process.env.accessToken;
 
 function callSendAPI(senderId, message) {
   let request_body = {
@@ -10,6 +12,7 @@ function callSendAPI(senderId, message) {
     },
     message: message,
   };
+  console.log(request_body);
   request(
     {
       uri: "https://graph.facebook.com/v2.6/me/messages",
@@ -33,9 +36,8 @@ function firstTrait(nlp, name) {
   return nlp && nlp.entities && nlp.traits[name] && nlp.traits[name][0];
 }
 
-function handleMessage(sender_psid, received_message) {
+async function handleMessage(sender_psid, received_message) {
   let response;
-
   // Checks if the message contains text
   if (received_message.text === "Start") {
     // Get the URL of the message attachment
@@ -75,63 +77,159 @@ function handleMessage(sender_psid, received_message) {
   } else {
     response = { text: `Type "Start" to chat with bot` };
   }
+  let payload = received_message.quick_reply.payload;
+  if (payload) {
+    if (payload.includes("cat-")) {
+      const catid = parseInt(payload.split("-")[1]);
+      console.log(catid);
+      response = await showCoursesByCat(sender_psid, catid);
+    }
+  }
   callSendAPI(sender_psid, response);
 }
 
-function handlePostback(sender_psid, received_postback) {
+function getStarted() {
+  return {
+    attachment: {
+      type: "template",
+      payload: {
+        template_type: "button",
+        text: "Hi, what do you want to do?",
+        buttons: [
+          {
+            type: "postback",
+            title: "Search courses by keyword",
+            payload: "keyword",
+          },
+          {
+            type: "postback",
+            title: "Search courses by category",
+            payload: "category",
+          },
+          {
+            type: "postback",
+            title: "View course's detail",
+            payload: "detail",
+          },
+        ],
+      },
+    },
+  };
+}
+
+async function getCategories() {
+  const sql = `SELECT * FROM small_category`;
+  const results = await new Promise((resolve, reject) => {
+    db.query(sql, (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(result);
+    });
+  });
+  return results;
+}
+
+async function getCoursesByCat(cat_id) {
+  const sql = `SELECT * FROM courses WHERE idsmall_category = ? AND isBlocked=0`;
+  const results = await new Promise((resolve, reject) => {
+    db.query(sql, [cat_id], (err, result) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(result);
+    });
+  });
+  return results;
+}
+
+async function showCategories() {
+  const data = await getCategories();
+  let array = [];
+  for (let item of data) {
+    array.push({
+      content_type: "text",
+      title: item.name,
+      payload: `cat-${item.idsmall_category}`,
+    });
+  }
+  return {
+    text: "Pick one category",
+    quick_replies: array,
+  };
+}
+
+async function showDetail(sender_psid, cat_id) {}
+
+async function showCoursesByCat(sender_psid, cat_id) {
+  let response = { text: "This list is what I have found" };
+  callSendAPI(sender_psid, response);
+  const data = await getCoursesByCat(cat_id);
+  let array = [];
+  for (let item of data) {
+    array.push({
+      title: item.name,
+      image_url: `https://my-academy-webhook.herokuapp.com${item.img}`,
+      subtitle: `Price: ${item.price}   Rate: ${item.rate} (${item.ratevotes})`,
+      buttons: [
+        {
+          type: "postback",
+          title: "View detail",
+          payload: `course-${item.idcourses}`,
+        },
+      ],
+    });
+  }
+  return {
+    attachment: {
+      type: "template",
+      payload: {
+        template_type: "generic",
+        elements: array,
+      },
+    },
+  };
+}
+
+async function handlePostback(sender_psid, received_postback) {
   let response;
 
   // Get the payload for the postback
   let payload = received_postback.payload;
 
   // Set the response based on the postback payload
-  switch (payload) {
-    case "keyword":
-      response = {
-        text: "Please type your keyword. (Example: Keyword YOUR-KEYWORD)",
-      };
-      break;
-    case "category":
-      response = { text: "Please choose one of these categories below" };
-      break;
-    case "detail":
-      response = {
-        text: "Please give me the course ID ( Example: Course 15 )",
-      };
-      break;
-    case "Restart":
-    case "GET_STARTED":
-      response = {
-        attachment: {
-          type: "template",
-          payload: {
-            template_type: "button",
-            text: "Hi, what do you want to do?",
-            buttons: [
-              {
-                type: "postback",
-                title: "Search courses by keyword",
-                payload: "keyword",
-              },
-              {
-                type: "postback",
-                title: "Search courses by category",
-                payload: "category",
-              },
-              {
-                type: "postback",
-                title: "View course's detail",
-                payload: "detail",
-              },
-            ],
-          },
-        },
-      };
-      break;
-    default:
-      response = {
-        text: `Opps! I don't know response with payload ${payload}`,
-      };
+  if (typeof payload === "string") {
+    switch (payload) {
+      case "keyword":
+        response = {
+          text: "Please type your keyword. (Example: Keyword YOUR-KEYWORD)",
+        };
+        break;
+      case "category":
+        response = await showCategories(sender_psid);
+        break;
+      case "detail":
+        response = {
+          text: "Please give me the course ID ( Example: Course 15 )",
+        };
+        break;
+      case "Restart":
+      case "GET_STARTED":
+        response = getStarted();
+        break;
+      default:
+        response = {
+          text: `Opps! I don't know response with payload ${payload}`,
+        };
+    }
+  }
+  // if (payload.includes("cat-")) {
+  //   const catid = parseInt(payload.split("-")[1]);
+  //   console.log(catid);
+  //   response = await showCoursesByCat(catid);
+  // }
+  if (payload.includes("course-")) {
+    const courseid = parseInt(payload.split("-"[1]));
   }
   // Send the message to acknowledge the postback
   callSendAPI(sender_psid, response);
@@ -139,7 +237,7 @@ function handlePostback(sender_psid, received_postback) {
 
 module.exports = {
   webhookget: (req, res) => {
-    let VERIFY_TOKEN = "quangdeptrai";
+    let VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
     // Parse the query params
     let mode = req.query["hub.mode"];
@@ -160,14 +258,13 @@ module.exports = {
     }
   },
   // Đoạn code xử lý khi có người nhắn tin cho bot
-  webhookpost: (req, res) => {
+  webhookpost: async (req, res) => {
     // Parse the request body from the POST
     let body = req.body;
-
     // Check the webhook event is from a Page subscription
     if (body.object === "page") {
       // Iterate over each entry - there may be multiple if batched
-      body.entry.forEach(function (entry) {
+      body.entry.forEach(async function (entry) {
         // Gets the body of the webhook event
         let webhook_event = entry.messaging[0];
         console.log(webhook_event);
@@ -175,13 +272,12 @@ module.exports = {
         // Get the sender PSID
         let sender_psid = webhook_event.sender.id;
         console.log("Sender PSID: " + sender_psid);
-
         // Check if the event is a message or postback and
         // pass the event to the appropriate handler function
         if (webhook_event.message) {
           handleMessage(sender_psid, webhook_event.message);
         } else if (webhook_event.postback) {
-          handlePostback(sender_psid, webhook_event.postback);
+          await handlePostback(sender_psid, webhook_event.postback);
         }
       });
 
