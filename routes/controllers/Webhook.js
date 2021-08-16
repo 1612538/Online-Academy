@@ -163,7 +163,7 @@ async function getDetail(course_id) {
       else return null;
     });
   });
-  results.teacher_name = results2.name;
+  results.teacher_name = results2.first_name + results2.last_name;
   sql = `SELECT * FROM small_category WHERE idsmall_category = ?`;
   const results3 = await new Promise((resolve, reject) => {
     db.query(sql, [results.idsmall_category], (err, result) => {
