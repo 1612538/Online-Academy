@@ -110,11 +110,6 @@ function getStarted() {
             title: "Search courses by category",
             payload: "category",
           },
-          {
-            type: "postback",
-            title: "View course's detail",
-            payload: "detail",
-          },
         ],
       },
     },
@@ -228,17 +223,17 @@ async function showDetail(sender_psid, course_id) {
           {
             title: data.name,
             image_url: `https://my-academy-webhook.herokuapp.com${data.img}`,
-            subtitle: ` ${data.description1}
-            Price: ${data.price}   Rate: ${data.rate} (${data.ratevotes})
+            subtitle: `Price: ${data.price}   Rate: ${data.rate} (${
+              data.ratevotes
+            })
             Last update: ${data.lastupdate}  Complete: ${
               data.isCompleted === 1 ? "Completed" : "Not completed"
             }
-            Instructor: ${data.teacher_name}  Category: ${data.cat_name}
-            ${data.description2}`,
+            Instructor: ${data.teacher_name}  Category: ${data.cat_name}`,
             buttons: [
               {
                 type: "web_url",
-                title: "View detail",
+                title: "View more",
                 url: "https://www.google.com/",
               },
             ],
@@ -261,7 +256,7 @@ async function showCourses(sender_psid, value, type) {
     array.push({
       title: item.name,
       image_url: `https://my-academy-webhook.herokuapp.com${item.img}`,
-      subtitle: `Price: ${item.price}   Rate: ${item.rate} (${item.ratevotes})`,
+      subtitle: `${data.description1}`,
       buttons: [
         {
           type: "postback",
