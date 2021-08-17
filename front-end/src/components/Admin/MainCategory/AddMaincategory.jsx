@@ -111,6 +111,7 @@ const AddForm = (props) => {
                   label="Name"
                   fullWidth
                   margin="normal"
+                  required
                   onChange={handlename}
                 />
               </Grid>

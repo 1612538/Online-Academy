@@ -83,6 +83,7 @@ const CourseListResults = ({ match, cname, tname }) => {
       let tmp = courses;
       tmp = tmp.filter((obj) => obj.idcourses !== id);
       setCourses([...tmp]);
+      setLength((prevLength) => prevLength - 1);
     }
   };
 

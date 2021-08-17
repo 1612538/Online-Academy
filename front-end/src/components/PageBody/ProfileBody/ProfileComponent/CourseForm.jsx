@@ -71,8 +71,8 @@ const CourseForm = (props) => {
   const [briefDesc, setBriefDesc] = useState(null);
   const [file, setFile] = useState(null);
   const [file2, setFile2] = useState(null);
-  const [filename, setFilename] = useState(null);
-  const [filename2, setFilename2] = useState(null);
+  const [filename, setFilename] = useState("Image required");
+  const [filename2, setFilename2] = useState("Video required");
 
   const onEditorStateChange = (contentState) => {
     setEditor(contentState);
@@ -99,23 +99,32 @@ const CourseForm = (props) => {
       trigger: "#",
       separator: " ",
     };
-    const rawContentState = convertToRaw(editor.getCurrentContent());
-    const markup = draftToHtml(rawContentState, hashtagConfig, true);
-    let formData = new FormData();
-    formData.append("imageInput", file);
-    formData.append("name", name);
-    formData.append("idteacher", localStorage.getItem("iduser"));
-    formData.append("price", price);
-    formData.append("briefDesc", briefDesc);
-    formData.append("detailDesc", markup);
-    formData.append("smallcategory", cat);
-    formData.append("videoInput", file2);
-    const returnData = await axios.post(
-      "http://localhost:8080/api/courses",
-      formData,
-      config
-    );
-    if (returnData.data.success) props.AddClose();
+    if (
+      errorPriceText === null &&
+      name != null &&
+      cat != null &&
+      briefDesc != null &&
+      price != null
+    ) {
+      const rawContentState = convertToRaw(editor.getCurrentContent());
+      const markup = draftToHtml(rawContentState, hashtagConfig, true);
+      let formData = new FormData();
+      formData.append("imageInput", file);
+      formData.append("name", name);
+      formData.append("idteacher", localStorage.getItem("iduser"));
+      formData.append("price", price);
+      formData.append("briefDesc", briefDesc);
+      formData.append("detailDesc", markup);
+      formData.append("smallcategory", cat);
+      formData.append("videoInput", file2);
+      console.log(formData);
+      const returnData = await axios.post(
+        "http://localhost:8080/api/courses",
+        formData,
+        config
+      );
+      if (returnData.data.success) props.AddClose();
+    }
   };
 
   const handleImage = (e) => {
@@ -123,7 +132,7 @@ const CourseForm = (props) => {
       setFilename(e.target.files[0].name);
       setFile(e.target.files[0]);
     } else {
-      setFilename(null);
+      setFilename("Image required");
       setFile(null);
     }
   };
@@ -133,7 +142,7 @@ const CourseForm = (props) => {
       setFilename2(e.target.files[0].name);
       setFile2(e.target.files[0]);
     } else {
-      setFilename2(null);
+      setFilename2("Video required");
       setFile2(null);
     }
   };
@@ -146,8 +155,15 @@ const CourseForm = (props) => {
     setCat(e.target.value);
   };
 
+  const [errorPriceText, setErrorPriceText] = useState(null);
+
   const handlePrice = (e) => {
-    setPrice(e.target.value);
+    if (isNaN(e.target.value)) {
+      setErrorPriceText("Price must be a number");
+    } else {
+      setPrice(e.target.value);
+      setErrorPriceText(null);
+    }
   };
 
   const handleBriefDesc = (e) => {
@@ -216,6 +232,8 @@ const CourseForm = (props) => {
                   fullWidth
                   margin="normal"
                   required
+                  error={errorPriceText ? true : false}
+                  helperText={errorPriceText ? errorPriceText : undefined}
                   onChange={handlePrice}
                 />
               </Grid>
@@ -251,6 +269,7 @@ const CourseForm = (props) => {
                   type="file"
                   hidden
                   onChange={handleImage}
+                  required
                   accept="image/*"
                 />
               </Button>
@@ -269,6 +288,7 @@ const CourseForm = (props) => {
                   type="file"
                   hidden
                   onChange={handleVideo}
+                  required
                   accept="video/*"
                 />
               </Button>

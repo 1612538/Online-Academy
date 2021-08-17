@@ -65,21 +65,24 @@ const AddForm = (props) => {
         "x-access-token": localStorage.getItem("accessToken"),
       },
     };
+    if (file === null) {
+      setFilename("Image required");
+    } else if (name != "") {
+      let formData = new FormData();
 
-    let formData = new FormData();
-
-    formData.append("name", name);
-    formData.append("idcategory", props.match.params.id);
-    formData.append("count", 0);
-    formData.append("imageInput", file);
-    const returnData = await axios.post(
-      `http://localhost:8080/api/smallcategories`,
-      formData,
-      config
-    );
-    if (returnData.data.success) {
-      props.AddClose();
-      props.setUpdate(!props.update);
+      formData.append("name", name);
+      formData.append("idcategory", props.match.params.id);
+      formData.append("count", 0);
+      formData.append("imageInput", file);
+      const returnData = await axios.post(
+        `http://localhost:8080/api/smallcategories`,
+        formData,
+        config
+      );
+      if (returnData.data.success) {
+        props.AddClose();
+        props.setUpdate(!props.update);
+      }
     }
   };
 
@@ -126,6 +129,7 @@ const AddForm = (props) => {
                   label="Name"
                   fullWidth
                   margin="normal"
+                  required
                   onChange={handlename}
                 />
               </Grid>
