@@ -857,6 +857,7 @@ const CourseBody = (props) => {
             idcourse={course.idcourses}
             rate={course.rate}
             votes={course.ratevotes}
+            setCourse={setCourse}
           ></CourseFeedback>
           <Grid item xs={12} style={{ textAlign: "center" }}>
             <Expand></Expand>

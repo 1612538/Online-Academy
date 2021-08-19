@@ -67,7 +67,7 @@ const AddForm = (props) => {
     };
     if (file === null) {
       setFilename("Image required");
-    } else if (name != "") {
+    } else if (name !== "") {
       let formData = new FormData();
 
       formData.append("name", name);

@@ -83,6 +83,9 @@ const Feedback = (props) => {
         calcRating,
         config
       );
+      props.setCourse((prevCourse) => {
+        return { ...prevCourse, ...calcRating };
+      });
     }
   };
 

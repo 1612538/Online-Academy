@@ -111,6 +111,13 @@ const PasswordForm = (props) => {
       );
       if (returnData.data.success) {
         setOpen(true);
+        setError1(false);
+        setError1Text(false);
+        setError2(false);
+        setError2Text(false);
+        setError3(false);
+        setError3Text(false);
+
         setTimeout(() => {
           props.EditClose();
         }, 2000);
