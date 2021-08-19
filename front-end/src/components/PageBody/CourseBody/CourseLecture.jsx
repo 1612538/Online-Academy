@@ -397,7 +397,6 @@ const CourseLecture = (props) => {
         setPVideo(returnData.data.video);
         tmp.video = returnData.data.video;
       }
-      setCurrLecture({ ...tmp });
       let index = lectures.findIndex(
         (obj) =>
           obj.idlecture === tmp.idlecture && obj.idcourse === tmp.idcourse
@@ -420,6 +419,7 @@ const CourseLecture = (props) => {
         temp.lastupdate = data2.lastupdate;
         setCourse({ ...temp });
       }
+      setCurrLecture({ ...tmp });
       setVideo(null);
       setChange(false);
       setCanClick(true);
@@ -717,7 +717,11 @@ const CourseLecture = (props) => {
                   ref={(tplayer) => {
                     myplayer = tplayer;
                   }}
-                  key={currLecture.video}
+                  key={
+                    isChange && video
+                      ? currLecture.video
+                      : "http://localhost:8080" + currLecture.video
+                  }
                 >
                   <source
                     src={
