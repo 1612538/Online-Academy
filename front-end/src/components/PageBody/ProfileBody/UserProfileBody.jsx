@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Typography, Avatar } from "@material-ui/core";
+import { Grid, Typography, Avatar, Snackbar, Button } from "@material-ui/core";
 import User from "./ProfileComponent/User";
 import Teacher from "./ProfileComponent/Teacher";
 
@@ -38,16 +38,64 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+let previousImage = "";
+
 const ProfileBody = () => {
   const classes = useStyles();
   const [user, setUser] = useState({});
   const [update, setUpdate] = useState(false);
+  const [img, setImage] = useState(null);
+  const [isChange, setChange] = useState(false);
 
   const getUser = async () => {
     const data = await axios.get(
       `http://localhost:8080/api/users/${localStorage.getItem("iduser")}`
     );
+    previousImage = data.data.img;
     setUser(data.data);
+  };
+
+  const handleImage = (e) => {
+    if (e.target.files[0]) {
+      let tmp = user;
+      tmp.img = window.URL.createObjectURL(e.target.files[0]);
+      setUser({ ...tmp });
+      setImage(e.target.files[0]);
+      setChange(true);
+    }
+  };
+
+  const handleDataChange = async () => {
+    const config = {
+      headers: {
+        "x-access-token": localStorage.getItem("accessToken"),
+      },
+    };
+    let formData = new FormData();
+    if (img !== null) formData.append("imageInput", img);
+    const returnData = await axios.put(
+      `http://localhost:8080/api/usersavatar/${user.iduser}`,
+      formData,
+      config
+    );
+    if (returnData.data.success === true) {
+      let tmp = user;
+      if (returnData.data.img !== "") {
+        previousImage = returnData.data.img;
+        tmp.img = returnData.data.img;
+      }
+      setUser({ ...tmp });
+      setImage(null);
+      setChange(false);
+    }
+  };
+
+  const cancelChange = () => {
+    let tmp = user;
+    tmp.img = previousImage;
+    setImage(null);
+    setUser({ ...tmp });
+    setChange(false);
   };
 
   useEffect(() => {
@@ -85,11 +133,22 @@ const ProfileBody = () => {
           </Grid>
         </Grid>
         <Grid container item xs={4} justify="center" alignItems="center">
-          <Avatar
-            style={{ height: "250px", width: "250px" }}
-            alt={user.firstname}
-            src={`http://localhost:8080/${user.img}`}
-          />
+          <Button component="label" style={{ borderRadius: "50%" }}>
+            <Avatar
+              style={{ height: "250px", width: "250px" }}
+              alt={user.firstname}
+              src={
+                isChange && img ? user.img : `http://localhost:8080${user.img}`
+              }
+            ></Avatar>
+            <input
+              type="file"
+              hidden
+              onChange={handleImage}
+              required
+              accept="image/*"
+            />
+          </Button>
         </Grid>
       </Grid>
       {localStorage.getItem("role") === "0" ? (
@@ -99,6 +158,29 @@ const ProfileBody = () => {
       ) : (
         <Redirect to="/"></Redirect>
       )}
+      <Snackbar
+        open={isChange}
+        action={
+          <React.Fragment>
+            Your changes haven't been saved.
+            <Button
+              color="secondary"
+              variant="contained"
+              style={{ margin: "10px", textTransform: "none" }}
+              onClick={handleDataChange}
+            >
+              Save changes
+            </Button>
+            <Button
+              variant="contained"
+              className={classes.cancelButton}
+              onClick={cancelChange}
+            >
+              Cancel
+            </Button>
+          </React.Fragment>
+        }
+      ></Snackbar>
     </div>
   );
 };

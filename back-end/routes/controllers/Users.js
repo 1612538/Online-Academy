@@ -103,6 +103,17 @@ module.exports = {
       res.json({ success: true });
     });
   },
+  updateAvatar: async (req, res) => {
+    let data = {
+      img: "/tmp/my-uploads/" + req.files["imageInput"][0].filename,
+    };
+    let id = req.params.id;
+    const sql = `UPDATE ${tbName} SET ? WHERE iduser = ?`;
+    db.query(sql, [data, id], (err, result) => {
+      if (err) throw err;
+      res.json({ success: true, img: data.img });
+    });
+  },
   add: async (req, res) => {
     const sql = `INSERT INTO ${tbName} SET ?`;
     let data = req.body;
