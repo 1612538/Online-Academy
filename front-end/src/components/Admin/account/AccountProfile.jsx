@@ -11,12 +11,6 @@ import {
 
 import { makeStyles } from "@material-ui/core/styles";
 
-const user = {
-  avatar: "",
-  city: "Admin",
-  jobTitle: "Senior Developer",
-  name: "Katarina Smith",
-};
 const useStyles = makeStyles({
   text: {
     fontWeight: "bold",
@@ -36,7 +30,7 @@ const AccountProfile = (props) => {
           }}
         >
           <Avatar
-            src={user.avatar}
+            src={props.admin ? props.admin.img : ""}
             style={{
               height: 100,
               width: 100,
@@ -48,10 +42,12 @@ const AccountProfile = (props) => {
             variant="h5"
             className={classes.text}
           >
-            {user.name}
+            {props.admin
+              ? props.admin.firstname + " " + props.admin.lastname
+              : ""}
           </Typography>
           <Typography color="textSecondary" variant="body1">
-            {`${user.city}`}
+            {`${props.admin ? props.admin.occupation : ""}`}
           </Typography>
         </Box>
       </CardContent>

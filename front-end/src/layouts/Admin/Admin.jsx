@@ -10,9 +10,10 @@ import CourseListByCat from "./pages/CourseListByCat";
 import Error from "../error/ErrorPage";
 import NavBar from "../../components/Admin/NavBar";
 import SideBar from "../../components/Admin/SideBar";
-import { useState } from "react";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
-const DefaultAdmin = ({ match, Component }) => {
+const DefaultAdmin = ({ match, Component, admin }) => {
   const [update, setUpdate] = useState(false);
 
   return (
@@ -20,7 +21,7 @@ const DefaultAdmin = ({ match, Component }) => {
       <NavBar></NavBar>
       <Grid container style={{ backgroundColor: "rgb(244, 246, 248)" }}>
         <Grid item xs={2}>
-          <SideBar match={match} update={update}></SideBar>
+          <SideBar match={match} admin={admin} update={update}></SideBar>
         </Grid>
         <Grid
           item
@@ -30,6 +31,7 @@ const DefaultAdmin = ({ match, Component }) => {
           <Component
             match={match}
             update={update}
+            admin={admin}
             setUpdate={setUpdate}
           ></Component>
         </Grid>
@@ -39,25 +41,53 @@ const DefaultAdmin = ({ match, Component }) => {
 };
 
 const Admin = ({ match }) => {
+  const [admin, setUser] = useState({});
+  const getUser = async () => {
+    const returnData = await axios.get(
+      `http://localhost:8080/api/users/${localStorage.getItem("iduser")}`
+    );
+    if (returnData) {
+      console.log(returnData.data);
+      setUser(returnData.data);
+    }
+  };
+  useEffect(() => {
+    const fetchData = async () => {
+      await getUser();
+    };
+    fetchData();
+  }, []);
   return (
     <>
       <Switch>
         <Route
           path={`${match.url}/account`}
           render={(props) => (
-            <DefaultAdmin {...props} Component={Account}></DefaultAdmin>
+            <DefaultAdmin
+              {...props}
+              admin={admin}
+              Component={Account}
+            ></DefaultAdmin>
           )}
         />
         <Route
           path={`${match.url}/users`}
           render={(props) => (
-            <DefaultAdmin {...props} Component={UserList}></DefaultAdmin>
+            <DefaultAdmin
+              {...props}
+              admin={admin}
+              Component={UserList}
+            ></DefaultAdmin>
           )}
         />
         <Route
           path={`${match.url}/teachers`}
           render={(props) => (
-            <DefaultAdmin {...props} Component={TeacherList}></DefaultAdmin>
+            <DefaultAdmin
+              {...props}
+              admin={admin}
+              Component={TeacherList}
+            ></DefaultAdmin>
           )}
         />
         <Route
@@ -65,6 +95,7 @@ const Admin = ({ match }) => {
           render={(props) => (
             <DefaultAdmin
               {...props}
+              admin={admin}
               Component={MainCategoryList}
             ></DefaultAdmin>
           )}
@@ -72,20 +103,32 @@ const Admin = ({ match }) => {
         <Route
           path={`${match.url}/categories/:id`}
           render={(props) => (
-            <DefaultAdmin {...props} Component={CategoryList}></DefaultAdmin>
+            <DefaultAdmin
+              {...props}
+              admin={admin}
+              Component={CategoryList}
+            ></DefaultAdmin>
           )}
         />
         <Route
           exact
           path={`${match.url}/courses`}
           render={(props) => (
-            <DefaultAdmin {...props} Component={CourseList}></DefaultAdmin>
+            <DefaultAdmin
+              {...props}
+              admin={admin}
+              Component={CourseList}
+            ></DefaultAdmin>
           )}
         />
         <Route
           path={`${match.url}/courses/:id`}
           render={(props) => (
-            <DefaultAdmin {...props} Component={CourseListByCat}></DefaultAdmin>
+            <DefaultAdmin
+              {...props}
+              admin={admin}
+              Component={CourseListByCat}
+            ></DefaultAdmin>
           )}
         />
         <Redirect

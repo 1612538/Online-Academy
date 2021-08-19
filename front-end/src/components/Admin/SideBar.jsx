@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SideBar = ({ match, update }) => {
+const SideBar = ({ match, update, admin }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
@@ -118,7 +118,7 @@ const SideBar = ({ match, update }) => {
           }}
         />
         <Typography color="textSecondary" variant="h6">
-          Name
+          {admin ? admin.firstname + " " + admin.lastname : "Admin"}
         </Typography>
         <Typography color="textSecondary" variant="body2">
           Admin

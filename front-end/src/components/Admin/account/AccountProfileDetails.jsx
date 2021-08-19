@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -26,22 +26,12 @@ const states = [
 ];
 
 const AccountProfileDetails = (props) => {
-  const [values, setValues] = useState({
-    firstName: "Katarina",
-    lastName: "Smith",
-    email: "demo@devias.io",
-    phone: "",
-    state: "Alabama",
-    country: "USA",
-  });
+  const [admin, setAdmin] = useState({});
+  const handleChange = (event) => {};
 
-  const handleChange = (event) => {
-    setValues({
-      ...values,
-      [event.target.name]: event.target.value,
-    });
-  };
-
+  useEffect(() => {
+    setAdmin(props.admin);
+  }, []);
   return (
     <form autoComplete="off" noValidate {...props}>
       <Card>
@@ -57,7 +47,7 @@ const AccountProfileDetails = (props) => {
                 name="firstName"
                 onChange={handleChange}
                 required
-                value={values.firstName}
+                value={admin.firstname || ""}
                 variant="outlined"
               />
             </Grid>
@@ -68,7 +58,7 @@ const AccountProfileDetails = (props) => {
                 name="lastName"
                 onChange={handleChange}
                 required
-                value={values.lastName}
+                value={admin.lastname || ""}
                 variant="outlined"
               />
             </Grid>
@@ -79,7 +69,7 @@ const AccountProfileDetails = (props) => {
                 name="email"
                 onChange={handleChange}
                 required
-                value={values.email}
+                value={admin.email || ""}
                 variant="outlined"
               />
             </Grid>
@@ -90,7 +80,7 @@ const AccountProfileDetails = (props) => {
                 name="phone"
                 onChange={handleChange}
                 type="number"
-                value={values.phone}
+                value={""}
                 variant="outlined"
               />
             </Grid>
@@ -101,7 +91,7 @@ const AccountProfileDetails = (props) => {
                 name="country"
                 onChange={handleChange}
                 required
-                value={values.country}
+                value={"USA"}
                 variant="outlined"
               />
             </Grid>
@@ -114,7 +104,7 @@ const AccountProfileDetails = (props) => {
                 required
                 select
                 SelectProps={{ native: true }}
-                value={values.state}
+                value={"Alabama"}
                 variant="outlined"
               >
                 {states.map((option) => (

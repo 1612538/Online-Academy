@@ -78,7 +78,8 @@ module.exports = {
       if (err) {
         throw err;
       }
-      res.json(result[0]);
+      if (result.length > 0) res.json(result[0]);
+      else res.json(null);
     });
   },
 
