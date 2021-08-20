@@ -67,25 +67,27 @@ const Feedback = (props) => {
       const user = await axios.get(
         `http://localhost:8080/api/users/${data.iduser}`
       );
-      data.name = user.data.username;
-      data.img = user.data.img;
+      let result = returnData.data.data;
+      result.name = user.data.username;
+      result.img = user.data.img;
       let tmp = comments;
       setText("");
-      tmp.push(data);
+      tmp.push(result);
       setComments([...tmp]);
-      const num = (props.rate * props.votes + value) / (props.votes + 1);
-      const calcRating = {
-        rate: Math.round((num + Number.EPSILON) * 10) / 10,
-        ratevotes: props.votes + 1,
+      const data2 = {
+        rate: returnData.data.rate,
+        ratevotes: returnData.data.ratevotes,
       };
-      const update = await axios.put(
-        `http://localhost:8080/api/courses/${props.idcourse}`,
-        calcRating,
+      const returnData2 = await axios.put(
+        `http://localhost:8080/api/courses/${data.idcourse}`,
+        data2,
         config
       );
-      props.setCourse((prevCourse) => {
-        return { ...prevCourse, ...calcRating };
-      });
+      if (returnData2.data.success) {
+        props.setCourse((prevCourse) => {
+          return { ...prevCourse, ...data2 };
+        });
+      }
     }
   };
 
@@ -201,8 +203,15 @@ const Feedback = (props) => {
             ></Rating>
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="body1" className={classes.text3}>
+            <Typography
+              variant="body1"
+              component="div"
+              className={classes.text3}
+            >
               {obj.comment}
+              <Typography variant="body2" style={{ textAlign: "right" }}>
+                {obj.createAt}
+              </Typography>
             </Typography>
           </Grid>
         </Grid>
