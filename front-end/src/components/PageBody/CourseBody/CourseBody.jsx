@@ -324,17 +324,22 @@ const CourseBody = (props) => {
     const data = await axios.get(
       `http://localhost:8080/api/courses/${props.match.params.id}`
     );
-    setCourse(data.data);
-    previousImage = data.data.img;
-    previousVideo = data.data.previewvideo;
-    const view = {
-      views: parseInt(data.data.views) + 1,
-    };
-    const tmp = await axios.put(
-      `http://localhost:8080/api/coursesView/${props.match.params.id}`,
-      view
-    );
-    return data.data;
+    if (data.data === null) {
+      History.push("/error");
+      return null;
+    } else {
+      setCourse(data.data);
+      previousImage = data.data.img;
+      previousVideo = data.data.previewvideo;
+      const view = {
+        views: parseInt(data.data.views) + 1,
+      };
+      const tmp = await axios.put(
+        `http://localhost:8080/api/coursesView/${props.match.params.id}`,
+        view
+      );
+      return data.data;
+    }
   };
 
   const getTeacher = async (teacher) => {
@@ -476,6 +481,9 @@ const CourseBody = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await getCourse();
+      if (data === null) {
+        return;
+      }
       await getTeacher(data.teacher);
       await getBestSeller(data.idcourses);
       await getNewest(data.idcourses);

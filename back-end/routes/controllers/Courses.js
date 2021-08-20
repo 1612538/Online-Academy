@@ -261,12 +261,13 @@ module.exports = {
     });
   },
   detail: (req, res) => {
-    const sql = `SELECT * FROM ${tbName} WHERE idcourses = ?`;
+    const sql = `SELECT * FROM ${tbName} WHERE idcourses = ? AND isBlocked=0`;
     db.query(sql, [req.params.id], (err, result) => {
       if (err) {
         throw err;
       }
-      res.json(result[0]);
+      if (result.length > 0) res.json(result[0]);
+      else res.json(null);
     });
   },
 

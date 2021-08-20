@@ -94,7 +94,7 @@ const ProfileBody = (props) => {
       const newdata = await axios.get(
         `http://localhost:8080/api/courses/${data.data[i].idcourses}`
       );
-      array.push(newdata.data);
+      if (newdata.data) array.push(newdata.data);
     }
     setFavoriteCourses(array);
     setOpen(true);
@@ -122,7 +122,7 @@ const ProfileBody = (props) => {
       const newdata = await axios.get(
         `http://localhost:8080/api/courses/${data.data[i].idcourses}`
       );
-      array.push(newdata.data);
+      if (newdata.data) array.push(newdata.data);
     }
     setEnrolledCourses(array);
     setOpen2(true);
